@@ -1,0 +1,252 @@
+
+--------------------------------------------------------------------------- 
+/* L2 ATIC 2013 – Groupe < OUFTIM > */ 
+/* BdD < Ouftim > */ 
+/* Création de la table < ouftim > */ 
+/* Auteur(s) : BROCHEN Elise, GOUALARD Mickael, POL Patrick, Hua Lucien, Tseksov Alexandre*/ 
+/* Testeur(s) : LADURANTI Sandra */ 
+/* Intégrateur(s) : LADURANTI Sandra */ 
+--------------------------------------------------------------------------- 
+
+USE ouftim
+
+insert into FILMS 
+values ('Gladiator','',2000,'USA',155,0); 
+insert into FILMS 
+values ('Terminator','1',1984,'USA',107,1); 
+insert into FILMS 
+values ('Star Wars','La Menace Fantôme',1999,'USA',130,0); 
+insert into FILMS 
+values ('Star Wars','L''Attaque des Clones',2002,'USA',136,1); 
+insert into FILMS 
+values ('Star Wars','La Revanche Des Sites Web',2005,'USA',140,0); 
+insert into FILMS 
+values ('X-Men','Le Commencement',2011,'USA',132,1); 
+insert into FILMS 
+values ('Intouchables','',2011,'France',113,0); 
+insert into FILMS 
+values ('The Artist','',2011,'France',100,1); 
+insert into FILMS 
+values ('Asterix & Obelix','Mission Cléopatre',2002,'France',107,1); 
+insert into FILMS 
+values ('The Hobbit','La désolation de Smaug',2013,'USA',165,0); 
+
+insert into GENRE
+values ('Péplum');
+insert into GENRE
+values ('Comédie');
+insert into GENRE
+values ('Action');
+insert into GENRE
+values ('Film pour enfants');
+insert into GENRE
+values ('Fantastique');
+insert into GENRE
+values ('Science-fiction');
+insert into GENRE
+values ('Mélodrame');
+insert into GENRE
+values ('Arts Martiaux');
+insert into GENRE
+values ('Autobiographique');
+insert into GENRE
+values ('Aventure');
+insert into GENRE
+values ('Bolywood');
+insert into GENRE
+values ('Musical');
+
+insert into APPARTENIR
+values ('Gladiator','','Péplum');
+
+insert into ACTEUR
+values ('Crowe','Russell','1964-02-10','Monsieur','','Rusty','','Néo-zélandaise/Australiene');
+insert into ACTEUR
+values ('Ford','Harrison','1942-03-13','Monsieur','','','','Américaine');
+insert into ACTEUR
+values ('Jackman','Hugh','1968-06-07','Monsieur','','','','Australienne');
+insert into ACTEUR
+values ('Portman','Natalie','1981-10-12','Madame','','','','Américaine');
+insert into ACTEUR
+values ('McGregor','Ewan','1971-12-05','Monsieur','','','','Britannique')
+insert into ACTEUR
+values ('Berry','Halle','1966-10-12','Madame','','','','Américaine');
+
+
+insert into JOUER
+values ('Gladiator','','Crowe','Russell','1964-02-10');
+
+insert into REALISATEUR
+values ('Scott','Ridley','1937-12-12','Monsieur',null,'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres...','Britannique');
+insert into REALISATEUR
+values ('Jackson','Peter','1961-02-06','Monsieur',null,'','Néo-Zélandaise');
+insert into REALISER
+values ('Gladiator','','Scott','Ridley','1937-12-12');
+insert into DISTINCTIONS
+values('Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
+insert into ATTRIBUER
+values ('Gladiator','','Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
+
+insert into COMPTE (Numero_bancaire, Montant, Somme_operations)
+values ('4973135146210003',30,3);
+insert into COMPTE (Numero_bancaire, Montant, Somme_operations)
+values ('4973135141410003',20,5);
+
+insert into RELANCE_DECOUVERT (Niveau_decouvert, Date_creation, Date_mise_a_jour, FK_numero_compte)
+values(2,'2013-02-10 23:42:59','2013-02-11 22:05:10',1);
+
+
+insert into ABONNE
+values ('AIT Ahmed', 'Kamel', 'KamelA', '1992-01-01', 'Monsieur', '14', null, 'boulevard', 'du Dome', null, '75015', 'Paris', null, 'France', '0669453218', 'kamel.ait.ahmed@gmail.com');
+
+insert into ABONNE
+values ('Amri', 'Zakaria', 'ZakariaA', '1992-02-02', 'Monsieur', '24', null, 'rue', 'saint-martin', null, '75001', 'Paris', null, 'France', '0664751823', 'amri.zakaria@gmail.com');
+
+insert into ABONNE
+values ('Baskaramoorthy', 'Anusan','AnusanB', '1992-03-03', 'Monsieur', '37', null, 'rue', 'saint-georges', null, '75002', 'Paris', null, 'France', '0667451823', 'baskaramoothy.anusan@gmail.com');
+
+insert into ABONNE
+values ('Brochen', 'Elise','EliseB', '1992-04-04', 'Madame', '3', null, 'rue', 'saint-claude', null, '75003', 'Paris', null, 'France', '0663114752', 'brochen.elise@gmail.com'); 
+
+insert into ABONNE
+values ('Danglet', 'Eric', 'EricD', '1992-05-05', 'Monsieur', '17', null, 'rue', 'saint-patrick', null, '75004', 'Paris', null, 'France', '0675451823', 'danglet.eric@gmail.com');
+
+insert into ABONNE
+values ('El Khazzar', 'Aimad', 'AimadEK', '1992-06-06', 'Monsieur', '19', null, 'rue', 'saint-marcel', null, '75005', 'Paris', null, 'France', '0678123456', 'alkhazzar.aimad@gmail.com');
+
+insert into ABONNE
+values ('Ghansum', 'Nourdine', 'NourdineG', '1992-07-07', 'Monsieur', '33', null, 'rue', 'saint-bernad', null, '75006', 'Paris', null, 'France', '0784321529', 'ghansum.nourdine@gmail.com');
+
+insert into ABONNE
+values ('Goualard', 'Mickael', 'Zebrada', '1992-08-08', 'Monsieur', '88', null, 'rue', 'saint-jacques', null, '75007', 'Paris', null, 'France', '0645751859', 'goualard.mickael@gmail.com');
+
+insert into ABONNE
+values ('Haffner', 'Paul', 'PaulH','1992-09-09', 'Monsieur', '100', null, 'rue', 'gilbert', null, '75008', 'Paris', null, 'France', '0645281817', 'haffner.paul@gmail.com');
+
+insert into ABONNE
+values ('Hamyani', 'Yasmina', 'YasminaH', '1992-10-10', 'Madame', '56',null, 'rue', 'saint-jean', null, '75009', 'Paris', null, 'France', '0645451813', 'hamyani.yasmina@gmail.com');
+
+insert into ABONNE
+values ('Hua', 'Lucien', 'LordOfSushis', '1992-11-11', 'Monsieur', '28',null, 'rue', 'saint-michel', null, '75010', 'Paris', null, 'France', '0632121848', 'hua.lucien@gmail.com');
+
+insert into ABONNE
+values ('Ifrah', 'Eliahou Raphael', 'ElihouIf', '1992-12-12', 'Monsieur', '30',null, 'boulevard', 'saint-ploutre', null,'75011', 'Paris', null, 'France', '0623416578', 'ifrah.eliahou@gmail.com');
+
+insert into ABONNE
+values ('Laduranti', 'Sandra', 'PatateMasquee', '1991-30-12', 'Madame', '10', null, 'rue', 'patate douce',null, '75012', 'Paris', null, 'France', '0645187823', 'laduranti.sandra@gmail.com');
+
+insert into ABONNE
+values ('Loutfi', 'Ibouroihim', 'LoutfiI', '1992-01-12', 'Monsieur', '13', null, 'rue', 'saint-pizza',null, '75013', 'Paris', null, 'France', '0645859674', 'loutfi.ibouroihim@gmail.com');
+
+insert into ABONNE
+values ('Nasser', 'Ashraf', 'AshrafN', '1992-06-14', 'Monsieur', '14', null, 'rue', 'saint-kebab',null, '75014', 'Paris', null, 'France', '0612457896', 'nasser.ashraf@gmail.com');
+
+insert into ABONNE
+values ('Negro Castro', 'Lucas', 'LucasNC', '1992-01-20', 'Monsieur', '27', null, 'rue', 'de la musique',null,'75015', 'Paris', null, 'France', '0645783625', 'negrocastro.lucas@gmail.com'); 
+
+insert into ABONNE
+values ('Petit', 'Clément', 'ClémentP', '1992-06-15', 'Monsieur', '36', null, 'rue', 'de la vie', null, '75016', 'Paris', null, 'France', '0636451285', 'petit.clement@gmail.com');
+
+insert into ABONNE
+values ('Piard-rousseau', 'Idriss', 'IdrissPR', '1992-04-16', 'Monsieur', '95', null, 'rue', 'saint-pascale', null, '75017', 'Paris', null, 'France', '0632659814', 'piardrousseau.idriss@gmail.com');
+
+insert into ABONNE
+values ('Pol', 'Patrick', 'PatrickP', '1992-01-13', 'Monsieur', '84',null, 'boulevard', 'chinois', null, '75013', 'Paris', null, 'France', '0646215896', 'pol.patrick@gmail.com');
+
+insert into ABONNE
+values ('Roman', 'Alexander', 'ARC', '1991-02-05', 'Monsieur', '157', null, 'rue', 'du lapin', null, '78000', 'Versailles',null, 'France', '0645856525', 'roman.alexander@gmail.com');
+
+insert into ABONNE
+values ('Serin', 'Damien', 'DamienS', '1992-07-06', 'Monsieur', '102', null, 'rue', 'du renouveau', null, '75019','Paris', null, 'France', '0623142536', 'serin.damien@gmail.com');
+
+insert into ABONNE
+values ('Sivanathan', 'Sinthujan', 'SinthujanS', '1992-05-11', 'Monsieur', '80', null, 'rue', 'de lafievre', null, '75020','Paris', null, 'France', '0666415278', 'sivanathan.sinthujan@gmail.com');
+
+insert into ABONNE
+values ('Tsvetkov', 'Alexandre', 'AlexandreT', '1992-06-04', 'Monsieur', '45', null, 'rue', 'du vodka', null, '75001','Paris', null, 'France', '0642152536', 'tsvetkov.alexandre@gmail.com');
+
+
+
+
+insert into TYPE_ABONNEMENT
+values ('premium', 600, 20, 5, 10, 72);
+insert into TYPE_ABONNEMENT
+values ('truc', 600, 20, 5, 10, 72);
+
+insert into ABONNEMENT (Date_creation, Date_expiration, FK_numcompte, FK_type_abonnement)
+values (GETDATE(),'1991-12-30', 1, 'premium');
+
+
+insert into SOUSCRIRE
+values ('AIT Ahmed','Kamel','KamelA',1);
+
+
+insert into LANGUE_AUDIO 
+values ('Anglais'); 
+insert into LANGUE_AUDIO 
+values('Russe'); 
+insert into LANGUE_AUDIO 
+values ('Espagnol'); 
+insert into LANGUE_AUDIO 
+values ('Portugais'); 
+insert into LANGUE_AUDIO 
+values ('Italien'); 
+insert into LANGUE_AUDIO 
+values ('Mandarin'); 
+insert into LANGUE_AUDIO 
+values ('Cantonais'); 
+insert into LANGUE_AUDIO 
+values ('Muet');
+insert into LANGUE_AUDIO 
+values ('Muet'); 
+
+insert into LANGUE_SOUS_TITRE
+values ('francais');
+insert into LANGUE_SOUS_TITRE
+values ('Anglais');
+insert into LANGUE_SOUS_TITRE
+values('Russe');
+insert into LANGUE_SOUS_TITRE
+values ('Espagnol');
+insert into LANGUE_SOUS_TITRE
+values ('Portugais');
+insert into LANGUE_SOUS_TITRE
+values ('Italien');
+insert into LANGUE_SOUS_TITRE
+values ('Mandarin');
+insert into LANGUE_SOUS_TITRE
+values('Cantonais');
+insert into LANGUE_SOUS_TITRE
+values ('Allemand');
+insert into LANGUE_SOUS_TITRE
+values ('Vietnamien');
+insert into LANGUE_SOUS_TITRE
+values ('Finnois');
+
+
+insert into EDITION (Nom,Annee_de_sortie,Duree_film,Support,Date_insertion,Type_couleur,Type_son,FK_titre,FK_complement_titre)
+values ('standard',2000,155,'DVD','2000-12-25','couleur','5.1','Gladiator','');
+
+
+insert into RATTACHER 
+values ('anglais',1);
+
+
+insert into AFFICHER 
+values ('francais',1);
+
+insert into EXEMPLAIRES
+values ('2007-10-10',1,0,1,0);
+insert into EXEMPLAIRES
+values ('2008-10-10',1,0,1,1);
+
+
+insert into LOCATIONS (Date_debut, Duree, Date_fin_prevue, Date_fin_reelle, FK_exemplaire,FK_num_abonnement)
+values ('2013-09-25 22:05:10',24,'2013-09-26 10:05:20','2013-09-27 02:21:30',1,1);
+
+
+insert into RELANCE_RETARDS (Niveau_de_retard, Date_creation, Date_mise_a_jour, FK_num_location)
+values (2,'2013-09-26 23:15:06','2013-09-26 20:25:53',1);
+
+
+
