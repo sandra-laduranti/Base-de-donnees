@@ -1,0 +1,1456 @@
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation de genre */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+/***  TEST  ***/
+
+USE Ouftim
+
+GO 
+EXEC Acteur_creer
+	@Nom = 'test',
+	@Prenom = 'Ashley',		
+	@Date_naissance = '1989-12-18',
+	@Sexe = 'Femme',
+	@Date_deces = NULL,
+	@Nom_de_scene = NULL,
+	@Biographie = 'Ashley Benson est une actrice et mannequin américaine. [...]',
+	@Nationalite = 'Américaine'	
+
+Select * from Acteur;
+
+/***  TEST 2 ***/
+
+USE Ouftim
+
+GO 
+EXEC Acteur_creer
+	@Nom = 'Nathalie',
+	@Prenom = 'Portmann',		
+	@Date_naissance = '1989-06-18',
+	@Sexe = 'Madame',
+	@Date_deces = NULL,
+	@Nom_de_scene = NULL,
+	@Biographie = 'Nathalie Portmann est une actrice et réalisatrice américaine. [...]',
+	@Nationalite = 'Américaine'	
+
+Select * from Acteur;
+
+/***  TEST 3 ***/
+
+USE Ouftim
+
+GO 
+EXEC Acteur_creer
+	@Nom = 'Bob',
+	@Prenom = 'Babar',		
+	@Date_naissance = '2030-06-18',
+	@Sexe = 'Homme',
+	@Date_deces = NULL,
+	@Nom_de_scene = NULL,
+	@Biographie = 'Babar est un acteur japonais. [...]',
+	@Nationalite = 'Japonais'	
+
+Select * from Acteur;
+
+/* Test 4 */
+
+USE Ouftim
+
+GO
+EXEC Acteur_creer
+	@Nom = '',
+	@Prenom = 'Dianna',		
+	@Date_naissance = '1980-12-18',
+	@Sexe = 'Femme',
+	@Date_deces = NULL,
+	@Nom_de_scene = NULL,
+	@Biographie = 'Dianna est une actrice et mannequin américaine. [...]',
+	@Nationalite = 'Américaine'
+
+Select * from Acteur;
+
+/* Test 5 */
+
+USE Ouftim
+
+GO
+EXEC Acteur_creer
+	@Nom = 'truc',
+	@Prenom = '123',		
+	@Date_naissance = '1980-12-18',
+	@Sexe = 'Femme',
+	@Date_deces = NULL,
+	@Nom_de_scene = NULL,
+	@Biographie = 'Dianna est une actrice et mannequin américaine. [...]',
+	@Nationalite = 'Américaine'
+
+Select * from Acteur;
+
+/* Test 4 */
+
+USE Ouftim
+
+GO
+EXEC Acteur_creer
+	@Nom = 'Agrion',
+	@Prenom = 'Dianna',		
+	@Date_naissance = '1980-12-18',
+	@Sexe = 'Femme',
+	@Date_deces = NULL,
+	@Nom_de_scene = NULL,
+	@Biographie = 'Dianna est une actrice et mannequin américaine. [...]',
+	@Nationalite = '25'
+
+Select * from Acteur;
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*test de la procédure genre_creer */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+/* Test Genre 1*/
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = 'Animation'
+
+Select * from Genre;
+
+/* Test Genre 2*/
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = 'Guerre'
+
+Select * from Genre;
+
+/* Test Genre 3*/
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = 'Erotique'
+
+Select * from Genre;
+
+/* Test Genre 4 */
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = ''
+
+Select * from Genre;
+
+/* Test Genre 5 */
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = '42'
+
+Select * from Genre;
+
+/* Test Genre 6 */
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = '$$$$$$'
+
+Select * from Genre;
+
+
+/* Test Genre 7 */
+
+USE Ouftim
+
+GO
+EXEC Genre_creer
+	@Nom = 3
+
+Select * from Genre;
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'une edition */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+/* Test 1 */
+
+USE Ouftim
+
+GO
+
+EXEC Edition_creer
+	@Nom = 'much',
+	@Annee_de_sortie = '2012',
+	@Duree_film = 120,
+	@limite_age = 12,
+	@Support = 'BluRay',
+	@Date_insertion = '2013',
+	@Type_couleur = 'Couleur',
+	@Type_son = '5.1',
+	@FK_titre = 'Terminator',
+	@FK_complement_titre = '1'
+	
+Select * from Edition
+
+
+/* Test 2 */
+
+USE Ouftim
+
+GO
+EXEC Edition_creer
+	@Nom = '',
+	@Annee_de_sortie = '2012',
+	@Duree_film = 120,
+	@limite_age = 12,
+	@Support = 'BluRay',
+	@Date_insertion = '2013',
+	@Type_couleur = 'Couleur',
+	@Type_son = '5.1',
+	@FK_titre = 'Batman 3',
+	@FK_complement_titre = ''
+	
+
+Select * from Edition
+
+
+/* Test 3 */
+/* QUESTION: est-ce qu'il faut gerer les cast de int dans les messages d'erreur? */
+
+USE Ouftim
+
+GO
+EXEC Edition_creer
+	@Nom = 'Standard',
+	@Annee_de_sortie = '2012',
+	@Duree_film = 'LOOOOOOOOOOOOOOL',
+	@limite_age = 12,
+	@Support = 'BluRay',
+	@Date_insertion = '2013',
+	@Type_couleur = 'Couleur',
+	@Type_son = '5.1',
+	@FK_titre = 'Superman 3',
+	@FK_complement_titre = ''
+	
+
+Select * from Edition
+
+/* Test 4 */
+
+USE Ouftim
+
+GO
+EXEC Edition_creer
+	@Nom = 'Standard',
+	@Annee_de_sortie = '2012',
+	@Duree_film = 200,
+	@limite_age = 12,
+	@Support = 30,
+	@Date_insertion = '2013',
+	@Type_couleur = 'Couleur',
+	@Type_son = '5.1',
+	@FK_titre = 'Superman 3',
+	@FK_complement_titre = ''
+	
+
+Select * from Edition
+
+/* Test 5 */
+
+USE Ouftim
+
+GO
+EXEC Edition_creer
+	@Nom = 'Standard',
+	@Annee_de_sortie = '2012',
+	@Duree_film = 200,
+	@limite_age = 12,
+	@Support = 'DVD',
+	@Date_insertion = '2013',
+	@Type_couleur = 15,
+	@Type_son = '5.1',
+	@FK_titre = 'Superman 3',
+	@FK_complement_titre = ''
+	
+
+Select * from Edition
+
+/*L2 ATIC 2013 GROUPE Ouftim 				*/
+/*BdD Ouftim 						*/
+/*Procedure de creation d'un type d'abonnement 		*/
+/*Auteur(s): Tsvetkov Alexandre				*/
+/*Testeur(s): Laduranti Sandra */
+/*Intégrateur: Laduranti Sandra				*/
+
+/* Test 1 (marche) */
+USE Ouftim
+
+GO
+EXEC Type_abonnement_creer
+	@Nom = 'Familiale',
+	@Prix = 30,
+	@Prix_location = 5,
+	@Exemplaires_simultanes = 3,
+	@Prix_retard = 200,
+	@Duree_engagement = 1 /* an */
+
+Select * from Type_abonnement
+
+
+/* Test 2 (marche pas) */
+USE Ouftim
+
+GO
+EXEC Type_abonnement_creer
+	@Nom = ' ',		/* impossible */
+	@Prix = 30,
+	@Prix_location = 5,
+	@Exemplaires_simultanes = 3,
+	@Prix_retard = 200,
+	@Duree_engagement = 0.1 
+
+Select * from Type_abonnement
+
+/* Test 3 (marche pas) */
+USE Ouftim
+
+GO
+EXEC Type_abonnement_creer
+	@Nom = 'haha',
+	@Prix = -50,		/* impossible */
+	@Prix_location = 5,
+	@Exemplaires_simultanes = 60,
+	@Prix_retard = 200,
+	@Duree_engagement = 0.1 
+
+Select * from Type_abonnement
+
+/* Test 4 (marche pas) */
+USE Ouftim
+
+GO
+EXEC Type_abonnement_creer
+	@Nom = '$',		/* impossible */
+	@Prix = 50,		
+	@Prix_location = 5,
+	@Exemplaires_simultanes = 60,
+	@Prix_retard = 200,
+	@Duree_engagement = 0.1 
+
+Select * from Type_abonnement
+
+/* Test 5 */
+USE Ouftim
+
+GO
+EXEC Type_abonnement_creer
+	@Nom = 'ceci est un nom composé',
+	@Prix = 50,		
+	@Prix_location = 5,
+	@Exemplaires_simultanes = 30,
+	@Prix_retard = 200,
+	@Duree_engagement = 10 
+
+Select * from Type_abonnement
+
+/*ELISE*/
+
+/* Test Abonnement */
+
+USE Ouftim
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dexpi DATE
+SET @Dexpi = CURRENT_TIMESTAMP+40;
+
+EXEC Abonnement_creer
+    @Date_creation = @Dcrea,
+	@Date_expiration = @Dexpi,
+	@FK_numcompte = 1,
+	@FK_type_abonnement = 'familiale'
+
+
+Select * from Abonnement
+
+
+
+/* Test Abonnement */
+
+USE Ouftim
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dexpi DATE
+SET @Dexpi = CURRENT_TIMESTAMP+40;
+
+EXEC Abonnement_creer
+	@Date_creation = @Dcrea,
+	@Date_expiration = '1900-12-30 22:21:20',
+	@FK_numcompte = 1,
+	@FK_type_abonnement = 'familiale'
+
+
+Select * from Abonnement
+
+
+/* Test Abonnement */
+
+USE Ouftim
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dexpi DATE
+SET @Dexpi = CURRENT_TIMESTAMP+40;
+
+EXEC Abonnement_creer
+	@Date_creation = @Dcrea,
+	@Date_expiration = '2014-02-25 23:12:12',
+	@FK_numcompte = '@',
+	@FK_type_abonnement = 'premium'
+
+
+Select * from Abonnement
+
+
+/* Test Abonnement */
+
+USE Ouftim
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dexpi DATE
+SET @Dexpi = CURRENT_TIMESTAMP+40;
+
+EXEC Abonnement_creer
+	@Date_creation = @Dcrea,
+	@Date_expiration = '2013-12-30 22:21:20',
+	@FK_numcompte = '1',
+	@FK_type_abonnement = 5
+
+
+Select * from Abonnement
+
+/*ELISE*/
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+Declare @Dappro DATE
+SET @Dappro = CURRENT_TIMESTAMP+1;
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = @Dappro,
+	@Taux_usure = 1,
+	@Disponibilite = 0,
+	@FK_numero_edition = 1
+
+Select * from Exemplaires
+
+
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = 'jeudi10',
+	@Taux_usure = 1,
+	@Disponibilite = 0,
+	@FK_numero_edition = 1
+
+Select Exemplaires.*, Edition.Numero_edition from Exemplaires, Edition
+WHERE
+Exemplaires.Edition = Edition.Numero_edition
+
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = 'jeudi10',
+	@Taux_usure = 100,
+	@Disponibilite = 0,
+	@FK_numero_edition = 1
+
+Select Exemplaires.*, Edition.Numero_edition from Exemplaires, Edition
+WHERE
+Exemplaires.Edition = Edition.Numero_edition
+
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = 'jeudi10',
+	@Taux_usure = 1,
+	@Disponibilite = 'oui',
+	@FK_numero_edition = 1
+
+Select Exemplaires.*, Edition.Numero_edition from Exemplaires, Edition
+WHERE
+Exemplaires.Edition = Edition.Numero_edition
+
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation de distinctions    */
+/*Auteur(s): TSVETKOV Alexandre            */
+/*testeur(s): LADURANTI Sandra             */
+/*Intégrateur: LADURANTI Sandra            */
+
+/* Test Distinction */
+/* Test 1 (marche) */
+
+USE Ouftim
+
+GO 
+EXEC Distinctions_creer
+	@Nom = 'Oscar',
+	@Lieu = 'croisette',
+	@Annee = 2013
+
+Select * from Distinctions;
+
+/* Test 2 (marche pas) */
+
+USE Ouftim
+
+GO 
+EXEC Distinctions_creer
+	@Nom = 'Oscar',
+	@Lieu = 'Paris',
+	@Annee = 3333
+
+Select * from Distinctions;
+
+/* Test 3 (marche pas) */
+
+USE Ouftim
+
+GO 
+EXEC Distinctions_creer
+	@Nom = 'Meilleur Film',
+	@Lieu = 'µ',
+	@Annee = 2013
+
+Select * from Distinctions;
+
+/* Test 3 (marche pas) */
+
+USE Ouftim
+
+GO 
+EXEC Distinctions_creer
+	@Nom = '',
+	@Lieu = 'Croisette',
+	@Annee = 2013
+
+Select * from Distinctions;
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'un réalisteur */
+/*Auteur(s): BROCHEN Elise*/
+/*testeur(s): PATRICK POL LADURANTI Sandra*/
+/*Intégrateur: LADURANTI Sandra */
+
+/* Test Realisateur */
+
+USE Ouftim
+
+GO 
+EXEC Realisateur_creer
+		@Nom = '',
+		@Prenom	= 'Ridley',
+		@Date_naissance = '1937-12-12',
+		@Sexe = 'Monsieur',
+		@Date_deces = NULL,
+		@Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
+		@Nationalite = 'Britannique';
+
+Select * from Realisateur;
+
+USE Ouftim
+
+GO 
+EXEC Realisateur_creer
+		@Nom = 'Scott',
+		@Prenom	= 'Ridley8',
+		@Date_naissance = '1937-12-12',
+		@Sexe = 'Monsieur',
+		@Date_deces = NULL,
+		@Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
+		@Nationalite = 'Britannique';
+
+Select * from Realisateur;
+
+USE Ouftim
+
+GO 
+EXEC Realisateur_creer
+		@Nom = 'Scott',
+		@Prenom	= 'Ridley',
+		@Date_naissance = 'Monsieur',
+		@Sexe = 'Monsieur',
+		@Date_deces = NULL,
+		@Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
+		@Nationalite = 'Britannique';
+
+Select * from Realisateur;
+
+
+USE Ouftim
+
+GO 
+EXEC Realisateur_creer
+		@Nom = 'Scott',
+		@Prenom	= 'Ridley',
+		@Date_naissance = '1991-12-12',
+		@Sexe = '',
+		@Date_deces = NULL,
+		@Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
+		@Nationalite = 'Britannique';
+
+Select * from Realisateur;
+
+
+USE Ouftim
+
+GO 
+EXEC Realisateur_creer
+		@Nom = 'Scott',
+		@Prenom	= 'Ridley',
+		@Date_naissance = '1937-12-12',
+		@Sexe = 'Monsieur',
+		@Date_deces = '1937-10-12',
+		@Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
+		@Nationalite = 'Britannique';
+
+Select * from Realisateur;
+
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation de relance_retards */
+/*Auteur(s): BROCHEN Elise                 */
+/*testeur(s): BROCHEN Elise		           */
+/*Intégrateur: LADURANTI Sandra            */
+
+/* Relance Retard */
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Relance_retards_creer
+	@Niveau_de_retard = 1,
+	@Date_creation = @Dcrea,
+	@Date_mise_a_jour = @Dmaj,
+	@FK_num_location = 1
+
+Select * from Relance_retards
+
+/* Relance Retard */
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Relance_retards_creer
+	@Niveau_de_retard = 2,
+	@Date_creation = 'lundi',
+	@Date_mise_a_jour = '2013-09-26 20:25:53',
+	@FK_num_location = 1
+
+select * from Relance_retards
+
+
+/* Relance Retard */
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Relance_retards_creer
+	@Niveau_de_retard = 2,
+	@Date_creation = '2013-09-26 23:15:06',
+	@Date_mise_a_jour = '2013-09-26 20:25:53',
+	@FK_num_location = 1
+
+select * from Relance_retards
+
+--------------------------------------------
+/* Groupe : < Ouf'Tim >                    */
+/* Procedure de creation d'un exemplaire   */
+/* Auteur: BROCHEN Elise                   */
+/*testeur(s): BROCHEN Elise		   */
+/*Intégrateur: LADURANTI Sandra            */
+--------------------------------------------
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = '2007-10-10',
+	@Taux_usure = 1,
+	@Disponibilite = 1,
+	@FK_numero_edition = 1
+
+Select * from Exemplaires
+
+
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = 'jeudi10',
+	@Taux_usure = 1,
+	@Disponibilite = 0,
+	@FK_numero_edition = 1
+
+Select * from Exemplaires
+
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = '2007-10-10',
+	@Taux_usure = 100,
+	@Disponibilite = 0,
+	@FK_numero_edition = 1
+
+Select * from Exemplaires
+
+
+/* Test Exemplaires */
+
+USE Ouftim
+GO
+
+EXEC Exemplaires_creer
+	@Date_approvisionnement = '2007-10-10',
+	@Taux_usure = 1,
+	@Disponibilite = 'oui',
+	@FK_numero_edition = 1
+
+Select * from Exemplaires
+
+
+/*L2 ATIC 2013 GROUPE Ouftim			*/
+/*BdD Ouftim 					*/
+/*Procedure de creation de langue audio		*/
+/*Auteur(s): GOUALARD Mickael			*/
+/*testeur(s): GOUALARD Mickael   		*/
+/*Intégrateur: LADURANTI Sandra            	*/
+
+
+/* Test Audio OK */
+
+USE Ouftim
+
+GO 
+EXEC Langue_audio_creer
+	@Nom = 'Combodgien'	
+
+Select * from Langue_audio;
+
+/* Test Audio KO */
+
+USE Ouftim
+
+GO 
+EXEC Langue_audio_creer
+	@Nom = '1789'	
+
+Select * from Langue_audio;
+
+
+/*L2 ATIC 2013 GROUPE Ouftim			*/
+/*BdD Ouftim 					*/
+/*Procedure de creation de langue sous-titre		*/
+/*Auteur(s): LADURANTI Sandra		*/
+/*testeur(s): LADURANTI Sandra  		*/
+/*Intégrateur: LADURANTI Sandra            	*/
+
+
+/* Test Audio OK */
+
+USE Ouftim
+
+GO 
+EXEC Langue_sous_titre_creer
+	@Nom = 'irlandais'	
+
+Select * from Langue_sous_titre;
+
+/* Test Audio KO */
+
+USE Ouftim
+
+GO 
+EXEC Langue_sous_titre_creer
+	@Nom = ''	
+
+Select * from Langue_sous_titre;
+
+USE Ouftim
+
+
+--------------------------------------------------
+/* BdD : < Ouf'tim >                        	*/
+/* Procédure de création d'un film         	*/
+/* Auteur : GOUALARD Mickael                	*/
+/*testeur(s): GOUALARD Mickael    		*/
+/*Intégrateur: LADURANTI Sandra			*/
+--------------------------------------------------
+
+/* Test Film OK */
+
+USE ouftim
+
+GO 
+EXEC Film_creer
+	@Titre = 'Avenger',
+	@Complement_titre = '2',
+	@Annee_de_sortie = '2013',
+	@Nationalite = 'Americaine',
+	@Duree = 105
+
+Select * from Films;
+
+
+/* Test Film KO */
+
+USE ouftim
+
+GO 
+EXEC Film_creer
+	@Titre = '564',
+	@Complement_titre = '',
+	@Annee_de_sortie = '2013',
+	@Nationalite = 'Americaine',
+	@Duree = 105
+
+Select * from Films;
+
+/* Test Film KO */
+
+USE ouftim
+
+GO 
+EXEC Film_creer
+	@Titre = 'Avenger',
+	@Complement_titre = '',
+	@Annee_de_sortie = '2015',
+	@Nationalite = 'Americaine',
+	@Duree = 105
+
+Select * from Films;
+
+/* Test Film KO */
+
+USE ouftim
+
+GO 
+EXEC Film_creer
+	@Titre = 'Avenger',
+	@Complement_titre = '',
+	@Annee_de_sortie = '2013',
+	@Nationalite = '',
+	@Duree = 105
+
+Select * from Films;
+
+/* Test Film KO */
+
+USE ouftim
+
+GO 
+EXEC Film_creer
+	@Titre = 'Avenger',
+	@Complement_titre = '',
+	@Annee_de_sortie = '2013',
+	@Nationalite = 'Americaine',
+	@Duree = 'test 1 2 test vous m entendez ? '
+
+Select * from Films;
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation de location */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+
+/* Test 1 */
+
+USE Ouftim
+GO
+
+Declare @debut DATE
+SET @debut = CURRENT_TIMESTAMP+1;
+Declare @finp DATE
+SET @debut = CURRENT_TIMESTAMP+2;
+Declare @finr DATE
+SET  @finr = CURRENT_TIMESTAMP+3;
+
+EXEC Locations_creer
+	@Date_debut = @debut,
+	@Duree = 24,
+	@Date_fin_prevue = @finp,
+	@Date_fin_reelle = @finr,
+	@FK_exemplaire = 1,
+	 @FK_num_abonnement = 1
+	
+
+Select * from Locations
+
+
+
+/* Test 2 */
+
+
+USE Ouftim
+GO
+
+Declare @debut DATE
+SET @debut = CURRENT_TIMESTAMP+1;
+Declare @finp DATE
+SET @debut = CURRENT_TIMESTAMP+40;
+Declare @finr DATE
+SET  @finr = CURRENT_TIMESTAMP+3;
+
+EXEC Locations_creer
+	@Date_debut = @debut,
+	@Duree = 600,
+	@Date_fin_prevue = @finp,
+	@Date_fin_reelle = @finr,
+	@FK_exemplaire = '',
+	 @FK_num_abonnement = 1
+
+
+Select * from Locations
+
+
+
+/* Test 3 */
+
+
+USE Ouftim
+GO
+
+Declare @debut DATE
+SET @debut = CURRENT_TIMESTAMP+1;
+Declare @finp DATE
+SET @debut = CURRENT_TIMESTAMP+2;
+Declare @finr DATE
+SET  @finr = CURRENT_TIMESTAMP+3;
+
+EXEC Locations_creer
+	@Date_debut = @debut,
+	@Duree = 200,
+	@Date_fin_prevue = @finp,
+	@Date_fin_reelle = @finr,
+	@FK_exemplaire = '',
+	 @FK_num_abonnement = ''
+
+
+Select * from Locations
+
+
+/* Test 4 */
+
+
+USE Ouftim
+GO
+
+Declare @debut DATE
+SET @debut = CURRENT_TIMESTAMP+1;
+Declare @finp DATE
+SET @debut = CURRENT_TIMESTAMP+2;
+Declare @finr DATE
+SET  @finr = CURRENT_TIMESTAMP+3;
+
+EXEC Locations_creer
+	@Date_debut = @debut,
+	@Duree = '^^',
+	@Date_fin_prevue = @finp,
+	@Date_fin_reelle = @finr,
+	@FK_exemplaire = '2',
+
+
+Select * from Locations
+
+/*L2 ATIC 2013 GROUPE Ouftim                 */
+/*BdD Ouftim                                 */
+/*Procedure de creation de relance_decouvert */
+/*Auteur(s): LADURANTI Sandra                */
+/*testeur(s): LADURANTI Sandra		         */
+/*Intégrateur: LADURANTI Sandra              */
+
+/* Relance Decouvert */
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Relance_decouvert_creer
+	@Niveau_decouvert = 1,
+	@Date_creation = @Dcrea,
+	@Date_mise_a_jour = @Dmaj,
+	@FK_numero_compte = 2
+
+Select * from Relance_decouvert
+
+/* test 2*/
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Relance_decouvert_creer
+	@Niveau_decouvert = 150,
+	@Date_creation = @Dcrea,
+	@Date_mise_a_jour = @Dmaj,
+	@FK_numero_compte = 2
+
+Select * from Relance_decouvert
+
+/* test 3 */
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Relance_decouvert_creer
+	@Niveau_decouvert = 1,
+	@Date_creation = '',
+	@Date_mise_a_jour = '',
+	@FK_numero_compte = 2
+
+Select * from Relance_decouvert
+
+---------------------------------------------
+/*BdD Ouftim                               */
+/*Procedure de creation d'un compte        */
+/*Auteur(s): HUA Lucien                    */
+/*testeur(s): LADURANTI Sandra             */
+/*Intégrateur: LADURANTI Sandra            */
+---------------------------------------------
+
+/* Test creation d'un compte 1*/ 
+
+USE Ouftim
+
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4931 0561 4513 8999',
+	@Montant = 10,
+	@Somme_operations = 15	
+
+Select * from Compte;
+
+/* Test creation d'un compte 2*/ 
+
+USE Ouftim
+
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = 'a493 0561 4513 8991',
+	@Montant = 10,
+	@Somme_operations = 15	
+
+Select * from Compte;
+
+/* Test creation d'un compte 3*/ 
+
+USE Ouftim
+
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4493 0561 4513 8991',
+	@Montant = -5,
+	@Somme_operations = 15	
+
+Select * from Compte;
+
+
+---------------------------------------------
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation d'un abonne        */
+/*Auteur(s): HUA Lucien LADURANTI Sandra   */
+/*testeur(s): LADURANTI Sandra             */
+/*Intégrateur: LADURANTI Sandra            */
+---------------------------------------------
+
+/* Test Abonne 1*/ 
+
+USE Ouftim
+
+GO 
+EXEC Abonne_creer
+	@Nom = 'Dupont',
+	@Prenom = 'Marcel',
+	@Pseudo = 'MarcelD',
+	@Date_de_naissance = '1980-07-07',
+	@Sexe = 'Monsieur',
+	@Numero_de_voie = '37',
+	@Complement_de_voie = NULL,
+	@Type_de_voie ='boulevard',
+	@Libelle = 'liberte',
+	@Complement_libelle = NULL,
+	@Code_postal = '75013',
+	@Ville = 'Paris',
+	@Cedex = NULL,
+	@Pays = 'France',
+	@Numero_telephone = '0664851878',
+	@Adresse_email = 'dupont.marcel@gmail.com'
+
+Select * from Abonne;
+
+/* Test Abonne 2*/ 
+
+USE Ouftim
+
+GO 
+EXEC Abonne_creer
+	@Nom = '*/',
+	@Prenom = 'Marcel',
+	@Pseudo = 'MarcelD',
+	@Date_de_naissance = '1980-07-07',
+	@Sexe = 'Monsieur',
+	@Numero_de_voie = '37',
+	@Complement_de_voie = NULL,
+	@Type_de_voie ='boulevard',
+	@Libelle = 'liberte',
+	@Complement_libelle = NULL,
+	@Code_postal = '75013',
+	@Ville = 'Paris',
+	@Cedex = NULL,
+	@Pays = 'France',
+	@Numero_telephone = '0664851878',
+	@Adresse_email = 'dupont.marcel@gmail.com'
+
+Select * from Abonne;
+
+/* Test Abonne 3*/ 
+
+USE Ouftim
+
+GO 
+EXEC Abonne_creer
+	@Nom = 'Dupont',
+	@Prenom = '12',
+	@Pseudo = 'MarcelD',
+	@Date_de_naissance = '1980-07-07',
+	@Sexe = 'Monsieur',
+	@Numero_de_voie = '37',
+	@Complement_de_voie = NULL,
+	@Type_de_voie ='boulevard',
+	@Libelle = 'liberte',
+	@Complement_libelle = NULL,
+	@Code_postal = '75013',
+	@Ville = 'Paris',
+	@Cedex = NULL,
+	@Pays = 'France',
+	@Numero_telephone = '0664851878',
+	@Adresse_email = 'dupont.marcel@gmail.com'
+
+Select * from Abonne;
+
+/* Test Abonne 4*/ 
+
+USE Ouftim
+
+GO 
+EXEC Abonne_creer
+	@Nom = 'Dupont',
+	@Prenom = 'Marcel',
+	@Pseudo = 'MarcelD',
+	@Date_de_naissance = '2050-07-07',
+	@Sexe = 'Monsieur',
+	@Numero_de_voie = '37',
+	@Complement_de_voie = NULL,
+	@Type_de_voie ='boulevard',
+	@Libelle = 'liberte',
+	@Complement_libelle = NULL,
+	@Code_postal = '75013',
+	@Ville = 'Paris',
+	@Cedex = NULL,
+	@Pays = 'France',
+	@Numero_telephone = '0664851878',
+	@Adresse_email = 'dupont.marcel@gmail.com'
+
+Select * from Abonne;
+
+/* Test Abonne 5*/ 
+
+USE Ouftim
+
+GO 
+EXEC Abonne_creer
+	@Nom = 'Dupont',
+	@Prenom = 'Marcel',
+	@Pseudo = 'MarcelD',
+	@Date_de_naissance = '1980-07-07',
+	@Sexe = 'Monsieur',
+	@Numero_de_voie = '37',
+	@Complement_de_voie = NULL,
+	@Type_de_voie ='boulevard',
+	@Libelle = 'liberte',
+	@Complement_libelle = NULL,
+	@Code_postal = '75013',
+	@Ville = 'Paris',
+	@Cedex = NULL,
+	@Pays = 'France',
+	@Numero_telephone = 'tralala',
+	@Adresse_email = 'dupont.marcel@gmail.com'
+
+Select * from Abonne;
+
+/* Test Abonne 6*/ 
+
+USE Ouftim
+
+GO 
+EXEC Abonne_creer
+	@Nom = 'Dupont',
+	@Prenom = 'Marcel',
+	@Pseudo = 'MarcelD',
+	@Date_de_naissance = '1980-07-07',
+	@Sexe = 'Monsieur',
+	@Numero_de_voie = '37',
+	@Complement_de_voie = NULL,
+	@Type_de_voie ='boulevard',
+	@Libelle = 'liberte',
+	@Complement_libelle = NULL,
+	@Code_postal = 'tralala',
+	@Ville = 'Paris',
+	@Cedex = NULL,
+	@Pays = 'France',
+	@Numero_telephone = '0664851878',
+	@Adresse_email = 'dupont.marcel@gmail.com'
+
+Select * from Abonne;
+
+/*L2 ATIC 2013 GROUPE Ouftim                 */
+/*BdD Ouftim                                 */
+/*Procedure de creation de jouer             */
+/*Auteur(s): BROCHEN Elise                   */
+/*testeur(s): BROCHEN Elise		             */
+/*Intégrateur: LADURANTI Sandra              */
+
+
+/* Test Jouer */
+
+USE ouftim
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Jouer_creer
+	@FK_titre_film = 'Gladiator',
+  	@FK_complement_titre = '',
+   	@FK_nom_acteur = 'Crowe',
+   	@FK_prenom_acteur = 'Russell',
+   	@FK_date_de_naissance_acteur = '1964-02-10'
+
+Select* from Jouer;
+
+
+/* Test Jouer */
+USE ouftim
+
+GO
+
+Declare @Dcrea DATE
+SET @Dcrea = CURRENT_TIMESTAMP+1;
+Declare @Dmaj DATE
+SET @Dmaj = CURRENT_TIMESTAMP+2;
+
+EXEC Jouer_creer
+	@FK_titre_film = 'Gladiator',
+  	@FK_complement_titre = '',
+   	@FK_nom_acteur = 100,
+   	@FK_prenom_acteur = 'Russel',
+   	@FK_date_de_naissance_acteur = '1964-02-10'
+
+Select* from Jouer;
+
+CREATE TABLE Reservation(
+	[Numero_reservation] [int] IDENTITY(1,1) NOT NULL,
+	[HD_creation] [DATE] NOT NULL,
+	[HD_butoir] [DATE] NOT NULL,
+	[Etat] [NVARCHAR] (50) NOT NULL,
+	[FK_num_abonnement] [int] NOT NULL ,
+    [FK_num_exemplaire][int]NULL
+    
+    /*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion film */
+/*Auteur(s): PATRICK POL ELISE BROCHEN*/
+/*Testeur(s): SANDRA LADURANTI PATRICK POL ELISE BROCHEN*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+/* Acteur */
+
+-- Test Procedure Acteur_creer
+-- Test Cas "Second sequel"
+
+use ouftim
+
+BEGIN 
+
+ print 'Begin Test Ajouter un Acteur --> Cas "Second sequel" ';  
+    DECLARE @Titre NVARCHAR(50) = 'Mon petit poney',
+            @Complement_titre NVARCHAR(50) = 'au pays des bonbons',
+            @Annee INT = 1950,
+            @Nationalite NVARCHAR (50) = 'Poneyland',
+            @Duree INT = 120,
+	
+    @liste_acteurs NVARCHAR(1000) = '|Crowe,Russell,1964-02-10,Monsieur,NULL,Rusty,bidule truc,Néo-zélandaise|',
+    @liste_realisateurs NVARCHAR(500) = '|Scott,Ridley,1937-12-12,Monsieur,NULL,Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres...,truc|',
+    @liste_distinctions NVARCHAR(500) = '|Meilleur Film,73e cérémonie des oscars du cinéma à Los Angeles,2001|',
+	@liste_genres NVARCHAR(1000) = '|banana|coconuts|';
+
+ print 'appel de la procedure Acteur_creer';
+ 
+ EXEC ajouter_film @Titre,@Complement_titre,@Annee,@Nationalite,@Duree,@liste_acteurs,@liste_realisateurs,@liste_distinctions,@liste_genres;
+    
+ print 'Fin Test Acteur_creer --> Cas "Second sequel" ';
+END 
+
+/* Realisateur */   
+
+-- Test Procedure Realisateur_creer
+-- Test Cas "Second sequel"
+
+/*
+BEGIN 
+ print 'Begin Test Ajouter un Realisateur --> Cas "Second sequel" ';
+    
+    @nom_rea nvarchar (50) = 'Jackson',
+    @prenom_rea nvarchar (50) = 'Peter',
+    @date_naissance_rea date = '1961-02-06',
+    @sexe_rea nvarchar (50) = 'Monsieur',
+    @date_deces_rea date = '',
+    @biographie_rea nvarchar (MAX) = '',
+    @nationalite_rea nvarchar (50) = 'Neo-Zelandaise'
+    
+ -- Appel de la procedure Realisateur_creer 
+
+ print 'appel de la procedure Realisateur_creer';
+ 
+ EXEC Realisateur_creer @nom_rea, @pre_rea, @date_naissance_rea, @sexe_rea,@date_deces_rea, @biographie_rea, @nat_rea 
+    
+ print 'Fin Test Realisateur_creer --> Cas "Second sequel" ';
+END 
+    
+
+    
+    
+    
+/* Distinction */    
+    
+-- Test Procedure Distinctions_creer
+-- Test Cas "Second sequel"
+
+BEGIN 
+ print 'Begin Test Ajouter une Distinction --> Cas "Second sequel" ';
+    
+    @nom nvarchar (50) = 'Meilleur Film',
+    @lieu nvarchar (50) = '73e cÈrÈmonie des oscars du cinÈma ‡ Los Angeles',
+    @annee date = 2001
+    
+ -- Appel de la procedure Distinction_creer 
+
+ print 'appel de la procedure Distinction_creer';
+ 
+ EXEC Distinctions_creer @nom, @lieu, @annee
+ print 'Fin Test Distinction_creer --> Cas "Second sequel" ';
+END 
+
+/* GENRE */ 
+
+USE Ouftim
+
+BEGIN 
+ print 'Begin Test Ajouter un genre --> Cas "Second sequel" ';
+	
+	DECLARE @nom_genre nvarchar(50) = 'Science-Fiction';
+
+ -- Appel de la procedure Genre_creer 
+
+ print 'appel de la procedure Genre_creer';
+ 
+ EXEC Genre_creer @nom_genre;
+	
+ print 'Fin Test Genre_creer --> Cas "Second sequel" ';
+END
+
+*/
