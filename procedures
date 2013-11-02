@@ -1,0 +1,2869 @@
+USE ouftim
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation de Acteur */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+use ouftim
+
+IF OBJECT_ID('dbo.Acteur_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Acteur_creer;
+GO 
+CREATE PROCEDURE dbo.Acteur_creer
+(
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Date_naissance DATE,
+	@Sexe NVARCHAR (50),
+	@Date_deces DATE,
+	@Nom_de_scene NVARCHAR (50),
+	@Biographie NVARCHAR (MAX),
+	@Nationalite NVARCHAR (50)
+)
+
+AS
+
+BEGIN
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom  = ''
+	BEGIN
+		PRINT('Le nom n''est pas valide');
+		RETURN 0;
+	END
+	
+	IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom  = ''
+	BEGIN
+		PRINT('Le prenom n''est pas valide');
+		RETURN 0;
+	END
+
+	IF @Date_naissance > GETDATE() OR @Date_naissance < '1825/01/01'
+	BEGIN
+		PRINT('La date de naissance n''est pas valide');
+		RETURN 0;
+	END
+
+	IF @Sexe NOT LIKE '%[A-Za-z]%' OR @Sexe LIKE ''
+	BEGIN
+		PRINT('Le sexe n''est pas valide');
+		RETURN 0;
+	END
+
+	IF @Date_deces > GETDATE()
+	BEGIN
+		PRINT('La date de deces non valide');
+		RETURN 0;
+	END
+
+	IF @Nom_de_scene NOT LIKE '%[A-Za-z ''-]%' OR @Nom_de_scene = ''
+	BEGIN
+		PRINT('Le nom de scene non valide');
+		RETURN 0;
+	END
+
+	IF @Biographie NOT LIKE '%[A-Za-z ''- 0-9]%' OR @Biographie  = ''
+	BEGIN
+		PRINT('La biographie non valide');
+		RETURN 0;
+	END
+
+	IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite = ''
+	BEGIN
+		PRINT('La nationalite non valide');
+		RETURN 0;
+	END
+
+IF NOT EXISTS (SELECT * FROM Acteur WHERE Nom=@Nom AND Prenom=@Prenom AND Date_naissance=@Date_naissance)
+BEGIN
+	INSERT INTO Acteur 
+	(
+		Nom,
+		Prenom,		
+		Date_naissance,
+		Sexe,
+		Date_deces,
+		Nom_de_scene,
+		Biographie,
+		Nationalite
+
+	)
+
+	VALUES
+	(
+		@Nom,
+		@Prenom,		
+		@Date_naissance,
+		@Sexe,
+		@Date_deces,
+		@Nom_de_scene,
+		@Biographie,
+		@Nationalite
+	)
+	PRINT 'Nouvel acteur ajouté';
+	return 1;
+END
+
+ELSE
+BEGIN
+	PRINT 'Cet acteur existe déjà';
+END
+
+END
+GO
+
+
+---------------------------------------------
+/*BdD Ouftim                               */
+/*Procedure de creation d'un compte        */
+/*Auteur(s): HUA Lucien                    */
+/*testeur(s): LADURANTI Sandra             */
+/*Intégrateur: LADURANTI Sandra            */
+---------------------------------------------
+
+
+
+IF OBJECT_ID('dbo.Compte_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Compte_creer;
+GO 
+CREATE PROCEDURE dbo.Compte_creer
+(
+	@Numero_bancaire NVARCHAR (50),
+	@Montant MONEY,
+	@Somme_operations Money		
+)
+
+AS
+
+BEGIN
+	IF @Numero_bancaire NOT LIKE '%[0-9]%'
+	BEGIN
+		PRINT('Numero bancaire non valide');
+		RETURN 0;
+	END
+
+	IF @Montant < 0
+	BEGIN
+		PRINT('Le montant est non valide');
+		RETURN 0;
+	END
+
+	IF @Somme_operations < 0
+	BEGIN
+		PRINT('La somme des operations est non valide');
+		RETURN 0;
+	END
+
+	IF NOT EXISTS (SELECT * FROM Compte WHERE Numero_bancaire=@Numero_bancaire)
+	BEGIN
+		INSERT INTO Compte 
+		(
+			Numero_bancaire,
+			Montant,
+			Somme_operations	
+		)
+
+		VALUES
+		(
+			@Numero_bancaire,
+			@Montant,
+			@Somme_operations
+		)
+	PRINT 'Nouveau compte ajouté'
+	END
+
+	ELSE
+	BEGIN
+	PRINT 'Ce compte existe déjà';
+	END
+
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation de distinctions    */
+/*Auteur(s): TSVETKOV Alexandre            */
+/*testeur(s): PATRICK POL LADURANTI Sandra */
+/*Intégrateur: LADURANTI Sandra            */
+
+IF OBJECT_ID('dbo.Distinctions_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Distinctions_creer;
+GO 
+CREATE PROCEDURE dbo.Distinctions_creer
+(
+	@Nom NVARCHAR (50),
+	@Lieu NVARCHAR (50),
+	@Annee INT
+)
+
+AS
+
+BEGIN
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR  @Nom LIKE ''  OR @Nom LIKE ' ' 
+	BEGIN
+		PRINT'Le nom de la distinction est non valide';
+		RETURN 0;
+	END
+
+	IF @Lieu NOT LIKE '%[A-Za-z ''-]%' OR @Lieu  LIKE '' AND @Lieu LIKE ' ' 
+	BEGIN
+		PRINT'Le lieu de la distinction est non valide';
+		RETURN 0;
+	END
+
+	IF @Annee > YEAR(GETDATE()) OR @Annee < 1895 
+	BEGIN
+		PRINT'L''annee de la distinction est non valide';
+		RETURN 0;
+	END
+
+
+	IF NOT EXISTS (SELECT * FROM Distinctions WHERE Nom=@Nom AND Lieu=@Lieu AND Annee=@Annee)
+	BEGIN
+		INSERT INTO Distinctions 
+		(
+			Nom,
+			Lieu,
+			Annee
+		)
+
+		VALUES
+		(
+			@Nom,
+			@Lieu,
+			@Annee
+		)
+		PRINT'Nouvelle distinction ajouté';
+	END
+
+	ELSE
+	BEGIN
+		PRINT'Cette distinction existe déjà';
+	END
+
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation de genre */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+USE Ouftim
+
+IF OBJECT_ID('dbo.Genre_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Genre_creer;
+GO 
+CREATE PROCEDURE dbo.Genre_creer
+(
+	@Nom NVARCHAR (50)	
+)
+
+AS
+
+BEGIN
+	
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @NOM = ''
+	BEGIN
+		PRINT('Le nom non valide');
+		RETURN 0;
+	END
+
+	IF NOT EXISTS (SELECT * FROM Genre WHERE Nom=@Nom)
+	BEGIN
+		INSERT INTO Genre 
+		(
+			Nom	
+		)
+
+		VALUES
+		(
+			@Nom	
+		)
+		PRINT 'Nouveau genre ajouté'
+	END
+
+	ELSE
+	BEGIN
+		PRINT('Ce genre existe déjà');
+	END
+
+END
+GO
+
+
+--------------------------------------------------
+/* BdD : < Ouf'tim >                        	*/
+/* Procédure de création d'un film         	*/
+/* Auteur : GOUALARD Mickael                	*/
+/*testeur(s): GOUALARD Mickael    		*/
+/*Intégrateur: LADURANTI Sandra			*/
+--------------------------------------------------
+
+IF OBJECT_ID ('film_creer', 'P') IS NOT NULL
+	DROP PROCEDURE  film_creer;
+GO
+
+CREATE PROCEDURE film_creer
+(
+	@Titre NVARCHAR (50) ,
+	@Complement_titre NVARCHAR (50),
+	@Annee_de_sortie INT ,
+	@Nationalite NVARCHAR (50) ,
+	@Duree INT,
+	@Cache BIT
+)
+AS
+
+BEGIN 
+
+	IF @Titre NOT LIKE '%[A-Za-z ''- 0-9]%' OR @Titre LIKE ''
+	BEGIN 
+	 PRINT 'Le titre est non valide';
+	 RETURN 0; 
+	END
+	
+	IF @Complement_titre LIKE ' '
+	BEGIN 
+	 PRINT 'Le Complement du titre est non valide';
+	 RETURN 0; 
+	END
+	
+	IF @Annee_de_sortie < 1895 OR @Annee_de_sortie > YEAR(GETDATE())
+ 	BEGIN 
+ 	 PRINT 'Annee de sortie est non valide';
+ 	 RETURN 0; 
+ 	END
+
+	IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite LIKE ''
+	BEGIN 
+	 PRINT 'La nationalite est non valide';
+	 RETURN 0; 
+	END
+
+	IF @Duree <= 10
+ 	BEGIN 
+ 	 PRINT 'La duree est non valide';
+ 	 RETURN 0; 
+ 	END
+
+ 	IF @Cache <> 0 AND @Cache <> 1
+ 	BEGIN
+ 	 PRINT 'Le booleen cache n''est pas valide';
+ 	 RETURN 0;
+ 	END
+
+
+IF NOT EXISTS (SELECT * FROM Films WHERE Titre=@Titre)
+ BEGIN
+	INSERT INTO Films
+		(
+		Titre,
+		Complement_titre,
+		Annee_de_sortie,
+		Nationalite,
+		Duree,
+		Cache
+		)
+	
+	VALUES
+		(
+		@Titre,
+		@Complement_titre,
+		@Annee_de_sortie,
+		@Nationalite,
+		@Duree,
+		@Cache
+		)
+	PRINT 'Nouveau Film ajouté';
+ END
+
+ ELSE
+ BEGIN
+ 	PRINT 'Ce Film existe déjà';
+ END
+
+END
+GO
+
+
+
+--------------------------------------------
+/* Groupe : < Ouf'Tim >                    */
+/* Procedure de creation d'un exemplaire   */
+/* Auteur: BROCHEN Elise                   */
+/*testeur(s): BROCHEN Elise		   */
+/*Intégrateur: LADURANTI Sandra            */
+--------------------------------------------
+
+IF OBJECT_ID ('exemplaires_creer','P') IS NOT NULL
+	DROP PROCEDURE exemplaires_creer;
+GO
+
+CREATE PROCEDURE exemplaires_creer
+(
+	@Date_approvisionnement DATETIME ,
+	@Taux_usure INT ,
+	@Disponibilite BIT ,
+	@Reserve BIT,
+	@FK_numero_edition INT
+	)
+AS
+
+BEGIN
+
+
+	IF @Taux_usure > 5
+	BEGIN
+		PRINT 'Le taux d''usure est non valide';
+		RETURN 0;
+	END
+
+	IF @Disponibilite < 0 AND @Disponibilite > 1
+	BEGIN
+		PRINT 'La disponibilite est non valide';
+		RETURN 0;
+	END
+
+	IF @Reserve < 0 AND @Reserve > 1
+	BEGIN
+		PRINT 'Le booleen reserve est non valide';
+		RETURN 0;
+	END
+
+IF NOT EXISTS (SELECT * FROM Exemplaires WHERE @FK_numero_edition=FK_numero_edition)
+BEGIN
+	INSERT INTO Exemplaires
+		(
+		Date_approvisionnement,
+		Taux_usure,
+		Disponibilite,
+		Reserve,
+		FK_numero_edition
+		)
+
+		VALUES
+		(
+		@Date_approvisionnement,
+		@Taux_usure,
+		@Disponibilite,
+		@Reserve,
+		@FK_numero_edition
+		)
+
+	PRINT 'Un nouvel exemplaire a été ajoute';
+END
+
+ELSE
+BEGIN
+	PRINT 'Cet exemplaire existe déjà' ;
+END
+
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'un réalisteur */
+/*Auteur(s): BROCHEN Elise*/
+/*testeur(s): PATRICK POL LADURANTI Sandra*/
+/*Intégrateur: LADURANTI Sandra */
+
+IF OBJECT_ID('dbo.Realisateur_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Realisateur_creer;
+GO 
+CREATE PROCEDURE dbo.Realisateur_creer
+(
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Date_naissance DATE,
+	@Sexe NVARCHAR (50),
+	@Date_deces DATE,
+	@Biographie NVARCHAR (MAX),
+	@Nationalite NVARCHAR (50)
+)
+
+AS
+
+BEGIN
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' Or @Nom LIKE '' Or @Nom LIKE ' '
+	BEGIN
+		PRINT 'Le nom n''est pas valide';
+		RETURN 0;
+	END
+	
+	IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom LIKE '' Or @Prenom LIKE ' '
+	BEGIN
+		PRINT 'Le prenom n''est pas valide';
+		RETURN 0;
+	END
+
+	IF @Date_naissance > GETDATE() OR @Date_naissance < '1825/01/01'
+	BEGIN
+		PRINT 'La date de naissance n''est pas valide';
+		RETURN 0;
+	END
+
+	IF @Sexe NOT LIKE 'Madame' AND @Sexe NOT LIKE 'Monsieur' OR @Sexe = ''
+	BEGIN
+		PRINT 'Le sexe n''est pas valide';
+		RETURN 0;
+	END
+
+	IF @Date_deces > GETDATE() OR @Date_deces < @Date_naissance
+	BEGIN
+		PRINT 'La date de deces n''est pas valide';
+		RETURN 0;
+	END	
+
+	IF @Biographie NOT LIKE '%[A-Za-z ''-]%'
+	BEGIN
+		PRINT 'La biographie n''est pas valide';
+		RETURN 0;
+	END
+
+	/*IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' Or @Nationalite LIKE ''
+	BEGIN
+		PRINT('La nationalite n''est pas valide');
+		RETURN 0;
+	END
+	*/
+IF NOT EXISTS (SELECT * FROM Realisateur WHERE Nom=@Nom AND Prenom=@Prenom AND Date_naissance=@Date_naissance)
+BEGIN
+	INSERT INTO Realisateur
+	(
+		Nom,
+		Prenom,		
+		Date_naissance,
+		Sexe,
+		Date_deces,
+		Biographie,
+		Nationalite
+	)
+
+	VALUES
+	(
+		@Nom,
+		@Prenom,		
+		@Date_naissance,
+		@Sexe,
+		@Date_deces,
+		@Biographie,
+		@Nationalite
+	)
+	PRINT 'Un nouveau réalisateur a été ajouté'
+END
+
+ELSE
+BEGIN
+	PRINT('Ce réalisateur existe déjà');
+END
+
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation des sous titres */
+/*Auteur(s): LADURANTI Sandra*/
+/*testeur(s): LADURANTI Sandra */
+/*Intégrateur: LADURANTI Sandra */
+
+IF OBJECT_ID('Langue_sous_titre_creer', 'P') IS NOT NULL
+	DROP PROCEDURE Langue_sous_titre_creer;
+GO 
+CREATE PROCEDURE Langue_sous_titre_creer
+(
+	@Nom NVARCHAR (50)
+)
+
+AS
+
+BEGIN
+	
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
+	BEGIN
+		PRINT('Le nom n''est pas valide');
+		RETURN 0;
+	END
+
+IF NOT EXISTS (SELECT * FROM Langue_sous_titre WHERE Nom=@Nom)
+BEGIN
+	INSERT INTO Langue_sous_titre
+	(
+		Nom	
+	)
+
+	VALUES
+	(
+		@Nom	
+	)
+	PRINT 'Nouveau sous-titre ajouté'
+END
+
+ELSE
+BEGIN
+	PRINT('Ce sous-titrage existe déjà');
+END
+
+END
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation de l'appartenance */
+/*Auteur(s): PATRICK POL*/
+/*testeur(s): PATRICK POL LADURANTI Sandra*/
+/*Intégrateur: LADURANTI Sandra */
+
+IF OBJECT_ID('dbo.Appartenir_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Appartenir_creer;
+GO 
+CREATE PROCEDURE dbo.Appartenir_creer
+(
+	@FK_titre NVARCHAR (50),
+	@FK_complement_titre NVARCHAR (50),
+	@FK_nom_genre NVARCHAR (50)
+)
+
+AS
+
+BEGIN
+
+	INSERT INTO dbo.Appartenir 
+	(
+		FK_Titre,
+		FK_complement_titre,
+		FK_nom_genre
+	)
+	VALUES
+	(
+		@FK_Titre,
+		@FK_complement_titre,
+		@FK_nom_genre
+	)
+
+	PRINT 'Appartenir Ajoute'                             
+
+END 
+GO	
+
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation de relance_retards */
+/*Auteur(s): BROCHEN Elise                 */
+/*testeur(s): BROCHEN Elise		           */
+/*Intégrateur: LADURANTI Sandra            */
+
+IF OBJECT_ID ('dbo.Relance_retards_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Relance_retards_creer ; 
+GO
+
+CREATE PROCEDURE dbo.Relance_retards_creer
+(
+    @Niveau_de_retard INT,
+    @Date_creation DATETIME,
+    @Date_mise_a_jour DATETIME,
+    @FK_num_location INT
+)
+
+AS
+
+BEGIN 
+
+
+	IF @Niveau_de_retard < 0 OR @Niveau_de_retard > 3
+	BEGIN 
+		PRINT 'Le numéro de retard non valide'; 
+	RETURN 0; 
+END
+
+	IF @FK_num_location < 0
+	BEGIN 
+		PRINT 'Le numéro de retard non valide';
+	RETURN 0;
+END 
+
+
+IF NOT EXISTS (SELECT * FROM Relance_retards WHERE @FK_num_location = FK_num_location)
+BEGIN
+
+	INSERT INTO Relance_retards
+		(
+   		Niveau_de_retard,
+   		Date_creation,
+   		Date_mise_a_jour,
+   		FK_num_location
+		)   	
+
+		VALUES 
+		(
+    		@Niveau_de_retard,
+    		@Date_creation,
+    		@Date_mise_a_jour,
+    		@FK_num_location
+		)
+		PRINT 'Une nouvelle Relance Retards a été ajouté'
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Ce type de Relance Retards existe déja';
+	END
+
+END
+GO
+
+
+/* Location */
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation de location */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+USE Ouftim
+
+IF OBJECT_ID ('Locations_creer', 'P') IS NOT NULL
+DROP PROCEDURE Locations_creer ;
+GO
+
+CREATE PROCEDURE Locations_creer
+(
+   @Date_debut DATETIME,
+   @Duree INT,
+   @Date_fin_prevue DATETIME,
+   @Date_fin_reelle DATETIME,
+   @FK_exemplaire INT,
+   @FK_num_abonnement INT
+)
+
+AS
+
+BEGIN 
+
+
+	IF @Duree < 0 OR @Duree > 300
+	BEGIN 
+		PRINT 'La durée de location non valide';
+	RETURN 0;
+	END 
+
+	IF @FK_exemplaire = ''
+	BEGIN 
+		PRINT 'Le numéro d''exemplaire n''est pas valide >> voir procédure exemplaire';
+	RETURN 0;
+	END 
+
+		IF @FK_num_abonnement = ''
+	BEGIN 
+		PRINT 'Le numéro d''abonnement n''est pas valide >> voir procédure abonnement';
+	RETURN 0;
+	END
+
+
+IF NOT EXISTS (SELECT * FROM Locations)
+BEGIN
+
+	INSERT INTO Locations(
+   		Date_debut,
+  	 	Duree,
+   		Date_fin_prevue,
+   		Date_fin_reelle,
+   		FK_exemplaire,
+		FK_num_abonnement
+		)   	
+
+		VALUES 
+		(
+   		@Date_debut,
+   		@Duree,
+   		@Date_fin_prevue,
+   		@Date_fin_reelle,
+   		@FK_exemplaire,
+		@FK_num_abonnement
+		)
+
+
+		PRINT 'Nouvelle Location ajouté';
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Ce type de location existe déja';
+	END
+END 
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation de realiser        */
+/*Auteur(s): BROCHEN Elise                 */
+/*testeur(s): PATRICK POL LADURANTI Sandra */
+/*Intégrateur: LADURANTI Sandra            */
+
+IF OBJECT_ID ('dbo.Realiser_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Realiser_creer ; 
+GO
+
+CREATE PROCEDURE dbo.Realiser_creer
+(
+   @FK_titre_film NVARCHAR(50),
+   @FK_complement_titre NVARCHAR(50),
+   @FK_nom_real NVARCHAR(50),
+   @FK_prenom_real NVARCHAR(50),
+   @FK_date_naissance NVARCHAR(50)
+)
+
+AS
+
+BEGIN 
+
+IF NOT EXISTS (SELECT * FROM Realiser WHERE Realiser.FK_titre_film = @FK_titre_film AND Realiser.FK_complement_titre = @FK_complement_titre)
+BEGIN
+
+	INSERT INTO Realiser
+		(
+   		 FK_titre_film,
+  		 FK_complement_titre,
+  		 FK_nom_real,
+   		 FK_prenom_real,
+   		 FK_date_naissance
+		)   	
+
+		VALUES 
+		(
+		 @FK_titre_film,
+  		 @FK_complement_titre,
+   		 @FK_nom_real,
+   		 @FK_prenom_real,
+   		 @FK_date_naissance
+		)
+
+		PRINT 'une nouvelle Realisation a été ajoutée'
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Ce type de Relalisation existe déja';
+	END
+END 
+GO
+
+---------------------------------------------
+/*L2 ATIC 2013 GROUPE Ouftim               */
+/*BdD Ouftim                               */
+/*Procedure de creation d'un abonne        */
+/*Auteur(s): HUA Lucien LADURANTI Sandra   */
+/*testeur(s): LADURANTI Sandra             */
+/*Intégrateur: LADURANTI Sandra            */
+---------------------------------------------
+
+IF OBJECT_ID('dbo.Abonne_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Abonne_creer;
+GO 
+CREATE PROCEDURE dbo.Abonne_creer
+(
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Pseudo NVARCHAR (50),
+	@Date_de_naissance DATE,
+	@Sexe NVARCHAR (50),
+	@Numero_de_voie NVARCHAR (50),
+	@Complement_de_voie NVARCHAR (50),
+	@Type_de_voie NVARCHAR (50),
+	@Libelle NVARCHAR (50),
+	@Complement_libelle NVARCHAR (50),
+	@Code_postal NVARCHAR (50),
+	@Ville NVARCHAR (50),
+	@Cedex NVARCHAR (50),
+	@Pays NVARCHAR (50),
+	@Numero_telephone NVARCHAR (50),
+	@Adresse_email NVARCHAR (50)
+)
+
+AS
+
+BEGIN
+	
+	IF @NOM NOT LIKE '%[A-Za-z ''-]%' OR @Nom = ''
+	BEGIN
+		PRINT('Le nom est invalide');
+		RETURN 0;
+	END
+
+	IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom = ''
+	BEGIN
+		PRINT('Le prenom est invalide');
+		RETURN 0;
+	END
+
+	IF @Pseudo NOT LIKE '%[A-Za-z ''-]%' OR @Pseudo = ''
+	BEGIN
+		PRINT('Le pseudo est invalide');
+		RETURN 0;
+	END
+
+	IF @Date_de_naissance > GETDATE() OR @Date_de_naissance < '1915/01/01'
+	BEGIN
+		PRINT('La date de naissance est invalide');
+		RETURN 0;
+	END
+
+	IF @Sexe  NOT LIKE '%[A-Za-z]%' OR @Sexe = ''
+	BEGIN
+		PRINT('Le sexe est invalide');
+		RETURN 0;
+	END
+
+	IF @Numero_de_voie NOT LIKE '%[0-9]%'
+	BEGIN
+		PRINT('Le numero de voie est invalide');
+		RETURN 0;
+	END
+
+	IF @Complement_de_voie NOT LIKE '%[A-Za-z ''-]%' OR @Complement_de_voie = ''
+	BEGIN
+		PRINT('Le complement de voie est invalide');
+		RETURN 0;
+	END
+
+	IF @Type_de_voie NOT LIKE '%[A-Za-z ''-]%' OR @Type_de_voie = ''
+	BEGIN
+		PRINT('Le type de voie est invalide');
+		RETURN 0;
+	END
+
+	IF @Libelle NOT LIKE '%[A-Za-z ''-]%' OR @Libelle = ''
+	BEGIN
+		PRINT('Le libelle est invalide');
+		RETURN 0;
+	END
+
+	IF @Complement_libelle NOT LIKE '%[A-Za-z ''-]%' OR @Complement_libelle = ''
+	BEGIN
+		PRINT('Le complement libelle est invalide');
+		RETURN 0;
+	END
+
+	IF @Code_postal NOT LIKE '%[0-9]%' OR @Code_postal = ''
+	BEGIN
+		PRINT('Le code postal est invalide');
+		RETURN 0;
+	END
+
+	IF @Ville NOT LIKE '%[A-Za-z ''-]%' OR @Ville = ''
+	BEGIN
+		PRINT('La ville est invalide');
+		RETURN 0;
+	END
+
+	IF @Cedex NOT LIKE '%[A-Za-z ''-]%' OR @Cedex = ''
+	BEGIN
+		PRINT('Le cedex est invalide');
+		RETURN 0;
+	END
+
+	IF @Pays NOT LIKE '%[A-Za-z ''-]%' OR @Pays = ''
+	BEGIN
+		PRINT('Le pays est invalide');
+		RETURN 0;
+	END
+
+	IF @Numero_telephone NOT LIKE '%[0-9 .]%'
+	BEGIN
+		PRINT('Le numero de telephone est invalide');
+		RETURN 0;
+	END
+
+	IF @Adresse_email NOT LIKE '%@%' OR @Adresse_email = ''
+	BEGIN
+		PRINT('Le mail est invalide');
+		RETURN 0;
+	END
+
+
+IF NOT EXISTS (SELECT * FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+BEGIN
+	INSERT INTO Abonne 
+	(
+		Nom,
+		Prenom,
+		Pseudo,
+		Date_de_naissance,
+		Sexe,
+		Numero_de_voie,
+		Complement_de_voie,
+		Type_de_voie,
+		Libelle,
+		Complement_libelle,
+		Code_postal,
+		Ville,
+		Cedex,
+		Pays,
+		Numero_telephone,
+		Adresse_email
+	)
+
+	VALUES
+	(
+		@Nom,
+		@Prenom,
+		@Pseudo,
+		@Date_de_naissance,
+		@Sexe,
+		@Numero_de_voie,
+		@Complement_de_voie,
+		@Type_de_voie,
+		@Libelle,
+		@Complement_libelle,
+		@Code_postal,
+		@Ville,
+		@Cedex,
+		@Pays,
+		@Numero_telephone,
+		@Adresse_email
+	)
+	PRINT 'Nouvel abonné ajouté'
+END
+
+ELSE
+BEGIN
+	PRINT 'Cet abonné existe déjà';
+END
+
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim                 */
+/*BdD Ouftim                                 */
+/*Procedure de creation d'abonnement         */
+/*Auteur(s): BROCHEN Elise  LADURANTI Sandra */
+/*testeur(s): PATRICK POL LADURANTI Sandra   */
+/*Intégrateur: LADURANTI Sandra              */
+
+use ouftim
+
+IF OBJECT_ID ('dbo.Abonnement_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Abonnement_creer ; 
+GO
+
+CREATE PROCEDURE dbo.Abonnement_creer
+(
+   @Date_creation DATETIME,
+   @Date_expiration DATETIME,
+   @FK_numcompte INT,
+   @FK_type_abonnement NVARCHAR (50)
+)
+
+AS
+
+BEGIN 
+
+IF @Date_expiration < @Date_creation
+	BEGIN 
+		PRINT 'Date d''expiration non valide';
+	RETURN 0;
+END
+
+	IF @FK_numcompte < 0
+	BEGIN 
+		PRINT 'Le FK_numero_compte non valide';
+	RETURN 0;
+END
+
+	
+
+IF NOT EXISTS (SELECT * FROM Abonnement WHERE @FK_type_abonnement=FK_type_abonnement)
+BEGIN
+
+	INSERT INTO Abonnement
+		(
+   Date_creation,
+   Date_expiration,
+   FK_numcompte,
+   FK_type_abonnement
+   		
+		)   	
+
+		VALUES 
+		(
+   @Date_creation,
+   @Date_expiration,
+   @FK_numcompte,
+   @FK_type_abonnement	
+		)
+
+		PRINT 'Un nouvel Abonnement a été ajouté'
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Ce type d''Abonnement existe déja';
+	END
+END 
+GO
+
+
+
+/*L2 ATIC 2013 GROUPE Ouftim                 */
+/*BdD Ouftim                                 */
+/*Procedure de creation de jouer             */
+/*Auteur(s): BROCHEN Elise                   */
+/*testeur(s): BROCHEN Elise		             */
+/*Intégrateur: LADURANTI Sandra              */
+
+use ouftim
+
+IF OBJECT_ID ('dbo.Jouer_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Jouer_creer ; 
+GO
+
+CREATE PROCEDURE dbo.Jouer_creer
+(
+   @FK_titre_film NVARCHAR(50),
+   @FK_complement_titre NVARCHAR(50),
+   @FK_nom_acteur NVARCHAR(50),
+   @FK_prenom_acteur NVARCHAR(50),
+   @FK_date_de_naissance_acteur DATE
+)
+
+AS
+
+BEGIN 
+
+
+
+	IF @FK_date_de_naissance_acteur > GETDATE() OR @FK_date_de_naissance_acteur < '1895/01/01'
+	BEGIN 
+		PRINT 'La FK de la date de naissance de l''acteur n''est pas valide';
+	RETURN 0;
+
+END 
+
+
+IF NOT EXISTS (SELECT * FROM Jouer WHERE FK_titre_film = @FK_titre_film AND FK_complement_titre = @FK_complement_titre
+ AND FK_nom_acteur = @FK_nom_acteur AND FK_prenom_acteur = @FK_prenom_acteur)
+BEGIN
+
+	INSERT INTO Jouer
+		(
+   		 FK_titre_film,
+  		 FK_complement_titre ,
+  		 FK_nom_acteur,
+   		FK_prenom_acteur,
+   		FK_date_de_naissance_acteur
+		)   	
+
+		VALUES 
+		(
+		 @FK_titre_film,
+  		 @FK_complement_titre,
+   		@FK_nom_acteur,
+   		@FK_prenom_acteur,
+   		@FK_date_de_naissance_acteur
+
+		)
+
+
+		PRINT 'Un nouveau type Jouer a été ajouté'
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Ce type Jouer existe déja';
+	END
+END 
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim                                 */
+/*BdD Ouftim                                                 */
+/*Procedure de creation de Souscire                          */
+/*Auteur(s): BROCHEN Elise                                   */
+/*testeur(s): PATRICK POL LADURANTI Sandra  Mickael GOUALARD */
+/*Intégrateur: LADURANTI Sandra                              */
+
+IF OBJECT_ID ('dbo.Souscrire_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Souscrire_creer ; 
+GO
+
+CREATE PROCEDURE dbo.Souscrire_creer
+(
+    @FK_nom_abonne NVARCHAR (50),
+   @FK_prenom NVARCHAR (50),
+   @FK_pseudo NVARCHAR (50),
+   @FK_num_abonnement INT
+)
+
+AS
+
+BEGIN 
+
+
+IF NOT EXISTS (SELECT * FROM Souscrire WHERE FK_nom_abonne = @FK_nom_abonne AND FK_prenom = @FK_prenom 
+AND FK_pseudo = @FK_pseudo AND FK_num_abonnement = @FK_num_abonnement )
+BEGIN
+
+	INSERT INTO Souscrire
+		(
+   		FK_nom_abonne,
+   		FK_prenom,
+        FK_pseudo,
+  		FK_num_abonnement
+		)   	
+
+		VALUES 
+		(
+		@FK_nom_abonne,
+ 		@FK_prenom,
+   		@FK_pseudo,
+   		@FK_num_abonnement
+		)
+
+
+		PRINT 'Nouveau Souscrire ajouté';
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Le type Souscrire existe déja';
+	END
+END 
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'une edition */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+USE Ouftim
+
+IF OBJECT_ID ('dbo.Edition_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Edition_creer ; 
+GO
+
+CREATE PROCEDURE dbo.Edition_creer
+(
+    	@Nom NVARCHAR (50),
+    	@Annee_de_sortie INT,
+    	@Duree_film INT,
+	    @limite_age INT,
+    	@Support NVARCHAR (50),
+    	@Date_insertion DATETIME,
+      	@Type_couleur NVARCHAR (50),
+    	@Type_son NVARCHAR (50),
+    	@FK_titre NVARCHAR (50),
+    	@FK_complement_titre NVARCHAR (50)
+)
+
+AS
+
+BEGIN 
+    
+
+	IF  @Nom NOT LIKE '%[A-Za-z ‘’-]%' OR @Nom = ''
+	BEGIN 
+		PRINT 'Nom edition non valide';
+	RETURN 0;
+END 
+
+	IF  @Annee_de_sortie > YEAR(GETDATE()) OR @Annee_de_sortie < 1895
+	BEGIN 
+		PRINT 'Année de sortie non valide';
+	RETURN 0;
+END
+
+	IF @limite_age < 0 OR @limite_age > 18
+	BEGIN 
+		PRINT 'limite d''age non valide';
+	RETURN 0;
+END  
+
+	IF @Duree_film < 10 OR @Duree_film NOT LIKE '%[0-9]%'
+	BEGIN 
+		PRINT 'Duree film non valide';
+	RETURN 0;
+END  
+
+	IF  @Support NOT LIKE '%[A-Za-z ‘’-]%' OR @Support = ''
+	BEGIN 
+		PRINT 'Support non valide';
+	RETURN 0;
+END
+
+	IF  @Date_insertion > GETDATE()
+	BEGIN 
+		PRINT 'Date d''insertion non valide';
+	RETURN 0;
+END 
+
+	IF  @Type_couleur NOT LIKE '%[A-Za-z ‘’-]%' OR @Type_couleur = ''
+	BEGIN 
+		PRINT 'Type couleur non valide';
+	RETURN 0;
+END
+
+	IF  @Type_son NOT LIKE '%[A-Za-z ‘’- . 0-9]%' OR @Type_son = ''
+	BEGIN 
+		PRINT 'Type son non valide';
+	RETURN 0;
+END
+
+IF NOT EXISTS (SELECT * FROM Edition WHERE Nom=@Nom )
+BEGIN
+	INSERT INTO Edition
+		(
+		Nom,
+		Annee_de_sortie,
+		Duree_film,
+		limite_age,
+	    	Support,
+      	 	Date_insertion,
+      	 	Type_couleur,
+       		Type_son ,
+       		FK_titre ,
+       		FK_complement_titre
+		)   	
+
+	VALUES 
+	(
+		@Nom,
+		@Annee_de_sortie,
+		@Duree_film,
+		@limite_age,
+	    @Support,
+       		@Date_insertion,
+       		@Type_couleur,
+       		@Type_son ,
+       		@FK_titre ,
+       		@FK_complement_titre
+	)
+
+
+		PRINT 'Nouvelle édition ajoutée';
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'L''édition existe déja';
+	END
+END
+
+/*L2 ATIC 2013 GROUPE Ouftim                   */
+/*BdD Ouftim                                   */
+/*Procedure de creation de relance_découvert   */
+/*Auteur(s): LADURANTI Sandra                  */
+/*testeur(s): PATRICK POL LADURANTI Sandra     */
+/*Intégrateur: LADURANTI Sandra                */
+
+IF OBJECT_ID ('dbo.Relance_decouvert_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.Relance_decouvert_creer ; 
+
+GO
+
+CREATE PROCEDURE dbo.Relance_decouvert_creer
+(
+    @Niveau_decouvert INT,
+    @Date_creation DATETIME,
+    @Date_mise_a_jour DATETIME,
+    @FK_numero_compte INT
+)
+
+AS
+
+BEGIN 
+
+	IF @Niveau_decouvert < 0 OR @Niveau_decouvert > 3
+	BEGIN 
+		PRINT 'Le niveau de découvert n''est pas valide'; 
+	RETURN 0; 
+END
+
+
+	IF @FK_numero_compte < 0 OR @FK_numero_compte = ''
+	BEGIN 
+		PRINT 'Le numéro de compte n''est pas valide >> voir compte';
+	RETURN 0;
+END 
+
+
+IF NOT EXISTS (SELECT * FROM Relance_decouvert WHERE @FK_numero_compte = FK_numero_compte)
+BEGIN
+
+	INSERT INTO Relance_decouvert
+		(
+   		Niveau_decouvert,
+   		Date_creation,
+   		Date_mise_a_jour,
+   		FK_numero_compte
+		)   	
+
+		VALUES 
+		(
+    		@Niveau_decouvert,
+    		@Date_creation,
+    		@Date_mise_a_jour,
+    		@FK_numero_compte
+		)
+		PRINT 'Nouvelle Relance Decouvert ajoutée'
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Cette Relance Decouvert existe déja';
+	END
+
+END
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'une attribution */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s): */
+/*Intégrateur: */
+
+
+IF OBJECT_ID('dbo.Attribuer_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Attribuer_creer;
+GO 
+CREATE PROCEDURE dbo.Attribuer_creer
+(
+	@FK_titre_film NVARCHAR (50),
+	@FK_complement_titre NVARCHAR (50),
+	@FK_nom_distinction NVARCHAR (50),
+	@FK_lieu_distinction NVARCHAR (50),
+	@FK_annee_distinction INT
+)
+
+AS
+
+BEGIN
+
+
+	INSERT INTO dbo.Attribuer
+	( 
+		FK_titre_film,
+		FK_complement_titre,
+		FK_nom_distinction,
+		FK_lieu_distinction,
+		FK_annee_distinction 
+	) 
+	VALUES 
+	( 
+		@FK_titre_film,
+		@FK_complement_titre,
+		@FK_nom_distinction,
+		@FK_lieu_distinction,
+		@FK_annee_distinction
+	)
+
+	PRINT 'Attribuer Ajoute'
+
+
+END 
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'un type d'abonnement */
+/*Auteur(s): Tsvetkov Alexandre*/
+/*Testeur(s): Laduranti Sandra */
+/*Intégrateur: Laduranti Sandra*/
+
+IF OBJECT_ID('dbo.Type_abonnement_creer', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.Type_abonnement_creer;
+GO 
+CREATE PROCEDURE dbo.Type_abonnement_creer
+(
+	@Nom NVARCHAR (50),
+	@Prix MONEY,
+	@Prix_location MONEY,
+	@Exemplaires_simultanes INT,
+	@Prix_retard MONEY,
+	@Duree_engagement INT
+)
+
+AS
+
+BEGIN
+
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' AND @Nom NOT LIKE '' AND @Nom NOT LIKE ' '
+	BEGIN
+		PRINT'Le nom du type d''abonnement est non valide';
+		RETURN 0;
+	END
+
+	IF @Prix <= 0
+	BEGIN
+		PRINT'Le prix du type d''abonnement est non valide';
+		RETURN 0;
+	END
+
+	IF @Prix_location <= 0 
+	BEGIN
+		PRINT'Le prix de la location non valide (proc : type_abonnement)';
+		RETURN 0;
+	END
+
+	IF @Exemplaires_simultanes < 0 OR @Exemplaires_simultanes > 50 
+	BEGIN
+		PRINT'Le nombre exemplaires simultanes est non valide (proc : type_abonnement)';
+		RETURN 0;
+	END
+	
+	IF @Prix_retard < 0
+	BEGIN
+		PRINT'Le prix retard est non valide (proc : type_abonnement)';
+		RETURN 0;
+	END
+
+	IF @Duree_engagement <= 0
+	BEGIN
+		PRINT'La duree engagement non est valide (proc : type_abonnement)';
+		RETURN 0;
+	END
+
+IF NOT EXISTS (SELECT * FROM Type_abonnement WHERE Nom=@Nom)
+BEGIN
+	INSERT INTO Type_abonnement
+	(
+		Nom,
+		Prix,
+		Prix_location,
+		Exemplaires_simultanes,
+		Prix_retard,
+		Duree_engagement
+	)
+	VALUES
+	(
+		@Nom,
+		@Prix,
+		@Prix_location,
+		@Exemplaires_simultanes,
+		@Prix_retard,
+		@Duree_engagement
+	)
+
+	PRINT 'Nouveau Type_abonnement ajouté';
+END
+
+ELSE
+BEGIN
+	PRINT 'Ce type abonnement existe déjà';
+END
+
+END
+GO
+
+
+-----------------------------------------------
+/* BdD : < Ouf'tim >                          */
+/* Procédure de création d'un rattachement    */
+/* Auteur : Elise BROCHEN                      */
+/*testeur(s): PATRICK POL LADURANTI Sandra     */
+/*Intégrateur: LADURANTI Sandra                */
+-----------------------------------------------
+
+IF OBJECT_ID ('rattacher_creer', 'P') IS NOT NULL
+	DROP PROCEDURE  rattacher_creer;
+GO
+
+CREATE PROCEDURE rattacher_creer
+(
+	@FK_langue NVARCHAR (50) ,
+	@FK_edition INT 
+)
+AS
+
+BEGIN 
+
+	
+IF NOT EXISTS ((SELECT * FROM Rattacher WHERE FK_langue = @FK_langue AND FK_edition = @FK_edition))
+ BEGIN
+	INSERT INTO Rattacher
+			(
+			FK_langue,
+			FK_edition
+			)
+	
+	VALUES
+		(
+		@FK_langue,
+		@FK_edition
+		)
+	PRINT 'Nouveau rattachement ajouté'
+ END
+
+ ELSE
+ BEGIN
+ 	PRINT 'Ce rattachement existe déjà'
+ END
+END
+
+GO
+
+-----------------------------------------------
+/* BdD : < Ouf'tim >                          */
+/* Procédure de création d'un affichage       */
+/* Auteur : Patrick POL                        */
+/*testeur(s): PATRICK POL LADURANTI Sandra     */
+/*Intégrateur: LADURANTI Sandra                */
+-----------------------------------------------
+
+IF OBJECT_ID ('afficher_creer', 'P') IS NOT NULL
+	DROP PROCEDURE  afficher_creer;
+GO
+
+CREATE PROCEDURE afficher_creer
+(
+	@FK_langue NVARCHAR (50) ,
+	@FK_edition INT	
+)
+AS
+
+BEGIN 
+	
+IF NOT EXISTS ((SELECT * FROM Afficher WHERE FK_langue = @FK_langue AND FK_edition = @FK_edition))
+ BEGIN
+	INSERT INTO Rattacher
+			(
+			FK_langue,
+			FK_edition
+			)
+	
+	VALUES
+		(
+		@FK_langue,
+		@FK_edition
+		)
+	PRINT 'Nouvel affichage ajouté'
+ END
+
+ ELSE
+ BEGIN
+ 	PRINT 'Cet affichage existe déjà'
+ END
+END
+
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim			*/
+/*BdD Ouftim 					*/
+/*Procedure de creation de langue audio		*/
+/*Auteur(s): GOUALARD Mickael			*/
+/*testeur(s): GOUALARD Mickael   		*/
+/*Intégrateur: LADURANTI Sandra            	*/
+
+IF OBJECT_ID('dbo.Langue_audio_creer', 'P') IS NOT NULL
+	DROP PROCEDURE Langue_audio_creer;
+GO 
+CREATE PROCEDURE Langue_audio_creer
+(
+	@Nom NVARCHAR (50)
+)
+
+AS
+
+BEGIN
+	
+	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
+	BEGIN
+		PRINT 'Le nom de la langue n''est pas valide';
+		RETURN 0;
+	END
+
+IF NOT EXISTS (SELECT * FROM Langue_audio WHERE Nom=@Nom)
+BEGIN
+	INSERT INTO Langue_audio
+	(
+		Nom	
+	)
+
+	VALUES
+	(
+		@Nom	
+	)
+	PRINT 'Nouveau langage audio ajouté';
+END
+
+ELSE
+BEGIN
+	PRINT 'Cette langue audio existe déjà';
+END
+
+END
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'une reservation */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s): PATRICK POL*/
+/*Intégrateur: */
+
+IF OBJECT_ID('dbo.Reservation_creer', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.Reservation_creer;
+GO 
+CREATE PROCEDURE dbo.Reservation_creer
+(
+    @HD_creation DATE,
+    @HD_butoir DATE,
+    @Etat [NVARCHAR] (50),
+    @FK_num_abonnement INT,
+	@FK_num_exemplaire INT
+)
+
+AS
+
+BEGIN
+
+    IF @HD_creation > GETDATE()
+    BEGIN  
+        PRINT 'La date de creation n''est pas valide'; 
+    RETURN; 
+    END 
+
+    IF @HD_butoir > GETDATE()
+    BEGIN  
+        PRINT 'La date butoir n''est pas valide'; 
+    RETURN; 
+    END
+
+    IF @Etat NOT LIKE '%[A-Za-z ''-]%' AND @Etat  = '' AND @Etat ='Abandonne' AND @Etat ='En cours' AND @Etat ='Accomplie'
+    BEGIN
+        PRINT('L''etat n''est pas valide');
+        RETURN;
+    END
+
+
+END
+
+IF NOT EXISTS (SELECT * FROM Reservation) 
+BEGIN 
+    INSERT INTO Reservation 
+        ( 
+        HD_creation,
+        HD_butoir,
+        Etat,
+        FK_num_abonnement ,
+		FK_num_exemplaire
+        )        
+ 
+    VALUES  
+    (
+        @HD_creation,
+        @HD_butoir,
+        @Etat,
+        @FK_num_abonnement,
+		@FK_num_exemplaire
+        )
+       PRINT 'Reservation crée'
+  END
+  ELSE
+  BEGIN
+    PRINT 'Reservation deja existante'
+  END
+
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion film */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+use ouftim
+
+GO
+
+CREATE procedure [dbo].[ajouter_film]
+    /* catalogue */
+    @Titre NVARCHAR(50),
+    @Complement_titre NVARCHAR(50),
+    @Annee INT,
+    @Nationalite NVARCHAR (50),
+    @Duree INT,
+	
+    
+    /* acteur(s) */
+    @liste_acteurs NVARCHAR(1000),
+    -- |nom1,prenom1,date_naissance1,sexe1,date_deces1,nom_scene1,biographie1,nationalité1|nom2,prenom2,date_naissance2,sexe2,date_deces2,nom_scene2,biographie2,nationalité2|...
+    -- 0 si film sans acteur
+
+    /*
+    @nom_act NVARCHAR(50), @pre_act NVARCHAR(50), @dat_naissance DATE, @sexe_act NVARCHAR(50),@date_deces DATE, @nom_scene NVARCHAR (50), @biographie NVARCHAR(max), @nat_act NVARCHAR(50)
+    */
+    
+	/* realisateur(s) */
+    @liste_realisateurs NVARCHAR(500),
+
+   /* Distinction(s) */
+    @liste_distinctions NVARCHAR(500),
+
+	/*genre(s)*/
+	@liste_genres NVARCHAR(100)
+--|nom|
+--pas de film sans genre
+
+    
+as
+
+begin
+
+	
+	declare @index int
+	declare @fin int
+	declare @vide int
+	declare @er int
+	
+	/* catalogue */
+	IF EXISTS (SELECT * FROM Films
+	WHERE
+	    Films.Titre=@Titre 
+        and Films.Complement_titre=@Complement_titre
+  	and Films.Annee_de_sortie=@Annee
+	and Films.Nationalite=@Nationalite
+	and Films.Duree=@Duree
+	)
+	begin
+	print cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@Annee as NVARCHAR)+','+cast(@Nationalite as NVARCHAR)+','+cast(@Duree as NVARCHAR)+' film déjà au catalogue';
+	return 0;
+	end
+
+	ELSE /* Film absent au catalogue */
+	begin
+	print cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@Annee as NVARCHAR)+','+cast(@Nationalite as NVARCHAR)+','+cast(@Duree as NVARCHAR)+' à insérer au catalogue';
+	exec @er=Film_creer @Titre, @Complement_titre, @Annee, @Nationalite, @Duree;
+	if @er <> 0 return 0
+	end
+	
+	/* ACTEUR(S) */
+	print '-- ACTEUR(S) --'
+	-- |nom1,prenom1,date_naissance1,sexe1,date_deces1,nom_scene1,biographie1,nationalité1|nom2,prenom2,date_naissance2,sexe2,date_deces2,nom_scene2,biographie2,nationalité2|...
+    -- 0 si film sans acteur
+	set @index=1
+	set @vide = 1
+	IF CHARINDEX('|', @liste_acteurs)=0
+		begin
+			print ' film sans acteur'
+			set @vide = 0
+		end
+	-- ajout cara | en debut
+	IF CHARINDEX('|',@liste_acteurs) <> 1
+		begin
+			set @liste_acteurs = '|' + @liste_acteurs
+		end
+	-- ajout cara | en fin
+	IF CHARINDEX('|',@liste_acteurs, len(@liste_acteurs)) = 0
+		begin
+			set @liste_acteurs = @liste_acteurs +'|'
+		end
+
+	while @index <> LEN(@liste_acteurs) AND @vide=1
+		begin
+		declare @avirg1 int, @avirg2 int,@avirg3 int,@avirg4 int,@avirg5 int, @avirg6 int, @avirg7 int
+		declare @nom_act NVARCHAR(50), @pre_act NVARCHAR(50), @date_naissance DATE, @sexe_act NVARCHAR(50),@date_deces DATE, @nom_scene NVARCHAR (50), @biographie NVARCHAR(max), @nat_act NVARCHAR(50)
+		set @avirg1 = CHARINDEX(',', @liste_acteurs, @index+1)
+		set @avirg2 = CHARINDEX(',', @liste_acteurs, @avirg1+1)
+		set @avirg3 = CHARINDEX(',', @liste_acteurs, @avirg2+1)
+		set @avirg4 = CHARINDEX(',', @liste_acteurs, @avirg3+1)	
+		set @avirg5 = CHARINDEX(',', @liste_acteurs, @avirg4+1)	
+		set @avirg6 = CHARINDEX(',', @liste_acteurs, @avirg5+1)	
+		set @avirg7 = CHARINDEX(',', @liste_acteurs, @avirg6+1)		
+
+		set @fin = CHARINDEX('|', @liste_acteurs, @index+1)
+		
+		set @nom_act = LTRIM(SUBSTRING(@liste_acteurs, @index+1, @avirg1 - @index -1))
+		set @pre_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg1+1, @avirg2 - @avirg1 -1))
+		set @date_naissance = LTRIM(SUBSTRING(@liste_acteurs, @avirg2+1, @avirg3 - @avirg2 -1))
+		set @sexe_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg3+1, @avirg4 - @avirg3 -1))
+
+		declare @atmpdeces NVARCHAR(100)
+		set @atmpdeces = LTRIM(SUBSTRING(@liste_acteurs, @avirg4+1, @avirg5 - @avirg4 -1))
+		IF (@atmpdeces='' OR @atmpdeces=' ' OR @atmpdeces='null' OR @atmpdeces = 'NULL')
+		 set @date_deces = null
+		 ELSE
+		 set @date_deces = @atmpdeces
+
+		set @nom_scene = LTRIM(SUBSTRING(@liste_acteurs, @avirg5+1, @avirg6 - @avirg5 -1))
+		set @biographie = LTRIM(SUBSTRING(@liste_acteurs, @avirg6+1, @avirg7 - @avirg6 -1))
+		set @nat_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg7+1, @fin- @avirg7 -1))
+		set @index = @fin
+
+
+		IF EXISTS(SELECT * FROM Acteur WHERE Acteur.Nom=@nom_act AND Acteur.Prenom=@pre_act AND Acteur.Date_naissance=@date_naissance AND Acteur.Sexe=@sexe_act AND Acteur.Date_deces=@date_deces AND Acteur.Nom_de_scene=@nom_scene AND Acteur.Biographie=@biographie AND Acteur.Nationalite=@nat_act)
+		/*SI l''acteur existe dans la table Acteur ALORS*/
+			begin
+			print 'l''acteur '+cast(@pre_act as NVARCHAR)+cast(@nom_act as NVARCHAR)+' existe déjà dans la table Acteur ; vérifier dans la table Jouer';
+
+			IF EXISTS (SELECT * FROM Joue WHERE Joue.FK_nom_acteur=@nom_act AND Joue.FK_prenom_acteur=@pre_act AND Joue.FK_date_de_naissance_acteur=@date_naissance)
+			/*SI l''acteur existe dans la table Joue ALORS*/
+				begin
+				print cast(@Titre as NVARCHAR)+', '+cast(@nom_act as NVARCHAR)+'; existe déjà dans la table Jouer'
+				end
+			ELSE
+				begin
+				print cast(@Titre as NVARCHAR)+', '+cast(@nom_act as NVARCHAR)+'; n''existe pas dans la table Jouer, insérer dans la table Joue'
+				exec  Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
+				end
+			end
+		ELSE /* l'acteur n'existe pas dans la table Acteur, insérer dans la table Acteur et dans la table Joue  */
+			begin
+			print cast(@nom_act as NVARCHAR)+' n''existe pas dans la table Acteurs, insérer dans la table Acteurs et dans la table Jouer'
+			exec Acteur_creer @nom_act, @pre_act, @date_naissance, @sexe_act, @date_deces, @nom_scene, @biographie, @nat_act;
+			exec Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
+			end
+		end
+		
+
+	
+	
+end
+
+print '--REALISATEUR(S)--';
+
+  set @index=1
+  set @vide=1
+
+  IF CHARINDEX('|', @liste_realisateurs)<>1
+     begin
+       set @liste_realisateurs = '|' + @liste_realisateurs
+     end
+  IF CHARINDEX('|',@liste_realisateurs, len(@liste_realisateurs))=0
+     begin
+       set @liste_realisateurs = @liste_realisateurs+'|'
+     end
+
+while @index <> LEN(@liste_realisateurs) AND @vide=1
+    begin
+
+    declare @cvirg1 int, @cvirg2 int, @cvirg3 int, @cvirg4 int, @cvirg5 int, @cvirg6 int
+
+    declare @nom_rea NVARCHAR (50), @prenom_rea NVARCHAR (50), @date_naissance_rea DATE, @sexe_rea NVARCHAR (50), @date_deces_rea DATE, @biographie_rea NVARCHAR (MAX), @nationalite_rea NVARCHAR (50)
+
+    set @cvirg1 = CHARINDEX(',', @liste_realisateurs, @index+1)
+    set @cvirg2 = CHARINDEX(',', @liste_realisateurs, @cvirg1+1) 
+    set @cvirg3 = CHARINDEX(',', @liste_realisateurs, @cvirg2+1)
+    set @cvirg4 = CHARINDEX(',', @liste_realisateurs, @cvirg3+1)
+    set @cvirg5 = CHARINDEX(',', @liste_realisateurs, @cvirg4+1)   
+    set @cvirg6 = CHARINDEX(',', @liste_realisateurs, @cvirg5+1)
+
+    
+    set @fin = CHARINDEX('|', @liste_realisateurs, @index+1)
+
+    set @nom_rea = LTRIM(SUBSTRING(@liste_realisateurs, @index+1, @cvirg1 - @index -1))
+    set @prenom_rea = LTRIM(SUBSTRING(@liste_realisateurs, @cvirg1+1, @cvirg2 - @cvirg1 -1))
+    set @date_naissance_rea = LTRIM(SUBSTRING(@liste_realisateurs, @cvirg2+1, @cvirg3 - @cvirg2 -1))
+    set @sexe_rea = LTRIM(SUBSTRING(@liste_realisateurs, @cvirg3+1, @cvirg4 - @cvirg3 -1))
+
+    declare @btmpDateDeces NVARCHAR(100)
+    set @btmpDateDeces = LTRIM(SUBSTRING(@liste_realisateurs, @cvirg4+1, @cvirg5 - @cvirg4 -1))
+    IF (@btmpDateDeces='' OR @btmpDateDeces=' ' OR @btmpDateDeces='null' OR @btmpDateDeces='NULL')
+       set @date_deces_rea = null
+    else set @date_deces_rea = @btmpDateDeces
+    
+    set @biographie_rea = LTRIM(SUBSTRING(@liste_acteurs, @cvirg5+1, @cvirg6 - @cvirg5 -1))
+
+    set @nationalite_rea = LTRIM(SUBSTRING(@liste_acteurs, @cvirg6+1, @fin- @cvirg6 -1))     
+
+    set @index = @fin
+
+
+    
+    IF EXISTS (SELECT * FROM Realisateur
+     WHERE
+     Realisateur.Nom=@nom_rea AND Realisateur.Prenom=@prenom_rea AND Realisateur.Date_naissance=@date_naissance_rea)
+         begin
+          print 'le realisateur'+cast(@nom_rea as NVARCHAR)+'existe déjà dans realisateurs'
+         IF EXISTS (SELECT * FROM Realiser
+         WHERE Realiser.FK_nom_real = @nom_rea AND Realiser.FK_prenom_real = @prenom_rea AND Realiser.FK_date_naissance = @date_naissance_rea)
+           begin
+            print 'le realisateur'+cast(@nom_rea as NVARCHAR)+'existe déjà dans realiser'
+           end
+        ELSE
+          begin
+           print 'le realisateur'+cast(@nom_rea as NVARCHAR)+'n''existe pas dans realiser'
+           exec Realiser_creer @Titre, @Complement_titre, @nom_rea, @prenom_rea, @date_naissance_rea;
+          end
+		END
+    ELSE
+       begin
+     /* Le realisateur n'existe pas on va donc l'ajouter dans la liste de nos realisateurs */
+        print cast(@nom_rea as NVARCHAR)+'n''existe pas dans realisateur, inserer dans realisateur et dans realiser'
+        exec Realisateur_creer @nom_rea, @prenom_rea, @date_naissance_rea, @sexe_rea, @date_deces_rea, @biographie_rea, @nationalite_rea;
+        exec Realiser_creer @Titre, @Complement_titre, @nom_rea, @prenom_rea, @date_naissance_rea;
+       end
+    END
+
+
+/* DISTINCTION(S) */
+
+print '--Distinctions--';
+
+ 	set @index=1
+	set @vide = 1
+
+  IF CHARINDEX('|', @liste_distinctions)=0
+     begin 
+       print 'Film sans distinctions'
+       set @vide=0
+     end
+
+  IF CHARINDEX('|', @liste_distinctions)<>1
+     begin
+       set  @liste_distinctions = '|' +  @liste_distinctions
+     end
+  IF CHARINDEX('|', @liste_distinctions, len(@liste_distinctions))=0
+     begin
+       set  @liste_distinctions =  @liste_distinctions+'|'
+     end
+
+	while @index <> LEN(@liste_distinctions) AND @vide=1
+        begin
+        declare @bvirg1 int, @bvirg2 int
+        declare @Nom NVARCHAR(50), @Lieu NVARCHAR(50), @Annee_d INT  
+        set @bvirg1 = CHARINDEX(',', @liste_distinctions, @index+1)
+        set @bvirg2 = CHARINDEX(',', @liste_distinctions, @bvirg1+1)
+        
+            
+    
+        set @fin = CHARINDEX('|', @liste_distinctions, @index+1)
+        
+        set @Nom = LTRIM(SUBSTRING(@liste_distinctions, @index+1, @bvirg1 - @index -1))
+        set @Lieu = LTRIM(SUBSTRING(@liste_distinctions, @bvirg1+1, @bvirg2 - @bvirg1 -1))
+        set @Annee_d = LTRIM(SUBSTRING(@liste_distinctions, @bvirg2+1, @fin- @bvirg2 -1))
+        
+        
+        set @index = @fin
+        
+        IF EXISTS (select* from Distinctions  
+            where Distinctions.Nom = @Nom and Distinctions.Lieu = @Lieu and Distinctions.Annee = @Annee_d)
+			begin
+            print 'la distinction'+cast(@Nom as NVARCHAR)+' existe déjà dans la table Distinctions ; vérifier dans la table Attribuer';
+ 
+        IF EXISTS (select* from Attribuer
+            where Attribuer.FK_nom_distinction = @Nom and Attribuer.FK_lieu_distinction = @Lieu and Attribuer.FK_annee_distinction= @Annee_d )
+			begin
+                print cast(@Nom as NVARCHAR)+', '+cast(@Lieu as NVARCHAR)+', '+cast(@Annee_d as INT)+'; existe déjà dans la table Attribuer'
+                end
+            ELSE
+                begin
+                      print cast(@Nom as NVARCHAR)+', '+cast(@Lieu as NVARCHAR)+', '+cast(@Annee_d as NVARCHAR)+'; n''existe pas dans la table Attribuer, inserer dans la table Attribuer'
+                end
+                
+            end
+        ELSE /* La distinction n'existe pas dans la table Attribuer, insérer dans la table Distinctions et dans la table Attribuer  */
+            begin
+            print cast(@nom_act as NVARCHAR)+' n''existe pas dans la table Acteurs, insérer dans la table Acteurs et dans la table Joue'
+            exec Distinctions_creer @Nom, @Lieu, @Annee_d;
+            exec Attribuer_creer @Titre, @Complement_titre, @Nom, @Lieu, @Annee_d;
+            end
+        end
+
+
+		/*Genre*/
+  print '--GENRE(S)--'
+  set @index=1
+  set @vide=1
+  IF CHARINDEX('|', @liste_genres)<>1
+     begin
+       set @liste_genres = '|' + @liste_genres
+     end
+  IF CHARINDEX('|',@liste_genres, len(@liste_genres))=0
+     begin
+       set @liste_genres = @liste_genres+'|'
+     end
+
+while @index <>LEN(@liste_genres) AND @vide=1
+    begin
+    declare @nom_genre NVARCHAR(50)
+    
+    set @fin = CHARINDEX('|', @liste_genres, @index+1)
+
+    set @nom_genre = LTRIM(SUBSTRING(@liste_genres, @index+1, @fin - @index -1))
+
+    set @index = @fin
+
+
+    IF EXISTS (SELECT * FROM Genre
+	WHERE
+          Genre.Nom=@nom_genre)
+	  begin
+          print 'le genre'+cast(@nom_genre as NVARCHAR)+'existe déjà dans genres';
+	  IF EXISTS (SELECT * FROM Appartenir
+	  WHERE
+ 	       Appartenir.FK_titre=@Titre
+           and Appartenir.FK_complement_titre=@Complement_titre
+           and Appartenir.FK_nom_genre=@nom_genre)
+	       begin
+               print 'le genre'+cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@nom_genre as NVARCHAR)+'existe deja';
+	       end
+
+	   ELSE
+               begin
+	       print 'le genre'+cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@nom_genre as NVARCHAR)+'existe deja';
+	       exec Appartenir_creer @Titre, @Complement_titre, @nom_genre;
+	       end
+ 	   end
+       
+    ELSE
+     /* Le genre n'existe pas on va donc l'ajouté dans la liste de nos genres */
+     begin
+     print cast(@nom_genre as NVARCHAR)+'n''existe pas dans genre';
+     exec Genre_creer @nom_genre;
+     exec Appartenir_creer @Titre,@Complement_titre,@nom_genre;
+     END
+END
+
+
+GO
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion Edition */
+/*Auteur(s): PATRICK POL ELISE BROCHEN*/
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+
+/*Charindex - Insertion Edition */
+
+GO
+
+CREATE procedure [dbo].[a_insertion_edition]
+@FK_titre NVARCHAR (50),
+@FK_complement_titre NVARCHAR(50),
+
+@Nom NVARCHAR(50),
+@Annee_de_sortie INT,
+@Duree_film INT,
+@limite_age INT,
+@Support NVARCHAR (50),
+@Dinsertion DATETIME,
+@Tcouleur NVARCHAR (50),
+@Tson NVARCHAR (50),
+
+@liste_Langue_audio NVARCHAR (1000),
+@liste_Langue_sous_titre NVARCHAR (1000)
+/* Exemplaire aussi normalement */
+
+as
+
+begin
+   declare @tmp int
+   declare @index int
+   declare @fin int
+   declare @vide int
+   declare @er int
+
+/* Catalogue - On vérifie l'existance du film*/
+
+IF EXISTS (select * FROM Films
+ where
+   Films.Titre=@FK_titre
+   and Films.Complement_titre=@FK_complement_titre
+	)
+
+begin
+print cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR)+'existe déja';
+return 0;
+end
+
+ELSE
+print cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR)+'à insérer';
+EXEC @er = Film_creer @FK_titre, @FK_complement_titre
+if @er<>0 return 0
+end
+
+/*Edition --> On vérifie l'existence des éléments */
+
+IF EXISTS (select * from Edition
+  where
+	Edition.Nom=@Nom AND
+	Edition.Annee_de_sortie=@Annee_de_sortie AND
+	Edition.limite_age=@limite_age AND
+	Edition.Support=@Support AND
+	Edition.Date_insertion=@Dinsertion AND
+	Edition.Type_couleur=@Tcouleur AND
+	Edition.Type_son=@Tson
+	)
+begin
+     print  cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as INT)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as DATETIME)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
+return 0;
+end
+
+ELSE
+begin
+    print cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as INT)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as DATETIME)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'à insérer';
+EXEC @er = Edition_creer @Nom, @Annee_de_sortie, @limite_age, @Support, @Dinsertion, @Tcouleur, @Tson;
+if @er<> 0 return 0
+end
+
+/* Langue Audio */
+   print '--LANGUE_AUDIO--';
+  set @index=1
+  set @vide=1
+  IF CHARINDEX('|', @liste_Langue_audio)=0
+     begin
+      print 'film muet'
+      set @vide = 0
+     end
+
+  IF CHARINDEX('|', @liste_Langue_audio)<>1
+     begin
+       set @liste_Langue_audio = '|' + @liste_Langue_audio
+     end
+  IF CHARINDEX('|',@liste_Langue_audio, len(@liste_Langue_audio))=0
+     begin
+       set @liste_Langue_audio = @liste_Langue_audio+'|'
+     end
+
+while @index <>LEN(@liste_Langue_audio) AND @vide=1
+    begin  
+    declare @nom_audio NVARCHAR(50)
+   
+    
+    set @fin = CHARINDEX('|', @liste_Langue_audio, @index+1)
+
+    set @nom_audio = LTRIM(SUBSTRING(@liste_Langue_audio, @index+1, @fin - @index -1))
+
+    set @index = @fin
+
+
+    IF EXISTS (SELECT * FROM Langue_audio
+	WHERE
+        Langue_audio.Nom=@nom_audio)
+	begin
+        print 'la langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans langues audio';
+	
+	IF EXISTS (SELECT * FROM Rattacher
+	WHERE Rattacher.FK_langue=@nom_audio)
+		begin
+		print 'Cette langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans rattacher';
+		end
+
+	ELSE
+		begin
+		print 'Cette langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans rattacher';
+		EXEC Rattacher_creer @nom_audio
+	    END
+	END
+	     
+    ELSE
+     /* La langue audio n'existe pas on va donc l'ajouté dans la liste de nos langues audio */
+     begin
+     print cast(@Nom as NVARCHAR)+'n''existe pas dans Langues Audio'
+     exec Langue_audio_creer @nom_audio;
+     end
+END
+
+/*Langue Sous-titre */
+
+print '--Langue_sous_titre--'
+  set @index=1
+  set @vide=1
+  IF CHARINDEX('|', @liste_Langue_sous_titre)=0
+     begin 
+       print 'Film sans sous titre'
+       set @vide=0
+     end
+
+  IF CHARINDEX('|', @liste_Langue_sous_titre)<>1
+     begin
+       set @liste_Langue_sous_titre = '|' + @liste_Langue_sous_titre
+     end
+  IF CHARINDEX('|',@liste_Langue_sous_titre, len(@liste_Langue_sous_titre))=0
+     begin
+       set @liste_Langue_sous_titre = @liste_Langue_sous_titre+'|'
+     end
+
+while @index <>LEN(@liste_Langue_sous_titre) AND @vide=1
+    begin  
+    declare @nom_sub NVARCHAR(50)
+    
+    set @fin = CHARINDEX('|', @liste_Langue_sous_titre, @index+1)
+
+    set @nom_sub = LTRIM(SUBSTRING(@liste_Langue_sous_titre, @index+1, @fin - @index -1))
+
+    set @index = @fin
+
+
+    IF EXISTS (SELECT * FROM Langue_sous_titre
+	WHERE Langue_sous_titre.Nom=@nom_sub)
+	    begin
+        print 'la langue sous titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans langues audio'
+       
+	      IF EXISTS (SELECT * FROM Afficher
+	      WHERE Afficher.FK_langue=@nom_sub)
+		     begin
+		    print 'Cette langue sous-titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans rattacher';
+		     end
+
+	     ELSE
+		    begin
+		    print 'Cette langue sous titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans rattacher';
+		    EXEC Afficher_creer @nom_sub
+		 end
+	END
+    ELSE
+     /* la langue sous titre n'existe pas on va donc l'ajouté dans la liste de nos langues audio */
+       BEGIN
+       print cast(@nom_sub as NVARCHAR)+'n''existe pas dans Langues Sous-titre'
+       exec Langue_sous_titre_creer @nom_sub;
+       END
+    END
+
+
+/* Exemplaire ==> a corriger*/
+
+/*declare @counter int
+declare @nombreEx int
+declare @Date_approvisionnement_e DATETIME
+declare @Taux_usure int
+declare @Disponibilite int
+declare @FK_numero_edition int
+set @counter = 1
+
+
+		EXEC exemplaire_creer @Date_approvisionnement_e @Taux_usure  @Disponibilite @FK_numero_edition;
+while @counter <= @nombreEx
+	begin
+
+		set @counter = @counter +1;
+	end;
+
+GO*/
+
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion Exemplaire */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+GO
+
+CREATE procedure [dbo].[insere_exemplaire]
+
+@numSerieEdition int,
+@nombreEx int,
+
+@NomE NVARCHAR (50),
+@AnneeE INT,
+@Duree INT,
+@limiteA INT,
+@SupportE NVARCHAR (50),
+@Dinsertion DATETIME,
+@Tcouleur NVARCHAR (50),
+@Tson NVARCHAR (50),
+
+@Date_approvisionnement DATETIME,
+@Taux_usure INT,
+@Disponibilite BIT,
+@FK_numero_edition INT
+as
+
+begin
+
+/* Tester si @numSerieEdition dans domaine */
+/* Tester si @numSerieEdition correspond a edition existante */
+IF  @numSerieEdition NOT LIKE '%[0-9]%'
+	BEGIN 
+		PRINT 'Le numero d''edition est pas valide';
+	RETURN 0;
+        END 
+
+IF EXISTS (select * from Edition
+  where
+	Edition.Nom=@NomE AND
+	Edition.Annee_de_sortie=@AnneeE AND
+	Edition.Duree_film=@Duree AND
+	Edition.limite_age=@limiteA AND
+	Edition.Support=@SupportE AND
+	Edition.Date_insertion=@Dinsertion AND
+	Edition.Type_couleur=@Tcouleur AND
+	Edition.Type_son=@Tson
+	)
+begin
+     print  cast(@NomE as NVARCHAR)+','+cast(@AnneeE as INT)+','+cast(@Duree as INT)+','+cast(@limiteA as INT)+','+cast(@SupportE as NVARCHAR)+','+cast(@Dinsertion as DATETIME)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
+return 0;
+end
+   
+/* Tester si @nombreEx dans domaine */
+
+IF  @nombreEx NOT LIKE '%[0-9]%'
+	BEGIN 
+		PRINT 'Le nombre d''exemplaire n''est pas valide';
+	RETURN 0;
+END 
+
+declare @counter int;
+set @counter = 1;
+
+while @counter <= @nombreEx
+	begin
+		insert into EXEMPLAIRE
+		(
+			Date_approvisionnement ,
+			Taux_usure ,
+			Disponibilite ,
+			FK_numero_edition
+		) 
+		values
+		(
+			@Date_approvisionnement ,
+			@Taux_usure ,
+			@Disponibilite ,
+			@FK_numero_edition
+		)
+		set @counter = @counter +1;
+          END
+
+END
+
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion abonne */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+GO
+
+CREATE procedure [dbo].[a_insertion_Abonne]
+
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Pseudo NVARCHAR (50),
+	@Date_naissance DATE,
+	@Sexe NVARCHAR (50),
+	@Numero_de_voie NVARCHAR (50),
+	@Complement_de_voie NVARCHAR (50),
+	@Type_de_voie NVARCHAR (50),
+	@Libelle NVARCHAR (50),
+	@Complement_libelle NVARCHAR (50),
+	@Code_postal NVARCHAR (50),
+	@Ville NVARCHAR (50),
+	@Cedex NVARCHAR (50),
+	@Pays NVARCHAR (50),
+	@Numero_telephone NVARCHAR (50),
+	@Adresse_email NVARCHAR (50),
+	
+	/* Type_abonnement */
+	
+	@Type_abonnement NVARCHAR(50)  
+
+as
+
+begin
+
+	declare @tmp int
+	declare @index int
+	declare @fin int
+	declare @er INT
+	declare @num_compte INT
+	declare @Date_crea DATETIME
+
+/* test type_abonnement */
+IF NOT EXISTS (
+	SELECT *
+	FROM Type_abonnement WHERE  Type_abonnement.Nom=@Type_abonnement )
+	BEGIN
+		PRINT'Le type d`abonnement n`existe pas';
+		RETURN 0;
+END
+ 
+ELSE /* le type_abonnnemnt exist déjà */
+	BEGIN
+		/* ABONNEE */
+		print '-- ABONNEE --'
+		exec @er = Abonne_creer @Nom, @Prenom, @Date_naissance;
+		IF @er= 1 /* Abonne déjà au catalogue */
+			BEGIN
+				print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+'existe déjà';
+				return 0;
+			END
+
+		ELSE /* Abonnee absent du catalogue */
+			BEGIN
+			print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+',  Abonnee absent du catalogue, à insérer';
+				
+				/* creation de compte*/
+				exec  compte_creer @er , 0  ;
+				set @num_compte=@@IDENTITY 
+				
+				/* creation de l''abonnement */
+				set @Date_crea = getdate()
+				declare @Dfin DATE
+				set @Dfin= CURRENT_TIMESTAMP+30
+		
+				
+
+				exec @er = abonnement_creer Date_crea,Dfin,@num_compte,@Type_abonnement ;
+			/**/
+			END
+	END
+	END
+	GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion type abonnement */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+GO
+
+Create procedure [dbo].[a_insertion_type_abonnement]
+@Nom NVARCHAR (50),
+@Prix MONEY,
+@Prix_location MONEY,
+@NbSimuls INT,
+@Prix_retard MONEY,
+@Duree INT
+
+
+as
+
+begin
+
+	
+	declare @index int
+	declare @fin int
+	declare @vide int
+	declare @er int
+	
+	/* catalogue */
+	IF EXISTS (SELECT * FROM Type_Abonnement
+	WHERE
+	     Type_Abonnement.Nom=@Nom and
+	     Type_Abonnement.Prix=@Prix and
+ 	     Type_Abonnement.Prix_location=@Prix_location and
+	     Type_Abonnement.Exemplaires_simultanes=@NbSimuls and
+             Type_Abonnement.Prix_retard=@Prix_retard and
+             Type_Abonnement.Duree_engagement=@Duree
+	)
+	begin
+	print cast(@Nom as NVARCHAR)+'exite deja';
+	return 0;
+	end
+
+	ELSE /* Film absent au catalogue */
+	begin
+	print cast(@Nom as NVARCHAR)+'à insérer au type abonnement';
+	exec @er=Type_abonnement_creer @Nom, @Prix, @Prix_location, @NbSimuls, @Prix_retard, @Duree;
+	if @er <> 0 return 0
+	end
+
+END 
+
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion location */
+/*Auteur(s): ELISE BROCHEN */
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN Mickael GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+use ouftim
+
+GO
+
+CREATE procedure [dbo].[insere_location]
+@Num_exem INT,
+@Num_abo INT
+
+AS
+
+BEGIN
+	DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128 ), @NbSimul INT
+
+	IF @Num_exem < 0
+	BEGIN
+		PRINT 'Num exemplaire invalide'
+		RETURN;
+	END
+
+	IF @Num_abo < 0
+	BEGIN
+		PRINT 'Num abonnement invalide'
+		RETURN;
+	END
+
+	
+	SET @Date_deb= CURRENT_TIMESTAMP
+
+	SET @TaboNom = (SELECT FK_type_abonnement FROM dbo.Abonnement WHERE Abonnement.Numero_abonnement = @Num_abo)
+	IF @TaboNom IS NULL
+	BEGIN
+		PRINT 'Abonnement invalide'
+		RETURN;
+	END
+
+	SET @Duree = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
+	IF @Duree IS NULL
+	BEGIN
+		PRINT 'Duree d''abonnement invalide'
+		RETURN;
+	END
+
+	IF (SELECT Disponibilite FROM dbo.Exemplaires WHERE  Exemplaires.Numero_exemplaire = @Num_exem) <> 1
+	BEGIN
+		PRINT 'Exemplaires non dispo'
+		RETURN;
+	END
+
+	SET @NbSimul = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
+	IF (SELECT COUNT(*) FROM dbo.Locations WHERE Locations.FK_num_abonnement = @Num_exem) >= @NbSimul
+	BEGIN
+		PRINT 'Trop de locations' 
+		RETURN;
+	END
+
+
+
+	IF NOT EXISTS (SELECT * FROM dbo.Locations WHERE Locations.FK_exemplaire=@Num_exem AND Locations.FK_num_abonnement=@Num_abo AND Locations.Date_debut=@Date_deb)
+	BEGIN
+		INSERT INTO dbo.Locations
+			(
+			Date_debut,
+			Duree, 
+			Date_fin_prevue,
+			Date_fin_reelle,
+			FK_exemplaire,
+			FK_num_abonnement
+			)
+
+			VALUES
+			(
+			@Date_deb,
+			@Duree, 
+			NULL,
+			NULL,
+			@Num_exem,
+			@Num_abo
+			)
+
+			UPDATE dbo.Exemplaires SET Disponibilite= 1 WHERE Exemplaires.FK_numero_edition = @Num_exem ;
+		PRINT 'Nouvel location ajoutée'
+
+	END
+
+	ELSE
+	BEGIN
+		PRINT 'Cette location existe déjà'
+	END
+END
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Charindex - Insertion Abonnement */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
+/*Intégrateur: SANDRA LADURANTI*/
+
+/*Charindex - Insertion Abonnement */
+
+GO
+
+CREATE procedure [dbo].[a_insertion_abonnement]
+
+/* On dresse la liste des abonnes qui ont le meme abonnement */
+
+@Nom_Abonne NVARCHAR (50),
+@Prenom_Abonne NVARCHAR (50),
+@Pseudo_Abonne NVARCHAR (50),
+@Num_compte INT,
+@TAbonnement NVARCHAR (50)
+
+AS
+BEGIN
+
+declare @Date_expiration DATE
+declare @Date_creation Date
+SET  @Date_creation = CURRENT_TIMESTAMP+1;
+SET  @Date_expiration = CURRENT_TIMESTAMP+20;
+
+IF NOT EXISTS (SELECT * FROM Abonne where Abonne.Nom=@Nom_Abonne and Abonne.Prenom=@Prenom_abonne and Abonne.Pseudo=@Pseudo_abonne)
+   BEGIN
+      print cast(@Nom_Abonne as NVARCHAR)+cast(@Prenom_Abonne as NVARCHAR)+cast(@Pseudo_Abonne as NVARCHAR)+'n''existe pas'
+      return 0;
+
+   IF NOT EXISTS (SELECT * FROM Type_Abonnement where Type_Abonnement.Nom=@TAbonnement)
+      BEGIN
+	print cast(@TAbonnement as NVARCHAR)+'Type Abonnement non existant'
+      END
+
+   ELSE
+      BEGIN
+	IF NOT EXISTS (SELECT * FROM Compte WHERE Compte.Numero_compte=@Num_compte)
+	   BEGIN
+             print 'Votre compte n''existe pas'
+	     return 0;
+           END
+        ELSE
+	    BEGIN
+	       EXEC Abonnement_creer @Num_compte,  @Date_creation, @Date_expiration, @TAbonnement
+	       EXEC Souscrire_creer  @Nom_Abonne, @Prenom_Abonne, @Pseudo_Abonne, @Num_compte
+            END
+      END
+
+   END
+
+END
+
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*Procedure de creation d'une reservation */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):*/
+/*Intégrateur: */
+
+/* Des curseurs seront intégrés par la suite
+* pour le moment pas le code final */
+
+USE ouftim
+
+GO 
+
+CREATE procedure [dbo].[insertion_reservation]
+
+/* Numero Abo */
+
+@Num_abonnement INT,
+
+/* Catalogue */
+
+@Titre NVARCHAR (50),
+@Complement_titre NVARCHAR (50),
+
+
+/* Edition */
+
+@Support NVARCHAR (50),
+@Annee_sortie INT,
+
+/* Audio */
+@Langue_audio NVARCHAR (50),
+
+/* Sous-titre */
+@Langue_sub NVARCHAR (50)
+
+AS
+
+BEGIN
+
+/* Numero Abo */
+print '----Votre num abonnement----'
+
+
+
+/* Catalogue */
+
+IF EXISTS (select * FROM Films 
+ where 
+   Films.Titre=@Titre 
+   AND Films.Complement_titre=@Complement_titre 
+    ) 
+ 
+   begin 
+   print cast(@Titre as VARCHAR)+','+cast(@Complement_titre as varchar)+'film existant'; 
+   return; 
+   end
+
+/* Edition */
+
+IF EXISTS (select * FROM Edition WHERE Edition.Support=@Support AND Edition.Annee_de_sortie=@Annee_sortie)
+begin 
+     print cast(@Support as VARCHAR)+','+cast(@Annee_sortie as INT)+'Edition Disponible'; 
+return; 
+end
+
+ELSE
+begin 
+    print cast(@Support as VARCHAR)+','+cast(@Annee_sortie as INT)+'Edition recherche non existante';
+END
+
+/* Audio */
+
+IF EXISTS (SELECT * FROM Langue_audio
+    WHERE
+        Langue_audio.Nom=@Langue_audio)
+    begin
+        print 'la langue audio'+cast(@Langue_audio as varchar)+'existe ';
+    
+        IF EXISTS (SELECT * FROM Rattacher
+        WHERE Rattacher.FK_langue=@Langue_audio)
+          begin
+            print 'Cette langue audio'+cast(@Langue_audio as varchar)+'existe déjà dans rattacher';
+          end
+
+        ELSE
+           begin
+           print 'Cette langue audio'+cast(@Langue_audio as varchar)+'n''existe pas';
+        END
+   END 
+ELSE
+    begin
+    print cast(@Langue_audio as varchar)+'n''existe pas pour cette edition'
+ END
+
+/* Sous-titre */
+
+IF EXISTS (SELECT * FROM Langue_sous_titre
+    WHERE Langue_sous_titre.Nom=@Langue_sub)
+    begin
+        print 'la langue sous titre'+cast(@Langue_sub as varchar)+'existe déjà dans langues audio'
+      
+	  	 /* la langue sous titre n'existe pas on va donc l'ajouter dans la liste de nos langues audio */ 
+        IF EXISTS (SELECT * FROM Afficher
+       WHERE Afficher.FK_langue=@Langue_sub)
+            begin
+            print 'Cette langue sous-titre'+cast(@Langue_sub as varchar)+'existe déjà dans rattacher';
+            end
+
+        ELSE
+          begin
+          print 'Cette langue sous titre'+cast(@Langue_sub as varchar)+'n''existe pas';
+         END
+	END
+    ELSE
+     BEGIN
+     print cast(@Langue_sub as varchar)+'n''existe pas pour cette edition'
+     
+     END
+
+
+	 /*comme nous n'avons pas les curseurs on ne peut pas récuperer la dernière edition il faudra donc appeler
+	 la création de reservation ici
+
+	 EXEC reservation_creer @date_creation, @date_butoir, @etat, @FK_num_abonnement, @FK_num_exemplaire;*/
+END
+GO
