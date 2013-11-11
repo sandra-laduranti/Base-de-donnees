@@ -1,8 +1,8 @@
 /* SQL-DDL – Identification – Template */ 
 --------------------------------------------------------------------------- 
 /* L2 ATIC 2013 – Groupe < OUF'TIM > */ 
-/* BdD < Ouftim > */ 
-/* Création de la table < ouftim > */ 
+/* BdD < ouf_tim > */ 
+/* Création de la table < ouf_tim > */ 
 /* Auteur(s) : LADURANTI Sandra, BROCHEN Elise, GOUALARD Mickael, POL Patrick */ 
 /* Testeur(s) : LADURANTI Sandra */ 
 /* Intégrateur(s) : LADURANTI Sandra */ 
@@ -14,24 +14,24 @@ USE [master]
 IF
  
 EXISTS
- (SELECT name FROM sys.databases WHERE name = 'ouftim') 
+ (SELECT name FROM sys.databases WHERE name = 'ouf_tim') 
 BEGIN
  
  
-EXEC msdb.dbo.sp_delete_database_backuphistory @database_name = 'ouftim'
+EXEC msdb.dbo.sp_delete_database_backuphistory @database_name = 'ouf_tim'
  
  
-DROP DATABASE ouftim 
+DROP DATABASE ouf_tim 
 END 
 GO
  
  
-CREATE DATABASE ouftim
+CREATE DATABASE ouf_tim
  
 GO
  
  
-USE ouftim
+USE ouf_tim
  
 GO
 
@@ -46,7 +46,8 @@ CREATE TABLE Films(
     [Annee_de_sortie] [int] NOT NULL, 
     [Nationalite] [nvarchar](50) NOT NULL,
     [Duree] [int] NOT NULL,
-	[Cache] [bit] NOT NULL
+	[Cache] [bit] NOT NULL,
+	[supprimer] [bit] NOT NULL
 
 CONSTRAINT PK_FILMS PRIMARY KEY ( Titre, Complement_titre)
 );
@@ -312,27 +313,7 @@ CONSTRAINT PK_ABONNEMENT PRIMARY KEY ( Numero_abonnement),
    );
 
 
-   IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation' AND xtype = 'U')
-DROP TABLE Reservation ;  
- 
- 
-CREATE TABLE Reservation(
-	[Numero_reservation] [int] IDENTITY(1,1) NOT NULL,
-	[HD_creation] [DATE] NOT NULL,
-	[HD_butoir] [DATE] NOT NULL,
-	[Etat] [NVARCHAR] (50) NOT NULL,
-	[FK_num_abonnement] [int] NOT NULL ,
-    [FK_num_exemplaire][int]NULL
- 
- 
-CONSTRAINT PK_RESERVATION PRIMARY KEY (Numero_reservation),
- 
- 
-   CONSTRAINT FK_RESERVATION_ABONNEMENT
-    	FOREIGN KEY ( FK_num_abonnement)   
-    	REFERENCES  Abonnement (Numero_abonnement)
 
-	);
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Souscrire' AND xtype = 'U')
 DROP TABLE Souscrire ; 
@@ -445,7 +426,7 @@ CONSTRAINT PK_AFFICHER PRIMARY KEY ( FK_langue, FK_edition),
 
    CONSTRAINT FK_AFFICHER_EDITION
         FOREIGN KEY ( FK_edition)  
-        REFERENCES  Edition (Numero_edition),
+        REFERENCES  edition (Numero_edition),
    
    CONSTRAINT FK_AFFICHER_LANGUE_SOUS_TITRE
         FOREIGN KEY (FK_langue)
@@ -462,7 +443,7 @@ CREATE TABLE Exemplaires(
     [Date_approvisionnement] [datetime] NOT NULL,
     [Taux_usure] [int] NOT NULL,
     [Disponibilite] [bit] NOT NULL,
-    [Reserve] [bit] NOT NULL,
+    [Reserve] [int] NOT NULL,
     [FK_numero_edition][int] NOT NULL
 
 CONSTRAINT PK_EXEMPLAIRES PRIMARY KEY ( Numero_exemplaire),
@@ -472,6 +453,99 @@ CONSTRAINT PK_EXEMPLAIRES PRIMARY KEY ( Numero_exemplaire),
         FOREIGN KEY ( FK_numero_edition )  
         REFERENCES Edition (Numero_edition),
    );
+
+   /* reservation et récupération par la personne */
+   IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_immediate' AND xtype = 'U')
+DROP TABLE Reservation_immediate ;  
+ 
+ 
+CREATE TABLE Reservation_immediate(
+	[Numero_reservation] [int] IDENTITY(1,1) NOT NULL,
+	[HD_creation] [DATETIME] NOT NULL,
+	[HD_butoir] [DATETIME] NOT NULL,
+	[Etat] [NVARCHAR] (50) NOT NULL,
+	[FK_num_abonnement] [int] NOT NULL ,
+    [FK_num_exemplaire][int]NULL
+ 
+ 
+CONSTRAINT PK_RESERVATION PRIMARY KEY (Numero_reservation),
+ 
+ 
+   CONSTRAINT FK_RESERVATION_ABONNEMENT
+    	FOREIGN KEY ( FK_num_abonnement)   
+    	REFERENCES  Abonnement (Numero_abonnement),
+
+		 CONSTRAINT FK_RESERVATION_ABONNEMENT_EXEMPLAIRE
+    	FOREIGN KEY ( FK_num_exemplaire)   
+    	REFERENCES  Exemplaires (Numero_exemplaire),
+
+	);
+
+
+	IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_Livraison' AND xtype = 'U')
+DROP TABLE Reservation_Livraison ; 
+
+CREATE TABLE Reservation_Livraison (
+	[Numero_reservation] [int] IDENTITY(1,1) NOT NULL,
+	[HD_creation] [DATETIME] NOT NULL,
+	[HD_livraison] [DATETIME] NOT NULL,
+	[HD_retour] [DATETIME] NOT NULL,
+	[Etat] [NVARCHAR] (50) NOT NULL,
+	[FK_num_abonnement] [int] NOT NULL ,
+  	[FK_num_exemplaire][int]NOT NULL
+ 
+CONSTRAINT PK_RESERVATION_LIVRAISON PRIMARY KEY (Numero_reservation),
+ 
+ 
+   CONSTRAINT FK_RESERVATION_LIVRAISON_ABONNEMENT
+    	FOREIGN KEY (FK_num_abonnement)   
+    	REFERENCES  Abonnement (Numero_abonnement),
+
+   CONSTRAINT FK_RESERVATION_LIVRAISON_EXEMPLAIRE
+    	FOREIGN KEY (FK_num_exemplaire)   
+    	REFERENCES  Exemplaires (Numero_exemplaire),
+);
+
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name='annulation_reservation_imm' and xtype='U')
+DROP TABLE annulation_reservation_imm;
+CREATE TABLE annulation_reservation_imm(
+	Numero_annulation INT IDENTITY(1,1) NOT NULL,
+	HD_annulation DATETIME NOT NULL,
+	FK_num_reservation INT NOT NULL,
+	FK_num_abonnement INT NOT NULL
+	
+CONSTRAINT PK_annulation_reservation_imm PRIMARY KEY(Numero_annulation),
+
+CONSTRAINT FK_Annulation_reservation_imm_reservation
+FOREIGN KEY(FK_num_reservation)
+REFERENCES Reservation_immediate (Numero_reservation),
+
+CONSTRAINT FK_Annulation_reservation_imm_abonnement
+FOREIGN KEY(FK_num_abonnement)
+REFERENCES Abonnement (Numero_abonnement)
+
+);
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name='annulation_livraison' and xtype='U')
+DROP TABLE annulation_livraison;
+CREATE TABLE annulation_livraison(
+	Numero_annulation INT IDENTITY(1,1) NOT NULL,
+	HD_annulation DATETIME NOT NULL,
+	FK_num_abonnement INT NOT NULL,
+	FK_num_reservation INT NOT NULL
+	
+CONSTRAINT PK_annulation_livraison PRIMARY KEY(Numero_annulation),
+
+CONSTRAINT FK_annulation_livraison_reservation_livraison
+FOREIGN KEY(FK_num_reservation)
+REFERENCES Reservation_livraison (Numero_reservation),
+
+CONSTRAINT FK_annulation_livraison_abonnement
+FOREIGN KEY(FK_num_abonnement)
+REFERENCES Abonnement (Numero_abonnement),
+
+);
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Locations' AND xtype = 'U')
@@ -501,6 +575,20 @@ CONSTRAINT PK_LOCATIONS PRIMARY KEY ( Numero_location),
         REFERENCES Exemplaires (Numero_exemplaire ),
 );
 
+IF EXISTS (SELECT 1  FROM sysobjects WHERE name='Retour_location' AND xtype = 'U')
+DROP TABLE Retour_location;
+CREATE TABLE Retour_location(
+	Numero_retour_loc INT IDENTITY(1,1) NOT NULL,
+	Date_retour DATETIME,
+	FK_num_location INT NOT NULL
+	
+CONSTRAINT PK_Retour_location PRIMARY KEY(Numero_retour_loc),
+
+CONSTRAINT FK_Retour_location_locations
+FOREIGN KEY (FK_num_location)
+REFERENCES Locations (Numero_location),
+
+);
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Relance_retards' AND xtype = 'U')
 DROP TABLE Relance_retards ; 
@@ -520,4 +608,25 @@ CONSTRAINT PK_RELANCE_RETARD PRIMARY KEY ( Numero_retard),
    CONSTRAINT RELANCE_RETARDS_LOCATION 
         FOREIGN KEY (FK_num_location)  
         REFERENCES Locations (Numero_location),
+);
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Colis_livraison' AND xtype = 'U')
+DROP TABLE Colis_livraison;
+CREATE TABLE Colis_livraison(
+	Numero_colis INT IDENTITY(1,1) NOT NULL,
+	HD_creation_colis DATETIME NOT NULL,
+	HD_retour_colis DATETIME NOT NULL,
+	FK_num_reservation INT NOT NULL,
+	FK_num_exemplaire INT NOT NULL,
+	FK_num_abonnement INT NOT NULL
+	
+CONSTRAINT PK_colis_livraison PRIMARY KEY(Numero_colis),
+	
+CONSTRAINT FK_colis_livraison_reservation_livraison
+FOREIGN KEY (FK_num_reservation)
+REFERENCES Reservation_livraison (Numero_reservation),
+
+CONSTRAINT FK_colis_livraison_abonnement
+FOREIGN KEY (FK_num_abonnement)
+REFERENCES Abonnement (Numero_abonnement),
 );
