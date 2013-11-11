@@ -1,113 +1,113 @@
-USE ouftim
+USE ouf_tim
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation de Acteur */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-use ouftim
+use ouf_tim
 
 IF OBJECT_ID('dbo.Acteur_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Acteur_creer;
+    DROP PROCEDURE dbo.Acteur_creer;
 GO 
 CREATE PROCEDURE dbo.Acteur_creer
 (
-	@Nom NVARCHAR (50),
-	@Prenom NVARCHAR (50),
-	@Date_naissance DATE,
-	@Sexe NVARCHAR (50),
-	@Date_deces DATE,
-	@Nom_de_scene NVARCHAR (50),
-	@Biographie NVARCHAR (MAX),
-	@Nationalite NVARCHAR (50)
+    @Nom NVARCHAR (50),
+    @Prenom NVARCHAR (50),
+    @Date_naissance DATE,
+    @Sexe NVARCHAR (50),
+    @Date_deces DATE,
+    @Nom_de_scene NVARCHAR (50),
+    @Biographie NVARCHAR (MAX),
+    @Nationalite NVARCHAR (50)
 )
 
 AS
 
 BEGIN
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom  = ''
-	BEGIN
-		PRINT('Le nom n''est pas valide');
-		RETURN 0;
-	END
-	
-	IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom  = ''
-	BEGIN
-		PRINT('Le prenom n''est pas valide');
-		RETURN 0;
-	END
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom  = ''
+    BEGIN
+        PRINT('Le nom n''est pas valide');
+        RETURN 0;
+    END
+    
+    IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom  = ''
+    BEGIN
+        PRINT('Le prenom n''est pas valide');
+        RETURN 0;
+    END
 
-	IF @Date_naissance > GETDATE() OR @Date_naissance < '1825/01/01'
-	BEGIN
-		PRINT('La date de naissance n''est pas valide');
-		RETURN 0;
-	END
+    IF @Date_naissance > GETDATE() OR @Date_naissance < '1825/01/01'
+    BEGIN
+        PRINT('La date de naissance n''est pas valide');
+        RETURN 0;
+    END
 
-	IF @Sexe NOT LIKE '%[A-Za-z]%' OR @Sexe LIKE ''
-	BEGIN
-		PRINT('Le sexe n''est pas valide');
-		RETURN 0;
-	END
+    IF @Sexe NOT LIKE '%[A-Za-z]%' OR @Sexe LIKE ''
+    BEGIN
+        PRINT('Le sexe n''est pas valide');
+        RETURN 0;
+    END
 
-	IF @Date_deces > GETDATE()
-	BEGIN
-		PRINT('La date de deces non valide');
-		RETURN 0;
-	END
+    IF @Date_deces > GETDATE()
+    BEGIN
+        PRINT('La date de deces non valide');
+        RETURN 0;
+    END
 
-	IF @Nom_de_scene NOT LIKE '%[A-Za-z ''-]%' OR @Nom_de_scene = ''
-	BEGIN
-		PRINT('Le nom de scene non valide');
-		RETURN 0;
-	END
+    IF @Nom_de_scene NOT LIKE '%[A-Za-z ''-]%' OR @Nom_de_scene = ''
+    BEGIN
+        PRINT('Le nom de scene non valide');
+        RETURN 0;
+    END
 
-	IF @Biographie NOT LIKE '%[A-Za-z ''- 0-9]%' OR @Biographie  = ''
-	BEGIN
-		PRINT('La biographie non valide');
-		RETURN 0;
-	END
+    IF @Biographie NOT LIKE '%[A-Za-z ''- 0-9]%' OR @Biographie  = ''
+    BEGIN
+        PRINT('La biographie non valide');
+        RETURN 0;
+    END
 
-	IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite = ''
-	BEGIN
-		PRINT('La nationalite non valide');
-		RETURN 0;
-	END
+    IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite = ''
+    BEGIN
+        PRINT('La nationalite non valide');
+        RETURN 0;
+    END
 
 IF NOT EXISTS (SELECT * FROM Acteur WHERE Nom=@Nom AND Prenom=@Prenom AND Date_naissance=@Date_naissance)
 BEGIN
-	INSERT INTO Acteur 
-	(
-		Nom,
-		Prenom,		
-		Date_naissance,
-		Sexe,
-		Date_deces,
-		Nom_de_scene,
-		Biographie,
-		Nationalite
+    INSERT INTO Acteur 
+    (
+        Nom,
+        Prenom,     
+        Date_naissance,
+        Sexe,
+        Date_deces,
+        Nom_de_scene,
+        Biographie,
+        Nationalite
 
-	)
+    )
 
-	VALUES
-	(
-		@Nom,
-		@Prenom,		
-		@Date_naissance,
-		@Sexe,
-		@Date_deces,
-		@Nom_de_scene,
-		@Biographie,
-		@Nationalite
-	)
-	PRINT 'Nouvel acteur ajouté';
-	return 1;
+    VALUES
+    (
+        @Nom,
+        @Prenom,        
+        @Date_naissance,
+        @Sexe,
+        @Date_deces,
+        @Nom_de_scene,
+        @Biographie,
+        @Nationalite
+    )
+    PRINT 'Nouvel acteur ajouté';
+    return 1;
 END
 
 ELSE
 BEGIN
-	PRINT 'Cet acteur existe déjà';
+    PRINT 'Cet acteur existe déjà';
 END
 
 END
@@ -115,7 +115,7 @@ GO
 
 
 ---------------------------------------------
-/*BdD Ouftim                               */
+/*BdD ouf_tim                               */
 /*Procedure de creation d'un compte        */
 /*Auteur(s): HUA Lucien                    */
 /*testeur(s): LADURANTI Sandra             */
@@ -125,268 +125,268 @@ GO
 
 
 IF OBJECT_ID('dbo.Compte_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Compte_creer;
+    DROP PROCEDURE dbo.Compte_creer;
 GO 
 CREATE PROCEDURE dbo.Compte_creer
 (
-	@Numero_bancaire NVARCHAR (50),
-	@Montant MONEY,
-	@Somme_operations Money		
+    @Numero_bancaire NVARCHAR (50),
+    @Montant MONEY,
+    @Somme_operations Money     
 )
 
 AS
 
 BEGIN
-	IF @Numero_bancaire NOT LIKE '%[0-9]%'
-	BEGIN
-		PRINT('Numero bancaire non valide');
-		RETURN 0;
-	END
+    IF @Numero_bancaire NOT LIKE '%[0-9]%'
+    BEGIN
+        PRINT('Numero bancaire non valide');
+        RETURN 0;
+    END
 
-	IF @Montant < 0
-	BEGIN
-		PRINT('Le montant est non valide');
-		RETURN 0;
-	END
+    IF @Montant < 0
+    BEGIN
+        PRINT('Le montant est non valide');
+        RETURN 0;
+    END
 
-	IF @Somme_operations < 0
-	BEGIN
-		PRINT('La somme des operations est non valide');
-		RETURN 0;
-	END
+    IF @Somme_operations < 0
+    BEGIN
+        PRINT('La somme des operations est non valide');
+        RETURN 0;
+    END
 
-	IF NOT EXISTS (SELECT * FROM Compte WHERE Numero_bancaire=@Numero_bancaire)
-	BEGIN
-		INSERT INTO Compte 
-		(
-			Numero_bancaire,
-			Montant,
-			Somme_operations	
-		)
+    IF NOT EXISTS (SELECT * FROM Compte WHERE Numero_bancaire=@Numero_bancaire)
+    BEGIN
+        INSERT INTO Compte 
+        (
+            Numero_bancaire,
+            Montant,
+            Somme_operations    
+        )
 
-		VALUES
-		(
-			@Numero_bancaire,
-			@Montant,
-			@Somme_operations
-		)
-	PRINT 'Nouveau compte ajouté'
-	END
+        VALUES
+        (
+            @Numero_bancaire,
+            @Montant,
+            @Somme_operations
+        )
+    PRINT 'Nouveau compte ajouté'
+    END
 
-	ELSE
-	BEGIN
-	PRINT 'Ce compte existe déjà';
-	END
+    ELSE
+    BEGIN
+    PRINT 'Ce compte existe déjà';
+    END
 
 END
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim               */
-/*BdD Ouftim                               */
+/*L2 ATIC 2013 GROUPE ouf_tim               */
+/*BdD ouf_tim                               */
 /*Procedure de creation de distinctions    */
 /*Auteur(s): TSVETKOV Alexandre            */
 /*testeur(s): PATRICK POL LADURANTI Sandra */
 /*Intégrateur: LADURANTI Sandra            */
 
 IF OBJECT_ID('dbo.Distinctions_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Distinctions_creer;
+    DROP PROCEDURE dbo.Distinctions_creer;
 GO 
 CREATE PROCEDURE dbo.Distinctions_creer
 (
-	@Nom NVARCHAR (50),
-	@Lieu NVARCHAR (50),
-	@Annee INT
+    @Nom NVARCHAR (50),
+    @Lieu NVARCHAR (50),
+    @Annee INT
 )
 
 AS
 
 BEGIN
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR  @Nom LIKE ''  OR @Nom LIKE ' ' 
-	BEGIN
-		PRINT'Le nom de la distinction est non valide';
-		RETURN 0;
-	END
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR  @Nom LIKE ''  OR @Nom LIKE ' ' 
+    BEGIN
+        PRINT'Le nom de la distinction est non valide';
+        RETURN 0;
+    END
 
-	IF @Lieu NOT LIKE '%[A-Za-z ''-]%' OR @Lieu  LIKE '' AND @Lieu LIKE ' ' 
-	BEGIN
-		PRINT'Le lieu de la distinction est non valide';
-		RETURN 0;
-	END
+    IF @Lieu NOT LIKE '%[A-Za-z ''-]%' OR @Lieu  LIKE '' AND @Lieu LIKE ' ' 
+    BEGIN
+        PRINT'Le lieu de la distinction est non valide';
+        RETURN 0;
+    END
 
-	IF @Annee > YEAR(GETDATE()) OR @Annee < 1895 
-	BEGIN
-		PRINT'L''annee de la distinction est non valide';
-		RETURN 0;
-	END
+    IF @Annee > YEAR(GETDATE()) OR @Annee < 1895 
+    BEGIN
+        PRINT'L''annee de la distinction est non valide';
+        RETURN 0;
+    END
 
 
-	IF NOT EXISTS (SELECT * FROM Distinctions WHERE Nom=@Nom AND Lieu=@Lieu AND Annee=@Annee)
-	BEGIN
-		INSERT INTO Distinctions 
-		(
-			Nom,
-			Lieu,
-			Annee
-		)
+    IF NOT EXISTS (SELECT * FROM Distinctions WHERE Nom=@Nom AND Lieu=@Lieu AND Annee=@Annee)
+    BEGIN
+        INSERT INTO Distinctions 
+        (
+            Nom,
+            Lieu,
+            Annee
+        )
 
-		VALUES
-		(
-			@Nom,
-			@Lieu,
-			@Annee
-		)
-		PRINT'Nouvelle distinction ajouté';
-	END
+        VALUES
+        (
+            @Nom,
+            @Lieu,
+            @Annee
+        )
+        PRINT'Nouvelle distinction ajouté';
+    END
 
-	ELSE
-	BEGIN
-		PRINT'Cette distinction existe déjà';
-	END
+    ELSE
+    BEGIN
+        PRINT'Cette distinction existe déjà';
+    END
 
 END
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation de genre */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-USE Ouftim
+USE ouf_tim
 
 IF OBJECT_ID('dbo.Genre_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Genre_creer;
+    DROP PROCEDURE dbo.Genre_creer;
 GO 
 CREATE PROCEDURE dbo.Genre_creer
 (
-	@Nom NVARCHAR (50)	
+    @Nom NVARCHAR (50)  
 )
 
 AS
 
 BEGIN
-	
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @NOM = ''
-	BEGIN
-		PRINT('Le nom non valide');
-		RETURN 0;
-	END
+    
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @NOM = ''
+    BEGIN
+        PRINT('Le nom non valide');
+        RETURN 0;
+    END
 
-	IF NOT EXISTS (SELECT * FROM Genre WHERE Nom=@Nom)
-	BEGIN
-		INSERT INTO Genre 
-		(
-			Nom	
-		)
+    IF NOT EXISTS (SELECT * FROM Genre WHERE Nom=@Nom)
+    BEGIN
+        INSERT INTO Genre 
+        (
+            Nom 
+        )
 
-		VALUES
-		(
-			@Nom	
-		)
-		PRINT 'Nouveau genre ajouté'
-	END
+        VALUES
+        (
+            @Nom    
+        )
+        PRINT 'Nouveau genre ajouté'
+    END
 
-	ELSE
-	BEGIN
-		PRINT('Ce genre existe déjà');
-	END
+    ELSE
+    BEGIN
+        PRINT('Ce genre existe déjà');
+    END
 
 END
 GO
 
 
 --------------------------------------------------
-/* BdD : < Ouf'tim >                        	*/
-/* Procédure de création d'un film         	*/
-/* Auteur : GOUALARD Mickael                	*/
-/*testeur(s): GOUALARD Mickael    		*/
-/*Intégrateur: LADURANTI Sandra			*/
+/* BdD : < Ouf'tim >                            */
+/* Procédure de création d'un film          */
+/* Auteur : GOUALARD Mickael                    */
+/*testeur(s): GOUALARD Mickael          */
+/*Intégrateur: LADURANTI Sandra         */
 --------------------------------------------------
 
 IF OBJECT_ID ('film_creer', 'P') IS NOT NULL
-	DROP PROCEDURE  film_creer;
+    DROP PROCEDURE  film_creer;
 GO
 
 CREATE PROCEDURE film_creer
 (
-	@Titre NVARCHAR (50) ,
-	@Complement_titre NVARCHAR (50),
-	@Annee_de_sortie INT ,
-	@Nationalite NVARCHAR (50) ,
-	@Duree INT,
-	@Cache BIT
+    @Titre NVARCHAR (50) ,
+    @Complement_titre NVARCHAR (50),
+    @Annee_de_sortie INT ,
+    @Nationalite NVARCHAR (50) ,
+    @Duree INT,
+    @Cache BIT
 )
 AS
 
 BEGIN 
 
-	IF @Titre NOT LIKE '%[A-Za-z ''- 0-9]%' OR @Titre LIKE ''
-	BEGIN 
-	 PRINT 'Le titre est non valide';
-	 RETURN 0; 
-	END
-	
-	IF @Complement_titre LIKE ' '
-	BEGIN 
-	 PRINT 'Le Complement du titre est non valide';
-	 RETURN 0; 
-	END
-	
-	IF @Annee_de_sortie < 1895 OR @Annee_de_sortie > YEAR(GETDATE())
- 	BEGIN 
- 	 PRINT 'Annee de sortie est non valide';
- 	 RETURN 0; 
- 	END
+    IF @Titre NOT LIKE '%[A-Za-z ''- 0-9]%' OR @Titre LIKE ''
+    BEGIN 
+     PRINT 'Le titre est non valide';
+     RETURN 0; 
+    END
+    
+    IF @Complement_titre LIKE ' '
+    BEGIN 
+     PRINT 'Le Complement du titre est non valide';
+     RETURN 0; 
+    END
+    
+    IF @Annee_de_sortie < 1895 OR @Annee_de_sortie > YEAR(GETDATE())
+    BEGIN 
+     PRINT 'Annee de sortie est non valide';
+     RETURN 0; 
+    END
 
-	IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite LIKE ''
-	BEGIN 
-	 PRINT 'La nationalite est non valide';
-	 RETURN 0; 
-	END
+    IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite LIKE ''
+    BEGIN 
+     PRINT 'La nationalite est non valide';
+     RETURN 0; 
+    END
 
-	IF @Duree <= 10
- 	BEGIN 
- 	 PRINT 'La duree est non valide';
- 	 RETURN 0; 
- 	END
+    IF @Duree <= 10
+    BEGIN 
+     PRINT 'La duree est non valide';
+     RETURN 0; 
+    END
 
- 	IF @Cache <> 0 AND @Cache <> 1
- 	BEGIN
- 	 PRINT 'Le booleen cache n''est pas valide';
- 	 RETURN 0;
- 	END
+    IF @Cache <> 0 AND @Cache <> 1
+    BEGIN
+     PRINT 'Le booleen cache n''est pas valide';
+     RETURN 0;
+    END
 
 
 IF NOT EXISTS (SELECT * FROM Films WHERE Titre=@Titre)
  BEGIN
-	INSERT INTO Films
-		(
-		Titre,
-		Complement_titre,
-		Annee_de_sortie,
-		Nationalite,
-		Duree,
-		Cache
-		)
-	
-	VALUES
-		(
-		@Titre,
-		@Complement_titre,
-		@Annee_de_sortie,
-		@Nationalite,
-		@Duree,
-		@Cache
-		)
-	PRINT 'Nouveau Film ajouté';
+    INSERT INTO Films
+        (
+        Titre,
+        Complement_titre,
+        Annee_de_sortie,
+        Nationalite,
+        Duree,
+        Cache
+        )
+    
+    VALUES
+        (
+        @Titre,
+        @Complement_titre,
+        @Annee_de_sortie,
+        @Nationalite,
+        @Duree,
+        @Cache
+        )
+    PRINT 'Nouveau Film ajouté';
  END
 
  ELSE
  BEGIN
- 	PRINT 'Ce Film existe déjà';
+    PRINT 'Ce Film existe déjà';
  END
 
 END
@@ -398,269 +398,269 @@ GO
 /* Groupe : < Ouf'Tim >                    */
 /* Procedure de creation d'un exemplaire   */
 /* Auteur: BROCHEN Elise                   */
-/*testeur(s): BROCHEN Elise		   */
+/*testeur(s): BROCHEN Elise        */
 /*Intégrateur: LADURANTI Sandra            */
 --------------------------------------------
 
 IF OBJECT_ID ('exemplaires_creer','P') IS NOT NULL
-	DROP PROCEDURE exemplaires_creer;
+    DROP PROCEDURE exemplaires_creer;
 GO
 
 CREATE PROCEDURE exemplaires_creer
 (
-	@Date_approvisionnement DATETIME ,
-	@Taux_usure INT ,
-	@Disponibilite BIT ,
-	@Reserve BIT,
-	@FK_numero_edition INT
-	)
+    @Date_approvisionnement DATETIME ,
+    @Taux_usure INT ,
+    @Disponibilite BIT ,
+    @Reserve BIT,
+    @FK_numero_edition INT
+    )
 AS
 
 BEGIN
 
 
-	IF @Taux_usure > 5
-	BEGIN
-		PRINT 'Le taux d''usure est non valide';
-		RETURN 0;
-	END
+    IF @Taux_usure > 5
+    BEGIN
+        PRINT 'Le taux d''usure est non valide';
+        RETURN 0;
+    END
 
-	IF @Disponibilite < 0 AND @Disponibilite > 1
-	BEGIN
-		PRINT 'La disponibilite est non valide';
-		RETURN 0;
-	END
+    IF @Disponibilite < 0 AND @Disponibilite > 1
+    BEGIN
+        PRINT 'La disponibilite est non valide';
+        RETURN 0;
+    END
 
-	IF @Reserve < 0 AND @Reserve > 1
-	BEGIN
-		PRINT 'Le booleen reserve est non valide';
-		RETURN 0;
-	END
+    IF @Reserve < 0 AND @Reserve > 1
+    BEGIN
+        PRINT 'Le booleen reserve est non valide';
+        RETURN 0;
+    END
 
 IF NOT EXISTS (SELECT * FROM Exemplaires WHERE @FK_numero_edition=FK_numero_edition)
 BEGIN
-	INSERT INTO Exemplaires
-		(
-		Date_approvisionnement,
-		Taux_usure,
-		Disponibilite,
-		Reserve,
-		FK_numero_edition
-		)
+    INSERT INTO Exemplaires
+        (
+        Date_approvisionnement,
+        Taux_usure,
+        Disponibilite,
+        Reserve,
+        FK_numero_edition
+        )
 
-		VALUES
-		(
-		@Date_approvisionnement,
-		@Taux_usure,
-		@Disponibilite,
-		@Reserve,
-		@FK_numero_edition
-		)
+        VALUES
+        (
+        @Date_approvisionnement,
+        @Taux_usure,
+        @Disponibilite,
+        @Reserve,
+        @FK_numero_edition
+        )
 
-	PRINT 'Un nouvel exemplaire a été ajoute';
+    PRINT 'Un nouvel exemplaire a été ajoute';
 END
 
 ELSE
 BEGIN
-	PRINT 'Cet exemplaire existe déjà' ;
+    PRINT 'Cet exemplaire existe déjà' ;
 END
 
 END
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation d'un réalisteur */
 /*Auteur(s): BROCHEN Elise*/
 /*testeur(s): PATRICK POL LADURANTI Sandra*/
 /*Intégrateur: LADURANTI Sandra */
 
 IF OBJECT_ID('dbo.Realisateur_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Realisateur_creer;
+    DROP PROCEDURE dbo.Realisateur_creer;
 GO 
 CREATE PROCEDURE dbo.Realisateur_creer
 (
-	@Nom NVARCHAR (50),
-	@Prenom NVARCHAR (50),
-	@Date_naissance DATE,
-	@Sexe NVARCHAR (50),
-	@Date_deces DATE,
-	@Biographie NVARCHAR (MAX),
-	@Nationalite NVARCHAR (50)
+    @Nom NVARCHAR (50),
+    @Prenom NVARCHAR (50),
+    @Date_naissance DATE,
+    @Sexe NVARCHAR (50),
+    @Date_deces DATE,
+    @Biographie NVARCHAR (MAX),
+    @Nationalite NVARCHAR (50)
 )
 
 AS
 
 BEGIN
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' Or @Nom LIKE '' Or @Nom LIKE ' '
-	BEGIN
-		PRINT 'Le nom n''est pas valide';
-		RETURN 0;
-	END
-	
-	IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom LIKE '' Or @Prenom LIKE ' '
-	BEGIN
-		PRINT 'Le prenom n''est pas valide';
-		RETURN 0;
-	END
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' Or @Nom LIKE '' Or @Nom LIKE ' '
+    BEGIN
+        PRINT 'Le nom n''est pas valide';
+        RETURN 0;
+    END
+    
+    IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom LIKE '' Or @Prenom LIKE ' '
+    BEGIN
+        PRINT 'Le prenom n''est pas valide';
+        RETURN 0;
+    END
 
-	IF @Date_naissance > GETDATE() OR @Date_naissance < '1825/01/01'
-	BEGIN
-		PRINT 'La date de naissance n''est pas valide';
-		RETURN 0;
-	END
+    IF @Date_naissance > GETDATE() OR @Date_naissance < '1825/01/01'
+    BEGIN
+        PRINT 'La date de naissance n''est pas valide';
+        RETURN 0;
+    END
 
-	IF @Sexe NOT LIKE 'Madame' AND @Sexe NOT LIKE 'Monsieur' OR @Sexe = ''
-	BEGIN
-		PRINT 'Le sexe n''est pas valide';
-		RETURN 0;
-	END
+    IF @Sexe NOT LIKE 'Madame' AND @Sexe NOT LIKE 'Monsieur' OR @Sexe = ''
+    BEGIN
+        PRINT 'Le sexe n''est pas valide';
+        RETURN 0;
+    END
 
-	IF @Date_deces > GETDATE() OR @Date_deces < @Date_naissance
-	BEGIN
-		PRINT 'La date de deces n''est pas valide';
-		RETURN 0;
-	END	
+    IF @Date_deces > GETDATE() OR @Date_deces < @Date_naissance
+    BEGIN
+        PRINT 'La date de deces n''est pas valide';
+        RETURN 0;
+    END 
 
-	IF @Biographie NOT LIKE '%[A-Za-z ''-]%'
-	BEGIN
-		PRINT 'La biographie n''est pas valide';
-		RETURN 0;
-	END
+    IF @Biographie NOT LIKE '%[A-Za-z ''-]%'
+    BEGIN
+        PRINT 'La biographie n''est pas valide';
+        RETURN 0;
+    END
 
-	/*IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' Or @Nationalite LIKE ''
-	BEGIN
-		PRINT('La nationalite n''est pas valide');
-		RETURN 0;
-	END
-	*/
+    /*IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' Or @Nationalite LIKE ''
+    BEGIN
+        PRINT('La nationalite n''est pas valide');
+        RETURN 0;
+    END
+    */
 IF NOT EXISTS (SELECT * FROM Realisateur WHERE Nom=@Nom AND Prenom=@Prenom AND Date_naissance=@Date_naissance)
 BEGIN
-	INSERT INTO Realisateur
-	(
-		Nom,
-		Prenom,		
-		Date_naissance,
-		Sexe,
-		Date_deces,
-		Biographie,
-		Nationalite
-	)
+    INSERT INTO Realisateur
+    (
+        Nom,
+        Prenom,     
+        Date_naissance,
+        Sexe,
+        Date_deces,
+        Biographie,
+        Nationalite
+    )
 
-	VALUES
-	(
-		@Nom,
-		@Prenom,		
-		@Date_naissance,
-		@Sexe,
-		@Date_deces,
-		@Biographie,
-		@Nationalite
-	)
-	PRINT 'Un nouveau réalisateur a été ajouté'
+    VALUES
+    (
+        @Nom,
+        @Prenom,        
+        @Date_naissance,
+        @Sexe,
+        @Date_deces,
+        @Biographie,
+        @Nationalite
+    )
+    PRINT 'Un nouveau réalisateur a été ajouté'
 END
 
 ELSE
 BEGIN
-	PRINT('Ce réalisateur existe déjà');
+    PRINT('Ce réalisateur existe déjà');
 END
 
 END
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation des sous titres */
 /*Auteur(s): LADURANTI Sandra*/
 /*testeur(s): LADURANTI Sandra */
 /*Intégrateur: LADURANTI Sandra */
 
 IF OBJECT_ID('Langue_sous_titre_creer', 'P') IS NOT NULL
-	DROP PROCEDURE Langue_sous_titre_creer;
+    DROP PROCEDURE Langue_sous_titre_creer;
 GO 
 CREATE PROCEDURE Langue_sous_titre_creer
 (
-	@Nom NVARCHAR (50)
+    @Nom NVARCHAR (50)
 )
 
 AS
 
 BEGIN
-	
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
-	BEGIN
-		PRINT('Le nom n''est pas valide');
-		RETURN 0;
-	END
+    
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
+    BEGIN
+        PRINT('Le nom n''est pas valide');
+        RETURN 0;
+    END
 
 IF NOT EXISTS (SELECT * FROM Langue_sous_titre WHERE Nom=@Nom)
 BEGIN
-	INSERT INTO Langue_sous_titre
-	(
-		Nom	
-	)
+    INSERT INTO Langue_sous_titre
+    (
+        Nom 
+    )
 
-	VALUES
-	(
-		@Nom	
-	)
-	PRINT 'Nouveau sous-titre ajouté'
+    VALUES
+    (
+        @Nom    
+    )
+    PRINT 'Nouveau sous-titre ajouté'
 END
 
 ELSE
 BEGIN
-	PRINT('Ce sous-titrage existe déjà');
+    PRINT('Ce sous-titrage existe déjà');
 END
 
 END
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation de l'appartenance */
 /*Auteur(s): PATRICK POL*/
 /*testeur(s): PATRICK POL LADURANTI Sandra*/
 /*Intégrateur: LADURANTI Sandra */
 
 IF OBJECT_ID('dbo.Appartenir_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Appartenir_creer;
+    DROP PROCEDURE dbo.Appartenir_creer;
 GO 
 CREATE PROCEDURE dbo.Appartenir_creer
 (
-	@FK_titre NVARCHAR (50),
-	@FK_complement_titre NVARCHAR (50),
-	@FK_nom_genre NVARCHAR (50)
+    @FK_titre NVARCHAR (50),
+    @FK_complement_titre NVARCHAR (50),
+    @FK_nom_genre NVARCHAR (50)
 )
 
 AS
 
 BEGIN
 
-	INSERT INTO dbo.Appartenir 
-	(
-		FK_Titre,
-		FK_complement_titre,
-		FK_nom_genre
-	)
-	VALUES
-	(
-		@FK_Titre,
-		@FK_complement_titre,
-		@FK_nom_genre
-	)
+    INSERT INTO dbo.Appartenir 
+    (
+        FK_Titre,
+        FK_complement_titre,
+        FK_nom_genre
+    )
+    VALUES
+    (
+        @FK_Titre,
+        @FK_complement_titre,
+        @FK_nom_genre
+    )
 
-	PRINT 'Appartenir Ajoute'                             
+    PRINT 'Appartenir Ajoute'                             
 
 END 
-GO	
+GO  
 
-/*L2 ATIC 2013 GROUPE Ouftim               */
-/*BdD Ouftim                               */
+/*L2 ATIC 2013 GROUPE ouf_tim               */
+/*BdD ouf_tim                               */
 /*Procedure de creation de relance_retards */
 /*Auteur(s): BROCHEN Elise                 */
-/*testeur(s): BROCHEN Elise		           */
+/*testeur(s): BROCHEN Elise                */
 /*Intégrateur: LADURANTI Sandra            */
 
 IF OBJECT_ID ('dbo.Relance_retards_creer', 'P') IS NOT NULL
@@ -680,44 +680,44 @@ AS
 BEGIN 
 
 
-	IF @Niveau_de_retard < 0 OR @Niveau_de_retard > 3
-	BEGIN 
-		PRINT 'Le numéro de retard non valide'; 
-	RETURN 0; 
+    IF @Niveau_de_retard < 0 OR @Niveau_de_retard > 3
+    BEGIN 
+        PRINT 'Le numéro de retard non valide'; 
+    RETURN 0; 
 END
 
-	IF @FK_num_location < 0
-	BEGIN 
-		PRINT 'Le numéro de retard non valide';
-	RETURN 0;
+    IF @FK_num_location < 0
+    BEGIN 
+        PRINT 'Le numéro de retard non valide';
+    RETURN 0;
 END 
 
 
 IF NOT EXISTS (SELECT * FROM Relance_retards WHERE @FK_num_location = FK_num_location)
 BEGIN
 
-	INSERT INTO Relance_retards
-		(
-   		Niveau_de_retard,
-   		Date_creation,
-   		Date_mise_a_jour,
-   		FK_num_location
-		)   	
+    INSERT INTO Relance_retards
+        (
+        Niveau_de_retard,
+        Date_creation,
+        Date_mise_a_jour,
+        FK_num_location
+        )       
 
-		VALUES 
-		(
-    		@Niveau_de_retard,
-    		@Date_creation,
-    		@Date_mise_a_jour,
-    		@FK_num_location
-		)
-		PRINT 'Une nouvelle Relance Retards a été ajouté'
-	END
+        VALUES 
+        (
+            @Niveau_de_retard,
+            @Date_creation,
+            @Date_mise_a_jour,
+            @FK_num_location
+        )
+        PRINT 'Une nouvelle Relance Retards a été ajouté'
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Ce type de Relance Retards existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Ce type de Relance Retards existe déja';
+    END
 
 END
 GO
@@ -725,14 +725,14 @@ GO
 
 /* Location */
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation de location */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-USE Ouftim
+USE ouf_tim
 
 IF OBJECT_ID ('Locations_creer', 'P') IS NOT NULL
 DROP PROCEDURE Locations_creer ;
@@ -753,61 +753,61 @@ AS
 BEGIN 
 
 
-	IF @Duree < 0 OR @Duree > 300
-	BEGIN 
-		PRINT 'La durée de location non valide';
-	RETURN 0;
-	END 
+    IF @Duree < 0 OR @Duree > 300
+    BEGIN 
+        PRINT 'La durée de location non valide';
+    RETURN 0;
+    END 
 
-	IF @FK_exemplaire = ''
-	BEGIN 
-		PRINT 'Le numéro d''exemplaire n''est pas valide >> voir procédure exemplaire';
-	RETURN 0;
-	END 
+    IF @FK_exemplaire = ''
+    BEGIN 
+        PRINT 'Le numéro d''exemplaire n''est pas valide >> voir procédure exemplaire';
+    RETURN 0;
+    END 
 
-		IF @FK_num_abonnement = ''
-	BEGIN 
-		PRINT 'Le numéro d''abonnement n''est pas valide >> voir procédure abonnement';
-	RETURN 0;
-	END
+        IF @FK_num_abonnement = ''
+    BEGIN 
+        PRINT 'Le numéro d''abonnement n''est pas valide >> voir procédure abonnement';
+    RETURN 0;
+    END
 
 
 IF NOT EXISTS (SELECT * FROM Locations)
 BEGIN
 
-	INSERT INTO Locations(
-   		Date_debut,
-  	 	Duree,
-   		Date_fin_prevue,
-   		Date_fin_reelle,
-   		FK_exemplaire,
-		FK_num_abonnement
-		)   	
+    INSERT INTO Locations(
+        Date_debut,
+        Duree,
+        Date_fin_prevue,
+        Date_fin_reelle,
+        FK_exemplaire,
+        FK_num_abonnement
+        )       
 
-		VALUES 
-		(
-   		@Date_debut,
-   		@Duree,
-   		@Date_fin_prevue,
-   		@Date_fin_reelle,
-   		@FK_exemplaire,
-		@FK_num_abonnement
-		)
+        VALUES 
+        (
+        @Date_debut,
+        @Duree,
+        @Date_fin_prevue,
+        @Date_fin_reelle,
+        @FK_exemplaire,
+        @FK_num_abonnement
+        )
 
 
-		PRINT 'Nouvelle Location ajouté';
-	END
+        PRINT 'Nouvelle Location ajouté';
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Ce type de location existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Ce type de location existe déja';
+    END
 END 
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim               */
-/*BdD Ouftim                               */
+/*L2 ATIC 2013 GROUPE ouf_tim               */
+/*BdD ouf_tim                               */
 /*Procedure de creation de realiser        */
 /*Auteur(s): BROCHEN Elise                 */
 /*testeur(s): PATRICK POL LADURANTI Sandra */
@@ -833,37 +833,37 @@ BEGIN
 IF NOT EXISTS (SELECT * FROM Realiser WHERE Realiser.FK_titre_film = @FK_titre_film AND Realiser.FK_complement_titre = @FK_complement_titre)
 BEGIN
 
-	INSERT INTO Realiser
-		(
-   		 FK_titre_film,
-  		 FK_complement_titre,
-  		 FK_nom_real,
-   		 FK_prenom_real,
-   		 FK_date_naissance
-		)   	
+    INSERT INTO Realiser
+        (
+         FK_titre_film,
+         FK_complement_titre,
+         FK_nom_real,
+         FK_prenom_real,
+         FK_date_naissance
+        )       
 
-		VALUES 
-		(
-		 @FK_titre_film,
-  		 @FK_complement_titre,
-   		 @FK_nom_real,
-   		 @FK_prenom_real,
-   		 @FK_date_naissance
-		)
+        VALUES 
+        (
+         @FK_titre_film,
+         @FK_complement_titre,
+         @FK_nom_real,
+         @FK_prenom_real,
+         @FK_date_naissance
+        )
 
-		PRINT 'une nouvelle Realisation a été ajoutée'
-	END
+        PRINT 'une nouvelle Realisation a été ajoutée'
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Ce type de Relalisation existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Ce type de Relalisation existe déja';
+    END
 END 
 GO
 
 ---------------------------------------------
-/*L2 ATIC 2013 GROUPE Ouftim               */
-/*BdD Ouftim                               */
+/*L2 ATIC 2013 GROUPE ouf_tim               */
+/*BdD ouf_tim                               */
 /*Procedure de creation d'un abonne        */
 /*Auteur(s): HUA Lucien LADURANTI Sandra   */
 /*testeur(s): LADURANTI Sandra             */
@@ -871,190 +871,190 @@ GO
 ---------------------------------------------
 
 IF OBJECT_ID('dbo.Abonne_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Abonne_creer;
+    DROP PROCEDURE dbo.Abonne_creer;
 GO 
 CREATE PROCEDURE dbo.Abonne_creer
 (
-	@Nom NVARCHAR (50),
-	@Prenom NVARCHAR (50),
-	@Pseudo NVARCHAR (50),
-	@Date_de_naissance DATE,
-	@Sexe NVARCHAR (50),
-	@Numero_de_voie NVARCHAR (50),
-	@Complement_de_voie NVARCHAR (50),
-	@Type_de_voie NVARCHAR (50),
-	@Libelle NVARCHAR (50),
-	@Complement_libelle NVARCHAR (50),
-	@Code_postal NVARCHAR (50),
-	@Ville NVARCHAR (50),
-	@Cedex NVARCHAR (50),
-	@Pays NVARCHAR (50),
-	@Numero_telephone NVARCHAR (50),
-	@Adresse_email NVARCHAR (50)
+    @Nom NVARCHAR (50),
+    @Prenom NVARCHAR (50),
+    @Pseudo NVARCHAR (50),
+    @Date_de_naissance DATE,
+    @Sexe NVARCHAR (50),
+    @Numero_de_voie NVARCHAR (50),
+    @Complement_de_voie NVARCHAR (50),
+    @Type_de_voie NVARCHAR (50),
+    @Libelle NVARCHAR (50),
+    @Complement_libelle NVARCHAR (50),
+    @Code_postal NVARCHAR (50),
+    @Ville NVARCHAR (50),
+    @Cedex NVARCHAR (50),
+    @Pays NVARCHAR (50),
+    @Numero_telephone NVARCHAR (50),
+    @Adresse_email NVARCHAR (50)
 )
 
 AS
 
 BEGIN
-	
-	IF @NOM NOT LIKE '%[A-Za-z ''-]%' OR @Nom = ''
-	BEGIN
-		PRINT('Le nom est invalide');
-		RETURN 0;
-	END
+    
+    IF @NOM NOT LIKE '%[A-Za-z ''-]%' OR @Nom = ''
+    BEGIN
+        PRINT('Le nom est invalide');
+        RETURN 0;
+    END
 
-	IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom = ''
-	BEGIN
-		PRINT('Le prenom est invalide');
-		RETURN 0;
-	END
+    IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom = ''
+    BEGIN
+        PRINT('Le prenom est invalide');
+        RETURN 0;
+    END
 
-	IF @Pseudo NOT LIKE '%[A-Za-z ''-]%' OR @Pseudo = ''
-	BEGIN
-		PRINT('Le pseudo est invalide');
-		RETURN 0;
-	END
+    IF @Pseudo NOT LIKE '%[A-Za-z ''-]%' OR @Pseudo = ''
+    BEGIN
+        PRINT('Le pseudo est invalide');
+        RETURN 0;
+    END
 
-	IF @Date_de_naissance > GETDATE() OR @Date_de_naissance < '1915/01/01'
-	BEGIN
-		PRINT('La date de naissance est invalide');
-		RETURN 0;
-	END
+    IF @Date_de_naissance > GETDATE() OR @Date_de_naissance < '1915/01/01'
+    BEGIN
+        PRINT('La date de naissance est invalide');
+        RETURN 0;
+    END
 
-	IF @Sexe  NOT LIKE '%[A-Za-z]%' OR @Sexe = ''
-	BEGIN
-		PRINT('Le sexe est invalide');
-		RETURN 0;
-	END
+    IF @Sexe  NOT LIKE '%[A-Za-z]%' OR @Sexe = ''
+    BEGIN
+        PRINT('Le sexe est invalide');
+        RETURN 0;
+    END
 
-	IF @Numero_de_voie NOT LIKE '%[0-9]%'
-	BEGIN
-		PRINT('Le numero de voie est invalide');
-		RETURN 0;
-	END
+    IF @Numero_de_voie NOT LIKE '%[0-9]%'
+    BEGIN
+        PRINT('Le numero de voie est invalide');
+        RETURN 0;
+    END
 
-	IF @Complement_de_voie NOT LIKE '%[A-Za-z ''-]%' OR @Complement_de_voie = ''
-	BEGIN
-		PRINT('Le complement de voie est invalide');
-		RETURN 0;
-	END
+    IF @Complement_de_voie NOT LIKE '%[A-Za-z ''-]%' OR @Complement_de_voie = ''
+    BEGIN
+        PRINT('Le complement de voie est invalide');
+        RETURN 0;
+    END
 
-	IF @Type_de_voie NOT LIKE '%[A-Za-z ''-]%' OR @Type_de_voie = ''
-	BEGIN
-		PRINT('Le type de voie est invalide');
-		RETURN 0;
-	END
+    IF @Type_de_voie NOT LIKE '%[A-Za-z ''-]%' OR @Type_de_voie = ''
+    BEGIN
+        PRINT('Le type de voie est invalide');
+        RETURN 0;
+    END
 
-	IF @Libelle NOT LIKE '%[A-Za-z ''-]%' OR @Libelle = ''
-	BEGIN
-		PRINT('Le libelle est invalide');
-		RETURN 0;
-	END
+    IF @Libelle NOT LIKE '%[A-Za-z ''-]%' OR @Libelle = ''
+    BEGIN
+        PRINT('Le libelle est invalide');
+        RETURN 0;
+    END
 
-	IF @Complement_libelle NOT LIKE '%[A-Za-z ''-]%' OR @Complement_libelle = ''
-	BEGIN
-		PRINT('Le complement libelle est invalide');
-		RETURN 0;
-	END
+    IF @Complement_libelle NOT LIKE '%[A-Za-z ''-]%' OR @Complement_libelle = ''
+    BEGIN
+        PRINT('Le complement libelle est invalide');
+        RETURN 0;
+    END
 
-	IF @Code_postal NOT LIKE '%[0-9]%' OR @Code_postal = ''
-	BEGIN
-		PRINT('Le code postal est invalide');
-		RETURN 0;
-	END
+    IF @Code_postal NOT LIKE '%[0-9]%' OR @Code_postal = ''
+    BEGIN
+        PRINT('Le code postal est invalide');
+        RETURN 0;
+    END
 
-	IF @Ville NOT LIKE '%[A-Za-z ''-]%' OR @Ville = ''
-	BEGIN
-		PRINT('La ville est invalide');
-		RETURN 0;
-	END
+    IF @Ville NOT LIKE '%[A-Za-z ''-]%' OR @Ville = ''
+    BEGIN
+        PRINT('La ville est invalide');
+        RETURN 0;
+    END
 
-	IF @Cedex NOT LIKE '%[A-Za-z ''-]%' OR @Cedex = ''
-	BEGIN
-		PRINT('Le cedex est invalide');
-		RETURN 0;
-	END
+    IF @Cedex NOT LIKE '%[A-Za-z ''-]%' OR @Cedex = ''
+    BEGIN
+        PRINT('Le cedex est invalide');
+        RETURN 0;
+    END
 
-	IF @Pays NOT LIKE '%[A-Za-z ''-]%' OR @Pays = ''
-	BEGIN
-		PRINT('Le pays est invalide');
-		RETURN 0;
-	END
+    IF @Pays NOT LIKE '%[A-Za-z ''-]%' OR @Pays = ''
+    BEGIN
+        PRINT('Le pays est invalide');
+        RETURN 0;
+    END
 
-	IF @Numero_telephone NOT LIKE '%[0-9 .]%'
-	BEGIN
-		PRINT('Le numero de telephone est invalide');
-		RETURN 0;
-	END
+    IF @Numero_telephone NOT LIKE '%[0-9 .]%'
+    BEGIN
+        PRINT('Le numero de telephone est invalide');
+        RETURN 0;
+    END
 
-	IF @Adresse_email NOT LIKE '%@%' OR @Adresse_email = ''
-	BEGIN
-		PRINT('Le mail est invalide');
-		RETURN 0;
-	END
+    IF @Adresse_email NOT LIKE '%@%' OR @Adresse_email = ''
+    BEGIN
+        PRINT('Le mail est invalide');
+        RETURN 0;
+    END
 
 
 IF NOT EXISTS (SELECT * FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
 BEGIN
-	INSERT INTO Abonne 
-	(
-		Nom,
-		Prenom,
-		Pseudo,
-		Date_de_naissance,
-		Sexe,
-		Numero_de_voie,
-		Complement_de_voie,
-		Type_de_voie,
-		Libelle,
-		Complement_libelle,
-		Code_postal,
-		Ville,
-		Cedex,
-		Pays,
-		Numero_telephone,
-		Adresse_email
-	)
+    INSERT INTO Abonne 
+    (
+        Nom,
+        Prenom,
+        Pseudo,
+        Date_de_naissance,
+        Sexe,
+        Numero_de_voie,
+        Complement_de_voie,
+        Type_de_voie,
+        Libelle,
+        Complement_libelle,
+        Code_postal,
+        Ville,
+        Cedex,
+        Pays,
+        Numero_telephone,
+        Adresse_email
+    )
 
-	VALUES
-	(
-		@Nom,
-		@Prenom,
-		@Pseudo,
-		@Date_de_naissance,
-		@Sexe,
-		@Numero_de_voie,
-		@Complement_de_voie,
-		@Type_de_voie,
-		@Libelle,
-		@Complement_libelle,
-		@Code_postal,
-		@Ville,
-		@Cedex,
-		@Pays,
-		@Numero_telephone,
-		@Adresse_email
-	)
-	PRINT 'Nouvel abonné ajouté'
+    VALUES
+    (
+        @Nom,
+        @Prenom,
+        @Pseudo,
+        @Date_de_naissance,
+        @Sexe,
+        @Numero_de_voie,
+        @Complement_de_voie,
+        @Type_de_voie,
+        @Libelle,
+        @Complement_libelle,
+        @Code_postal,
+        @Ville,
+        @Cedex,
+        @Pays,
+        @Numero_telephone,
+        @Adresse_email
+    )
+    PRINT 'Nouvel abonné ajouté'
 END
 
 ELSE
 BEGIN
-	PRINT 'Cet abonné existe déjà';
+    PRINT 'Cet abonné existe déjà';
 END
 
 END
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim                 */
-/*BdD Ouftim                                 */
+/*L2 ATIC 2013 GROUPE ouf_tim                 */
+/*BdD ouf_tim                                 */
 /*Procedure de creation d'abonnement         */
 /*Auteur(s): BROCHEN Elise  LADURANTI Sandra */
 /*testeur(s): PATRICK POL LADURANTI Sandra   */
 /*Intégrateur: LADURANTI Sandra              */
 
-use ouftim
+use ouf_tim
 
 IF OBJECT_ID ('dbo.Abonnement_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.Abonnement_creer ; 
@@ -1073,59 +1073,59 @@ AS
 BEGIN 
 
 IF @Date_expiration < @Date_creation
-	BEGIN 
-		PRINT 'Date d''expiration non valide';
-	RETURN 0;
+    BEGIN 
+        PRINT 'Date d''expiration non valide';
+    RETURN 0;
 END
 
-	IF @FK_numcompte < 0
-	BEGIN 
-		PRINT 'Le FK_numero_compte non valide';
-	RETURN 0;
+    IF @FK_numcompte < 0
+    BEGIN 
+        PRINT 'Le FK_numero_compte non valide';
+    RETURN 0;
 END
 
-	
+    
 
 IF NOT EXISTS (SELECT * FROM Abonnement WHERE @FK_type_abonnement=FK_type_abonnement)
 BEGIN
 
-	INSERT INTO Abonnement
-		(
+    INSERT INTO Abonnement
+        (
    Date_creation,
    Date_expiration,
    FK_numcompte,
    FK_type_abonnement
-   		
-		)   	
+        
+        )       
 
-		VALUES 
-		(
+        VALUES 
+        (
    @Date_creation,
    @Date_expiration,
    @FK_numcompte,
-   @FK_type_abonnement	
-		)
+   @FK_type_abonnement  
+        )
 
-		PRINT 'Un nouvel Abonnement a été ajouté'
-	END
+        PRINT 'Un nouvel Abonnement a été ajouté'
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Ce type d''Abonnement existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Ce type d''Abonnement existe déja';
+    END
 END 
 GO
 
 
 
-/*L2 ATIC 2013 GROUPE Ouftim                 */
-/*BdD Ouftim                                 */
+/*L2 ATIC 2013 GROUPE ouf_tim                 */
+/*BdD ouf_tim                                 */
 /*Procedure de creation de jouer             */
 /*Auteur(s): BROCHEN Elise                   */
-/*testeur(s): BROCHEN Elise		             */
+/*testeur(s): BROCHEN Elise                  */
 /*Intégrateur: LADURANTI Sandra              */
 
-use ouftim
+use ouf_tim
 
 IF OBJECT_ID ('dbo.Jouer_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.Jouer_creer ; 
@@ -1146,10 +1146,10 @@ BEGIN
 
 
 
-	IF @FK_date_de_naissance_acteur > GETDATE() OR @FK_date_de_naissance_acteur < '1895/01/01'
-	BEGIN 
-		PRINT 'La FK de la date de naissance de l''acteur n''est pas valide';
-	RETURN 0;
+    IF @FK_date_de_naissance_acteur > GETDATE() OR @FK_date_de_naissance_acteur < '1895/01/01'
+    BEGIN 
+        PRINT 'La FK de la date de naissance de l''acteur n''est pas valide';
+    RETURN 0;
 
 END 
 
@@ -1158,39 +1158,39 @@ IF NOT EXISTS (SELECT * FROM Jouer WHERE FK_titre_film = @FK_titre_film AND FK_c
  AND FK_nom_acteur = @FK_nom_acteur AND FK_prenom_acteur = @FK_prenom_acteur)
 BEGIN
 
-	INSERT INTO Jouer
-		(
-   		 FK_titre_film,
-  		 FK_complement_titre ,
-  		 FK_nom_acteur,
-   		FK_prenom_acteur,
-   		FK_date_de_naissance_acteur
-		)   	
+    INSERT INTO Jouer
+        (
+         FK_titre_film,
+         FK_complement_titre ,
+         FK_nom_acteur,
+        FK_prenom_acteur,
+        FK_date_de_naissance_acteur
+        )       
 
-		VALUES 
-		(
-		 @FK_titre_film,
-  		 @FK_complement_titre,
-   		@FK_nom_acteur,
-   		@FK_prenom_acteur,
-   		@FK_date_de_naissance_acteur
+        VALUES 
+        (
+         @FK_titre_film,
+         @FK_complement_titre,
+        @FK_nom_acteur,
+        @FK_prenom_acteur,
+        @FK_date_de_naissance_acteur
 
-		)
+        )
 
 
-		PRINT 'Un nouveau type Jouer a été ajouté'
-	END
+        PRINT 'Un nouveau type Jouer a été ajouté'
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Ce type Jouer existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Ce type Jouer existe déja';
+    END
 END 
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim                                 */
-/*BdD Ouftim                                                 */
+/*L2 ATIC 2013 GROUPE ouf_tim                                 */
+/*BdD ouf_tim                                                 */
 /*Procedure de creation de Souscire                          */
 /*Auteur(s): BROCHEN Elise                                   */
 /*testeur(s): PATRICK POL LADURANTI Sandra  Mickael GOUALARD */
@@ -1217,41 +1217,41 @@ IF NOT EXISTS (SELECT * FROM Souscrire WHERE FK_nom_abonne = @FK_nom_abonne AND 
 AND FK_pseudo = @FK_pseudo AND FK_num_abonnement = @FK_num_abonnement )
 BEGIN
 
-	INSERT INTO Souscrire
-		(
-   		FK_nom_abonne,
-   		FK_prenom,
+    INSERT INTO Souscrire
+        (
+        FK_nom_abonne,
+        FK_prenom,
         FK_pseudo,
-  		FK_num_abonnement
-		)   	
+        FK_num_abonnement
+        )       
 
-		VALUES 
-		(
-		@FK_nom_abonne,
- 		@FK_prenom,
-   		@FK_pseudo,
-   		@FK_num_abonnement
-		)
+        VALUES 
+        (
+        @FK_nom_abonne,
+        @FK_prenom,
+        @FK_pseudo,
+        @FK_num_abonnement
+        )
 
 
-		PRINT 'Nouveau Souscrire ajouté';
-	END
+        PRINT 'Nouveau Souscrire ajouté';
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Le type Souscrire existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Le type Souscrire existe déja';
+    END
 END 
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation d'une edition */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-USE Ouftim
+USE ouf_tim
 
 IF OBJECT_ID ('dbo.Edition_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.Edition_creer ; 
@@ -1259,16 +1259,16 @@ GO
 
 CREATE PROCEDURE dbo.Edition_creer
 (
-    	@Nom NVARCHAR (50),
-    	@Annee_de_sortie INT,
-    	@Duree_film INT,
-	    @limite_age INT,
-    	@Support NVARCHAR (50),
-    	@Date_insertion DATETIME,
-      	@Type_couleur NVARCHAR (50),
-    	@Type_son NVARCHAR (50),
-    	@FK_titre NVARCHAR (50),
-    	@FK_complement_titre NVARCHAR (50)
+        @Nom NVARCHAR (50),
+        @Annee_de_sortie INT,
+        @Duree_film INT,
+        @limite_age INT,
+        @Support NVARCHAR (50),
+        @Date_insertion DATETIME,
+        @Type_couleur NVARCHAR (50),
+        @Type_son NVARCHAR (50),
+        @FK_titre NVARCHAR (50),
+        @FK_complement_titre NVARCHAR (50)
 )
 
 AS
@@ -1276,96 +1276,96 @@ AS
 BEGIN 
     
 
-	IF  @Nom NOT LIKE '%[A-Za-z ‘’-]%' OR @Nom = ''
-	BEGIN 
-		PRINT 'Nom edition non valide';
-	RETURN 0;
+    IF  @Nom NOT LIKE '%[A-Za-z ‘’-]%' OR @Nom = ''
+    BEGIN 
+        PRINT 'Nom edition non valide';
+    RETURN 0;
 END 
 
-	IF  @Annee_de_sortie > YEAR(GETDATE()) OR @Annee_de_sortie < 1895
-	BEGIN 
-		PRINT 'Année de sortie non valide';
-	RETURN 0;
+    IF  @Annee_de_sortie > YEAR(GETDATE()) OR @Annee_de_sortie < 1895
+    BEGIN 
+        PRINT 'Année de sortie non valide';
+    RETURN 0;
 END
 
-	IF @limite_age < 0 OR @limite_age > 18
-	BEGIN 
-		PRINT 'limite d''age non valide';
-	RETURN 0;
+    IF @limite_age < 0 OR @limite_age > 18
+    BEGIN 
+        PRINT 'limite d''age non valide';
+    RETURN 0;
 END  
 
-	IF @Duree_film < 10 OR @Duree_film NOT LIKE '%[0-9]%'
-	BEGIN 
-		PRINT 'Duree film non valide';
-	RETURN 0;
+    IF @Duree_film < 10 OR @Duree_film NOT LIKE '%[0-9]%'
+    BEGIN 
+        PRINT 'Duree film non valide';
+    RETURN 0;
 END  
 
-	IF  @Support NOT LIKE '%[A-Za-z ‘’-]%' OR @Support = ''
-	BEGIN 
-		PRINT 'Support non valide';
-	RETURN 0;
+    IF  @Support NOT LIKE '%[A-Za-z ‘’-]%' OR @Support = ''
+    BEGIN 
+        PRINT 'Support non valide';
+    RETURN 0;
 END
 
-	IF  @Date_insertion > GETDATE()
-	BEGIN 
-		PRINT 'Date d''insertion non valide';
-	RETURN 0;
+    IF  @Date_insertion > GETDATE()
+    BEGIN 
+        PRINT 'Date d''insertion non valide';
+    RETURN 0;
 END 
 
-	IF  @Type_couleur NOT LIKE '%[A-Za-z ‘’-]%' OR @Type_couleur = ''
-	BEGIN 
-		PRINT 'Type couleur non valide';
-	RETURN 0;
+    IF  @Type_couleur NOT LIKE '%[A-Za-z ‘’-]%' OR @Type_couleur = ''
+    BEGIN 
+        PRINT 'Type couleur non valide';
+    RETURN 0;
 END
 
-	IF  @Type_son NOT LIKE '%[A-Za-z ‘’- . 0-9]%' OR @Type_son = ''
-	BEGIN 
-		PRINT 'Type son non valide';
-	RETURN 0;
+    IF  @Type_son NOT LIKE '%[A-Za-z ‘’- . 0-9]%' OR @Type_son = ''
+    BEGIN 
+        PRINT 'Type son non valide';
+    RETURN 0;
 END
 
 IF NOT EXISTS (SELECT * FROM Edition WHERE Nom=@Nom )
 BEGIN
-	INSERT INTO Edition
-		(
-		Nom,
-		Annee_de_sortie,
-		Duree_film,
-		limite_age,
-	    	Support,
-      	 	Date_insertion,
-      	 	Type_couleur,
-       		Type_son ,
-       		FK_titre ,
-       		FK_complement_titre
-		)   	
+    INSERT INTO Edition
+        (
+        Nom,
+        Annee_de_sortie,
+        Duree_film,
+        limite_age,
+            Support,
+            Date_insertion,
+            Type_couleur,
+            Type_son ,
+            FK_titre ,
+            FK_complement_titre
+        )       
 
-	VALUES 
-	(
-		@Nom,
-		@Annee_de_sortie,
-		@Duree_film,
-		@limite_age,
-	    @Support,
-       		@Date_insertion,
-       		@Type_couleur,
-       		@Type_son ,
-       		@FK_titre ,
-       		@FK_complement_titre
-	)
+    VALUES 
+    (
+        @Nom,
+        @Annee_de_sortie,
+        @Duree_film,
+        @limite_age,
+        @Support,
+            @Date_insertion,
+            @Type_couleur,
+            @Type_son ,
+            @FK_titre ,
+            @FK_complement_titre
+    )
 
 
-		PRINT 'Nouvelle édition ajoutée';
-	END
+        PRINT 'Nouvelle édition ajoutée';
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'L''édition existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'L''édition existe déja';
+    END
 END
 
-/*L2 ATIC 2013 GROUPE Ouftim                   */
-/*BdD Ouftim                                   */
+/*L2 ATIC 2013 GROUPE ouf_tim                   */
+/*BdD ouf_tim                                   */
 /*Procedure de creation de relance_découvert   */
 /*Auteur(s): LADURANTI Sandra                  */
 /*testeur(s): PATRICK POL LADURANTI Sandra     */
@@ -1388,51 +1388,51 @@ AS
 
 BEGIN 
 
-	IF @Niveau_decouvert < 0 OR @Niveau_decouvert > 3
-	BEGIN 
-		PRINT 'Le niveau de découvert n''est pas valide'; 
-	RETURN 0; 
+    IF @Niveau_decouvert < 0 OR @Niveau_decouvert > 3
+    BEGIN 
+        PRINT 'Le niveau de découvert n''est pas valide'; 
+    RETURN 0; 
 END
 
 
-	IF @FK_numero_compte < 0 OR @FK_numero_compte = ''
-	BEGIN 
-		PRINT 'Le numéro de compte n''est pas valide >> voir compte';
-	RETURN 0;
+    IF @FK_numero_compte < 0 OR @FK_numero_compte = ''
+    BEGIN 
+        PRINT 'Le numéro de compte n''est pas valide >> voir compte';
+    RETURN 0;
 END 
 
 
 IF NOT EXISTS (SELECT * FROM Relance_decouvert WHERE @FK_numero_compte = FK_numero_compte)
 BEGIN
 
-	INSERT INTO Relance_decouvert
-		(
-   		Niveau_decouvert,
-   		Date_creation,
-   		Date_mise_a_jour,
-   		FK_numero_compte
-		)   	
+    INSERT INTO Relance_decouvert
+        (
+        Niveau_decouvert,
+        Date_creation,
+        Date_mise_a_jour,
+        FK_numero_compte
+        )       
 
-		VALUES 
-		(
-    		@Niveau_decouvert,
-    		@Date_creation,
-    		@Date_mise_a_jour,
-    		@FK_numero_compte
-		)
-		PRINT 'Nouvelle Relance Decouvert ajoutée'
-	END
+        VALUES 
+        (
+            @Niveau_decouvert,
+            @Date_creation,
+            @Date_mise_a_jour,
+            @FK_numero_compte
+        )
+        PRINT 'Nouvelle Relance Decouvert ajoutée'
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Cette Relance Decouvert existe déja';
-	END
+    ELSE
+    BEGIN
+        PRINT 'Cette Relance Decouvert existe déja';
+    END
 
 END
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation d'une attribution */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s): */
@@ -1440,15 +1440,15 @@ GO
 
 
 IF OBJECT_ID('dbo.Attribuer_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Attribuer_creer;
+    DROP PROCEDURE dbo.Attribuer_creer;
 GO 
 CREATE PROCEDURE dbo.Attribuer_creer
 (
-	@FK_titre_film NVARCHAR (50),
-	@FK_complement_titre NVARCHAR (50),
-	@FK_nom_distinction NVARCHAR (50),
-	@FK_lieu_distinction NVARCHAR (50),
-	@FK_annee_distinction INT
+    @FK_titre_film NVARCHAR (50),
+    @FK_complement_titre NVARCHAR (50),
+    @FK_nom_distinction NVARCHAR (50),
+    @FK_lieu_distinction NVARCHAR (50),
+    @FK_annee_distinction INT
 )
 
 AS
@@ -1456,116 +1456,116 @@ AS
 BEGIN
 
 
-	INSERT INTO dbo.Attribuer
-	( 
-		FK_titre_film,
-		FK_complement_titre,
-		FK_nom_distinction,
-		FK_lieu_distinction,
-		FK_annee_distinction 
-	) 
-	VALUES 
-	( 
-		@FK_titre_film,
-		@FK_complement_titre,
-		@FK_nom_distinction,
-		@FK_lieu_distinction,
-		@FK_annee_distinction
-	)
+    INSERT INTO dbo.Attribuer
+    ( 
+        FK_titre_film,
+        FK_complement_titre,
+        FK_nom_distinction,
+        FK_lieu_distinction,
+        FK_annee_distinction 
+    ) 
+    VALUES 
+    ( 
+        @FK_titre_film,
+        @FK_complement_titre,
+        @FK_nom_distinction,
+        @FK_lieu_distinction,
+        @FK_annee_distinction
+    )
 
-	PRINT 'Attribuer Ajoute'
+    PRINT 'Attribuer Ajoute'
 
 
 END 
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Procedure de creation d'un type d'abonnement */
 /*Auteur(s): Tsvetkov Alexandre*/
 /*Testeur(s): Laduranti Sandra */
 /*Intégrateur: Laduranti Sandra*/
 
 IF OBJECT_ID('dbo.Type_abonnement_creer', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Type_abonnement_creer;
+    DROP PROCEDURE dbo.Type_abonnement_creer;
 GO 
 CREATE PROCEDURE dbo.Type_abonnement_creer
 (
-	@Nom NVARCHAR (50),
-	@Prix MONEY,
-	@Prix_location MONEY,
-	@Exemplaires_simultanes INT,
-	@Prix_retard MONEY,
-	@Duree_engagement INT
+    @Nom NVARCHAR (50),
+    @Prix MONEY,
+    @Prix_location MONEY,
+    @Exemplaires_simultanes INT,
+    @Prix_retard MONEY,
+    @Duree_engagement INT
 )
 
 AS
 
 BEGIN
 
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' AND @Nom NOT LIKE '' AND @Nom NOT LIKE ' '
-	BEGIN
-		PRINT'Le nom du type d''abonnement est non valide';
-		RETURN 0;
-	END
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' AND @Nom NOT LIKE '' AND @Nom NOT LIKE ' '
+    BEGIN
+        PRINT'Le nom du type d''abonnement est non valide';
+        RETURN 0;
+    END
 
-	IF @Prix <= 0
-	BEGIN
-		PRINT'Le prix du type d''abonnement est non valide';
-		RETURN 0;
-	END
+    IF @Prix <= 0
+    BEGIN
+        PRINT'Le prix du type d''abonnement est non valide';
+        RETURN 0;
+    END
 
-	IF @Prix_location <= 0 
-	BEGIN
-		PRINT'Le prix de la location non valide (proc : type_abonnement)';
-		RETURN 0;
-	END
+    IF @Prix_location <= 0 
+    BEGIN
+        PRINT'Le prix de la location non valide (proc : type_abonnement)';
+        RETURN 0;
+    END
 
-	IF @Exemplaires_simultanes < 0 OR @Exemplaires_simultanes > 50 
-	BEGIN
-		PRINT'Le nombre exemplaires simultanes est non valide (proc : type_abonnement)';
-		RETURN 0;
-	END
-	
-	IF @Prix_retard < 0
-	BEGIN
-		PRINT'Le prix retard est non valide (proc : type_abonnement)';
-		RETURN 0;
-	END
+    IF @Exemplaires_simultanes < 0 OR @Exemplaires_simultanes > 50 
+    BEGIN
+        PRINT'Le nombre exemplaires simultanes est non valide (proc : type_abonnement)';
+        RETURN 0;
+    END
+    
+    IF @Prix_retard < 0
+    BEGIN
+        PRINT'Le prix retard est non valide (proc : type_abonnement)';
+        RETURN 0;
+    END
 
-	IF @Duree_engagement <= 0
-	BEGIN
-		PRINT'La duree engagement non est valide (proc : type_abonnement)';
-		RETURN 0;
-	END
+    IF @Duree_engagement <= 0
+    BEGIN
+        PRINT'La duree engagement non est valide (proc : type_abonnement)';
+        RETURN 0;
+    END
 
 IF NOT EXISTS (SELECT * FROM Type_abonnement WHERE Nom=@Nom)
 BEGIN
-	INSERT INTO Type_abonnement
-	(
-		Nom,
-		Prix,
-		Prix_location,
-		Exemplaires_simultanes,
-		Prix_retard,
-		Duree_engagement
-	)
-	VALUES
-	(
-		@Nom,
-		@Prix,
-		@Prix_location,
-		@Exemplaires_simultanes,
-		@Prix_retard,
-		@Duree_engagement
-	)
+    INSERT INTO Type_abonnement
+    (
+        Nom,
+        Prix,
+        Prix_location,
+        Exemplaires_simultanes,
+        Prix_retard,
+        Duree_engagement
+    )
+    VALUES
+    (
+        @Nom,
+        @Prix,
+        @Prix_location,
+        @Exemplaires_simultanes,
+        @Prix_retard,
+        @Duree_engagement
+    )
 
-	PRINT 'Nouveau Type_abonnement ajouté';
+    PRINT 'Nouveau Type_abonnement ajouté';
 END
 
 ELSE
 BEGIN
-	PRINT 'Ce type abonnement existe déjà';
+    PRINT 'Ce type abonnement existe déjà';
 END
 
 END
@@ -1581,38 +1581,38 @@ GO
 -----------------------------------------------
 
 IF OBJECT_ID ('rattacher_creer', 'P') IS NOT NULL
-	DROP PROCEDURE  rattacher_creer;
+    DROP PROCEDURE  rattacher_creer;
 GO
 
 CREATE PROCEDURE rattacher_creer
 (
-	@FK_langue NVARCHAR (50) ,
-	@FK_edition INT 
+    @FK_langue NVARCHAR (50) ,
+    @FK_edition INT 
 )
 AS
 
 BEGIN 
 
-	
+    
 IF NOT EXISTS ((SELECT * FROM Rattacher WHERE FK_langue = @FK_langue AND FK_edition = @FK_edition))
  BEGIN
-	INSERT INTO Rattacher
-			(
-			FK_langue,
-			FK_edition
-			)
-	
-	VALUES
-		(
-		@FK_langue,
-		@FK_edition
-		)
-	PRINT 'Nouveau rattachement ajouté'
+    INSERT INTO Rattacher
+            (
+            FK_langue,
+            FK_edition
+            )
+    
+    VALUES
+        (
+        @FK_langue,
+        @FK_edition
+        )
+    PRINT 'Nouveau rattachement ajouté'
  END
 
  ELSE
  BEGIN
- 	PRINT 'Ce rattachement existe déjà'
+    PRINT 'Ce rattachement existe déjà'
  END
 END
 
@@ -1627,171 +1627,99 @@ GO
 -----------------------------------------------
 
 IF OBJECT_ID ('afficher_creer', 'P') IS NOT NULL
-	DROP PROCEDURE  afficher_creer;
+    DROP PROCEDURE  afficher_creer;
 GO
 
 CREATE PROCEDURE afficher_creer
 (
-	@FK_langue NVARCHAR (50) ,
-	@FK_edition INT	
+    @FK_langue NVARCHAR (50) ,
+    @FK_edition INT 
 )
 AS
 
 BEGIN 
-	
+    
 IF NOT EXISTS ((SELECT * FROM Afficher WHERE FK_langue = @FK_langue AND FK_edition = @FK_edition))
  BEGIN
-	INSERT INTO Rattacher
-			(
-			FK_langue,
-			FK_edition
-			)
-	
-	VALUES
-		(
-		@FK_langue,
-		@FK_edition
-		)
-	PRINT 'Nouvel affichage ajouté'
+    INSERT INTO Rattacher
+            (
+            FK_langue,
+            FK_edition
+            )
+    
+    VALUES
+        (
+        @FK_langue,
+        @FK_edition
+        )
+    PRINT 'Nouvel affichage ajouté'
  END
 
  ELSE
  BEGIN
- 	PRINT 'Cet affichage existe déjà'
+    PRINT 'Cet affichage existe déjà'
  END
 END
 
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim			*/
-/*BdD Ouftim 					*/
-/*Procedure de creation de langue audio		*/
-/*Auteur(s): GOUALARD Mickael			*/
-/*testeur(s): GOUALARD Mickael   		*/
-/*Intégrateur: LADURANTI Sandra            	*/
+/*L2 ATIC 2013 GROUPE ouf_tim            */
+/*BdD ouf_tim                    */
+/*Procedure de creation de langue audio     */
+/*Auteur(s): GOUALARD Mickael           */
+/*testeur(s): GOUALARD Mickael          */
+/*Intégrateur: LADURANTI Sandra             */
 
 IF OBJECT_ID('dbo.Langue_audio_creer', 'P') IS NOT NULL
-	DROP PROCEDURE Langue_audio_creer;
+    DROP PROCEDURE Langue_audio_creer;
 GO 
 CREATE PROCEDURE Langue_audio_creer
 (
-	@Nom NVARCHAR (50)
+    @Nom NVARCHAR (50)
 )
 
 AS
 
 BEGIN
-	
-	IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
-	BEGIN
-		PRINT 'Le nom de la langue n''est pas valide';
-		RETURN 0;
-	END
+    
+    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
+    BEGIN
+        PRINT 'Le nom de la langue n''est pas valide';
+        RETURN 0;
+    END
 
 IF NOT EXISTS (SELECT * FROM Langue_audio WHERE Nom=@Nom)
 BEGIN
-	INSERT INTO Langue_audio
-	(
-		Nom	
-	)
+    INSERT INTO Langue_audio
+    (
+        Nom 
+    )
 
-	VALUES
-	(
-		@Nom	
-	)
-	PRINT 'Nouveau langage audio ajouté';
+    VALUES
+    (
+        @Nom    
+    )
+    PRINT 'Nouveau langage audio ajouté';
 END
 
 ELSE
 BEGIN
-	PRINT 'Cette langue audio existe déjà';
+    PRINT 'Cette langue audio existe déjà';
 END
 
 END
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
-/*Procedure de creation d'une reservation */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s): PATRICK POL*/
-/*Intégrateur: */
 
-IF OBJECT_ID('dbo.Reservation_creer', 'P') IS NOT NULL
-    DROP PROCEDURE dbo.Reservation_creer;
-GO 
-CREATE PROCEDURE dbo.Reservation_creer
-(
-    @HD_creation DATE,
-    @HD_butoir DATE,
-    @Etat [NVARCHAR] (50),
-    @FK_num_abonnement INT,
-	@FK_num_exemplaire INT
-)
-
-AS
-
-BEGIN
-
-    IF @HD_creation > GETDATE()
-    BEGIN  
-        PRINT 'La date de creation n''est pas valide'; 
-    RETURN; 
-    END 
-
-    IF @HD_butoir > GETDATE()
-    BEGIN  
-        PRINT 'La date butoir n''est pas valide'; 
-    RETURN; 
-    END
-
-    IF @Etat NOT LIKE '%[A-Za-z ''-]%' AND @Etat  = '' AND @Etat ='Abandonne' AND @Etat ='En cours' AND @Etat ='Accomplie'
-    BEGIN
-        PRINT('L''etat n''est pas valide');
-        RETURN;
-    END
-
-
-END
-
-IF NOT EXISTS (SELECT * FROM Reservation) 
-BEGIN 
-    INSERT INTO Reservation 
-        ( 
-        HD_creation,
-        HD_butoir,
-        Etat,
-        FK_num_abonnement ,
-		FK_num_exemplaire
-        )        
- 
-    VALUES  
-    (
-        @HD_creation,
-        @HD_butoir,
-        @Etat,
-        @FK_num_abonnement,
-		@FK_num_exemplaire
-        )
-       PRINT 'Reservation crée'
-  END
-  ELSE
-  BEGIN
-    PRINT 'Reservation deja existante'
-  END
-
-GO
-
-
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion film */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
 /*Intégrateur: SANDRA LADURANTI*/
 
-use ouftim
+use ouf_tim
 
 GO
 
@@ -1802,7 +1730,7 @@ CREATE procedure [dbo].[ajouter_film]
     @Annee INT,
     @Nationalite NVARCHAR (50),
     @Duree INT,
-	
+    
     
     /* acteur(s) */
     @liste_acteurs NVARCHAR(1000),
@@ -1813,14 +1741,14 @@ CREATE procedure [dbo].[ajouter_film]
     @nom_act NVARCHAR(50), @pre_act NVARCHAR(50), @dat_naissance DATE, @sexe_act NVARCHAR(50),@date_deces DATE, @nom_scene NVARCHAR (50), @biographie NVARCHAR(max), @nat_act NVARCHAR(50)
     */
     
-	/* realisateur(s) */
+    /* realisateur(s) */
     @liste_realisateurs NVARCHAR(500),
 
    /* Distinction(s) */
     @liste_distinctions NVARCHAR(500),
 
-	/*genre(s)*/
-	@liste_genres NVARCHAR(100)
+    /*genre(s)*/
+    @liste_genres NVARCHAR(100)
 --|nom|
 --pas de film sans genre
 
@@ -1829,114 +1757,114 @@ as
 
 begin
 
-	
-	declare @index int
-	declare @fin int
-	declare @vide int
-	declare @er int
-	
-	/* catalogue */
-	IF EXISTS (SELECT * FROM Films
-	WHERE
-	    Films.Titre=@Titre 
+    
+    declare @index int
+    declare @fin int
+    declare @vide int
+    declare @er int
+    
+    /* catalogue */
+    IF EXISTS (SELECT * FROM Films
+    WHERE
+        Films.Titre=@Titre 
         and Films.Complement_titre=@Complement_titre
-  	and Films.Annee_de_sortie=@Annee
-	and Films.Nationalite=@Nationalite
-	and Films.Duree=@Duree
-	)
-	begin
-	print cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@Annee as NVARCHAR)+','+cast(@Nationalite as NVARCHAR)+','+cast(@Duree as NVARCHAR)+' film déjà au catalogue';
-	return 0;
-	end
+    and Films.Annee_de_sortie=@Annee
+    and Films.Nationalite=@Nationalite
+    and Films.Duree=@Duree
+    )
+    begin
+    print cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@Annee as NVARCHAR)+','+cast(@Nationalite as NVARCHAR)+','+cast(@Duree as NVARCHAR)+' film déjà au catalogue';
+    return 0;
+    end
 
-	ELSE /* Film absent au catalogue */
-	begin
-	print cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@Annee as NVARCHAR)+','+cast(@Nationalite as NVARCHAR)+','+cast(@Duree as NVARCHAR)+' à insérer au catalogue';
-	exec @er=Film_creer @Titre, @Complement_titre, @Annee, @Nationalite, @Duree;
-	if @er <> 0 return 0
-	end
-	
-	/* ACTEUR(S) */
-	print '-- ACTEUR(S) --'
-	-- |nom1,prenom1,date_naissance1,sexe1,date_deces1,nom_scene1,biographie1,nationalité1|nom2,prenom2,date_naissance2,sexe2,date_deces2,nom_scene2,biographie2,nationalité2|...
+    ELSE /* Film absent au catalogue */
+    begin
+    print cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@Annee as NVARCHAR)+','+cast(@Nationalite as NVARCHAR)+','+cast(@Duree as NVARCHAR)+' à insérer au catalogue';
+    exec @er=Film_creer @Titre, @Complement_titre, @Annee, @Nationalite, @Duree;
+    if @er <> 0 return 0
+    end
+    
+    /* ACTEUR(S) */
+    print '-- ACTEUR(S) --'
+    -- |nom1,prenom1,date_naissance1,sexe1,date_deces1,nom_scene1,biographie1,nationalité1|nom2,prenom2,date_naissance2,sexe2,date_deces2,nom_scene2,biographie2,nationalité2|...
     -- 0 si film sans acteur
-	set @index=1
-	set @vide = 1
-	IF CHARINDEX('|', @liste_acteurs)=0
-		begin
-			print ' film sans acteur'
-			set @vide = 0
-		end
-	-- ajout cara | en debut
-	IF CHARINDEX('|',@liste_acteurs) <> 1
-		begin
-			set @liste_acteurs = '|' + @liste_acteurs
-		end
-	-- ajout cara | en fin
-	IF CHARINDEX('|',@liste_acteurs, len(@liste_acteurs)) = 0
-		begin
-			set @liste_acteurs = @liste_acteurs +'|'
-		end
+    set @index=1
+    set @vide = 1
+    IF CHARINDEX('|', @liste_acteurs)=0
+        begin
+            print ' film sans acteur'
+            set @vide = 0
+        end
+    -- ajout cara | en debut
+    IF CHARINDEX('|',@liste_acteurs) <> 1
+        begin
+            set @liste_acteurs = '|' + @liste_acteurs
+        end
+    -- ajout cara | en fin
+    IF CHARINDEX('|',@liste_acteurs, len(@liste_acteurs)) = 0
+        begin
+            set @liste_acteurs = @liste_acteurs +'|'
+        end
 
-	while @index <> LEN(@liste_acteurs) AND @vide=1
-		begin
-		declare @avirg1 int, @avirg2 int,@avirg3 int,@avirg4 int,@avirg5 int, @avirg6 int, @avirg7 int
-		declare @nom_act NVARCHAR(50), @pre_act NVARCHAR(50), @date_naissance DATE, @sexe_act NVARCHAR(50),@date_deces DATE, @nom_scene NVARCHAR (50), @biographie NVARCHAR(max), @nat_act NVARCHAR(50)
-		set @avirg1 = CHARINDEX(',', @liste_acteurs, @index+1)
-		set @avirg2 = CHARINDEX(',', @liste_acteurs, @avirg1+1)
-		set @avirg3 = CHARINDEX(',', @liste_acteurs, @avirg2+1)
-		set @avirg4 = CHARINDEX(',', @liste_acteurs, @avirg3+1)	
-		set @avirg5 = CHARINDEX(',', @liste_acteurs, @avirg4+1)	
-		set @avirg6 = CHARINDEX(',', @liste_acteurs, @avirg5+1)	
-		set @avirg7 = CHARINDEX(',', @liste_acteurs, @avirg6+1)		
+    while @index <> LEN(@liste_acteurs) AND @vide=1
+        begin
+        declare @avirg1 int, @avirg2 int,@avirg3 int,@avirg4 int,@avirg5 int, @avirg6 int, @avirg7 int
+        declare @nom_act NVARCHAR(50), @pre_act NVARCHAR(50), @date_naissance DATE, @sexe_act NVARCHAR(50),@date_deces DATE, @nom_scene NVARCHAR (50), @biographie NVARCHAR(max), @nat_act NVARCHAR(50)
+        set @avirg1 = CHARINDEX(',', @liste_acteurs, @index+1)
+        set @avirg2 = CHARINDEX(',', @liste_acteurs, @avirg1+1)
+        set @avirg3 = CHARINDEX(',', @liste_acteurs, @avirg2+1)
+        set @avirg4 = CHARINDEX(',', @liste_acteurs, @avirg3+1) 
+        set @avirg5 = CHARINDEX(',', @liste_acteurs, @avirg4+1) 
+        set @avirg6 = CHARINDEX(',', @liste_acteurs, @avirg5+1) 
+        set @avirg7 = CHARINDEX(',', @liste_acteurs, @avirg6+1)     
 
-		set @fin = CHARINDEX('|', @liste_acteurs, @index+1)
-		
-		set @nom_act = LTRIM(SUBSTRING(@liste_acteurs, @index+1, @avirg1 - @index -1))
-		set @pre_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg1+1, @avirg2 - @avirg1 -1))
-		set @date_naissance = LTRIM(SUBSTRING(@liste_acteurs, @avirg2+1, @avirg3 - @avirg2 -1))
-		set @sexe_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg3+1, @avirg4 - @avirg3 -1))
+        set @fin = CHARINDEX('|', @liste_acteurs, @index+1)
+        
+        set @nom_act = LTRIM(SUBSTRING(@liste_acteurs, @index+1, @avirg1 - @index -1))
+        set @pre_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg1+1, @avirg2 - @avirg1 -1))
+        set @date_naissance = LTRIM(SUBSTRING(@liste_acteurs, @avirg2+1, @avirg3 - @avirg2 -1))
+        set @sexe_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg3+1, @avirg4 - @avirg3 -1))
 
-		declare @atmpdeces NVARCHAR(100)
-		set @atmpdeces = LTRIM(SUBSTRING(@liste_acteurs, @avirg4+1, @avirg5 - @avirg4 -1))
-		IF (@atmpdeces='' OR @atmpdeces=' ' OR @atmpdeces='null' OR @atmpdeces = 'NULL')
-		 set @date_deces = null
-		 ELSE
-		 set @date_deces = @atmpdeces
+        declare @atmpdeces NVARCHAR(100)
+        set @atmpdeces = LTRIM(SUBSTRING(@liste_acteurs, @avirg4+1, @avirg5 - @avirg4 -1))
+        IF (@atmpdeces='' OR @atmpdeces=' ' OR @atmpdeces='null' OR @atmpdeces = 'NULL')
+         set @date_deces = null
+         ELSE
+         set @date_deces = @atmpdeces
 
-		set @nom_scene = LTRIM(SUBSTRING(@liste_acteurs, @avirg5+1, @avirg6 - @avirg5 -1))
-		set @biographie = LTRIM(SUBSTRING(@liste_acteurs, @avirg6+1, @avirg7 - @avirg6 -1))
-		set @nat_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg7+1, @fin- @avirg7 -1))
-		set @index = @fin
+        set @nom_scene = LTRIM(SUBSTRING(@liste_acteurs, @avirg5+1, @avirg6 - @avirg5 -1))
+        set @biographie = LTRIM(SUBSTRING(@liste_acteurs, @avirg6+1, @avirg7 - @avirg6 -1))
+        set @nat_act = LTRIM(SUBSTRING(@liste_acteurs, @avirg7+1, @fin- @avirg7 -1))
+        set @index = @fin
 
 
-		IF EXISTS(SELECT * FROM Acteur WHERE Acteur.Nom=@nom_act AND Acteur.Prenom=@pre_act AND Acteur.Date_naissance=@date_naissance AND Acteur.Sexe=@sexe_act AND Acteur.Date_deces=@date_deces AND Acteur.Nom_de_scene=@nom_scene AND Acteur.Biographie=@biographie AND Acteur.Nationalite=@nat_act)
-		/*SI l''acteur existe dans la table Acteur ALORS*/
-			begin
-			print 'l''acteur '+cast(@pre_act as NVARCHAR)+cast(@nom_act as NVARCHAR)+' existe déjà dans la table Acteur ; vérifier dans la table Jouer';
+        IF EXISTS(SELECT * FROM Acteur WHERE Acteur.Nom=@nom_act AND Acteur.Prenom=@pre_act AND Acteur.Date_naissance=@date_naissance AND Acteur.Sexe=@sexe_act AND Acteur.Date_deces=@date_deces AND Acteur.Nom_de_scene=@nom_scene AND Acteur.Biographie=@biographie AND Acteur.Nationalite=@nat_act)
+        /*SI l''acteur existe dans la table Acteur ALORS*/
+            begin
+            print 'l''acteur '+cast(@pre_act as NVARCHAR)+cast(@nom_act as NVARCHAR)+' existe déjà dans la table Acteur ; vérifier dans la table Jouer';
 
-			IF EXISTS (SELECT * FROM Joue WHERE Joue.FK_nom_acteur=@nom_act AND Joue.FK_prenom_acteur=@pre_act AND Joue.FK_date_de_naissance_acteur=@date_naissance)
-			/*SI l''acteur existe dans la table Joue ALORS*/
-				begin
-				print cast(@Titre as NVARCHAR)+', '+cast(@nom_act as NVARCHAR)+'; existe déjà dans la table Jouer'
-				end
-			ELSE
-				begin
-				print cast(@Titre as NVARCHAR)+', '+cast(@nom_act as NVARCHAR)+'; n''existe pas dans la table Jouer, insérer dans la table Joue'
-				exec  Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
-				end
-			end
-		ELSE /* l'acteur n'existe pas dans la table Acteur, insérer dans la table Acteur et dans la table Joue  */
-			begin
-			print cast(@nom_act as NVARCHAR)+' n''existe pas dans la table Acteurs, insérer dans la table Acteurs et dans la table Jouer'
-			exec Acteur_creer @nom_act, @pre_act, @date_naissance, @sexe_act, @date_deces, @nom_scene, @biographie, @nat_act;
-			exec Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
-			end
-		end
-		
+            IF EXISTS (SELECT * FROM Joue WHERE Joue.FK_nom_acteur=@nom_act AND Joue.FK_prenom_acteur=@pre_act AND Joue.FK_date_de_naissance_acteur=@date_naissance)
+            /*SI l''acteur existe dans la table Joue ALORS*/
+                begin
+                print cast(@Titre as NVARCHAR)+', '+cast(@nom_act as NVARCHAR)+'; existe déjà dans la table Jouer'
+                end
+            ELSE
+                begin
+                print cast(@Titre as NVARCHAR)+', '+cast(@nom_act as NVARCHAR)+'; n''existe pas dans la table Jouer, insérer dans la table Joue'
+                exec  Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
+                end
+            end
+        ELSE /* l'acteur n'existe pas dans la table Acteur, insérer dans la table Acteur et dans la table Joue  */
+            begin
+            print cast(@nom_act as NVARCHAR)+' n''existe pas dans la table Acteurs, insérer dans la table Acteurs et dans la table Jouer'
+            exec Acteur_creer @nom_act, @pre_act, @date_naissance, @sexe_act, @date_deces, @nom_scene, @biographie, @nat_act;
+            exec Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
+            end
+        end
+        
 
-	
-	
+    
+    
 end
 
 print '--REALISATEUR(S)--';
@@ -2004,7 +1932,7 @@ while @index <> LEN(@liste_realisateurs) AND @vide=1
            print 'le realisateur'+cast(@nom_rea as NVARCHAR)+'n''existe pas dans realiser'
            exec Realiser_creer @Titre, @Complement_titre, @nom_rea, @prenom_rea, @date_naissance_rea;
           end
-		END
+        END
     ELSE
        begin
      /* Le realisateur n'existe pas on va donc l'ajouter dans la liste de nos realisateurs */
@@ -2019,8 +1947,8 @@ while @index <> LEN(@liste_realisateurs) AND @vide=1
 
 print '--Distinctions--';
 
- 	set @index=1
-	set @vide = 1
+    set @index=1
+    set @vide = 1
 
   IF CHARINDEX('|', @liste_distinctions)=0
      begin 
@@ -2037,7 +1965,7 @@ print '--Distinctions--';
        set  @liste_distinctions =  @liste_distinctions+'|'
      end
 
-	while @index <> LEN(@liste_distinctions) AND @vide=1
+    while @index <> LEN(@liste_distinctions) AND @vide=1
         begin
         declare @bvirg1 int, @bvirg2 int
         declare @Nom NVARCHAR(50), @Lieu NVARCHAR(50), @Annee_d INT  
@@ -2057,12 +1985,12 @@ print '--Distinctions--';
         
         IF EXISTS (select* from Distinctions  
             where Distinctions.Nom = @Nom and Distinctions.Lieu = @Lieu and Distinctions.Annee = @Annee_d)
-			begin
+            begin
             print 'la distinction'+cast(@Nom as NVARCHAR)+' existe déjà dans la table Distinctions ; vérifier dans la table Attribuer';
  
         IF EXISTS (select* from Attribuer
             where Attribuer.FK_nom_distinction = @Nom and Attribuer.FK_lieu_distinction = @Lieu and Attribuer.FK_annee_distinction= @Annee_d )
-			begin
+            begin
                 print cast(@Nom as NVARCHAR)+', '+cast(@Lieu as NVARCHAR)+', '+cast(@Annee_d as INT)+'; existe déjà dans la table Attribuer'
                 end
             ELSE
@@ -2080,7 +2008,7 @@ print '--Distinctions--';
         end
 
 
-		/*Genre*/
+        /*Genre*/
   print '--GENRE(S)--'
   set @index=1
   set @vide=1
@@ -2105,25 +2033,25 @@ while @index <>LEN(@liste_genres) AND @vide=1
 
 
     IF EXISTS (SELECT * FROM Genre
-	WHERE
+    WHERE
           Genre.Nom=@nom_genre)
-	  begin
+      begin
           print 'le genre'+cast(@nom_genre as NVARCHAR)+'existe déjà dans genres';
-	  IF EXISTS (SELECT * FROM Appartenir
-	  WHERE
- 	       Appartenir.FK_titre=@Titre
+      IF EXISTS (SELECT * FROM Appartenir
+      WHERE
+           Appartenir.FK_titre=@Titre
            and Appartenir.FK_complement_titre=@Complement_titre
            and Appartenir.FK_nom_genre=@nom_genre)
-	       begin
+           begin
                print 'le genre'+cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@nom_genre as NVARCHAR)+'existe deja';
-	       end
+           end
 
-	   ELSE
+       ELSE
                begin
-	       print 'le genre'+cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@nom_genre as NVARCHAR)+'existe deja';
-	       exec Appartenir_creer @Titre, @Complement_titre, @nom_genre;
-	       end
- 	   end
+           print 'le genre'+cast(@Titre as NVARCHAR)+','+cast(@Complement_titre as NVARCHAR)+','+cast(@nom_genre as NVARCHAR)+'existe deja';
+           exec Appartenir_creer @Titre, @Complement_titre, @nom_genre;
+           end
+       end
        
     ELSE
      /* Le genre n'existe pas on va donc l'ajouté dans la liste de nos genres */
@@ -2138,8 +2066,8 @@ END
 GO
 
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion Edition */
 /*Auteur(s): PATRICK POL ELISE BROCHEN*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
@@ -2182,7 +2110,7 @@ IF EXISTS (select * FROM Films
  where
    Films.Titre=@FK_titre
    and Films.Complement_titre=@FK_complement_titre
-	)
+    )
 
 begin
 print cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR)+'existe déja';
@@ -2199,14 +2127,14 @@ end
 
 IF EXISTS (select * from Edition
   where
-	Edition.Nom=@Nom AND
-	Edition.Annee_de_sortie=@Annee_de_sortie AND
-	Edition.limite_age=@limite_age AND
-	Edition.Support=@Support AND
-	Edition.Date_insertion=@Dinsertion AND
-	Edition.Type_couleur=@Tcouleur AND
-	Edition.Type_son=@Tson
-	)
+    Edition.Nom=@Nom AND
+    Edition.Annee_de_sortie=@Annee_de_sortie AND
+    Edition.limite_age=@limite_age AND
+    Edition.Support=@Support AND
+    Edition.Date_insertion=@Dinsertion AND
+    Edition.Type_couleur=@Tcouleur AND
+    Edition.Type_son=@Tson
+    )
 begin
      print  cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as INT)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as DATETIME)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
 return 0;
@@ -2251,24 +2179,24 @@ while @index <>LEN(@liste_Langue_audio) AND @vide=1
 
 
     IF EXISTS (SELECT * FROM Langue_audio
-	WHERE
+    WHERE
         Langue_audio.Nom=@nom_audio)
-	begin
+    begin
         print 'la langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans langues audio';
-	
-	IF EXISTS (SELECT * FROM Rattacher
-	WHERE Rattacher.FK_langue=@nom_audio)
-		begin
-		print 'Cette langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans rattacher';
-		end
+    
+    IF EXISTS (SELECT * FROM Rattacher
+    WHERE Rattacher.FK_langue=@nom_audio)
+        begin
+        print 'Cette langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans rattacher';
+        end
 
-	ELSE
-		begin
-		print 'Cette langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans rattacher';
-		EXEC Rattacher_creer @nom_audio
-	    END
-	END
-	     
+    ELSE
+        begin
+        print 'Cette langue audio'+cast(@nom_audio as NVARCHAR)+'existe déjà dans rattacher';
+        EXEC Rattacher_creer @nom_audio
+        END
+    END
+         
     ELSE
      /* La langue audio n'existe pas on va donc l'ajouté dans la liste de nos langues audio */
      begin
@@ -2309,22 +2237,22 @@ while @index <>LEN(@liste_Langue_sous_titre) AND @vide=1
 
 
     IF EXISTS (SELECT * FROM Langue_sous_titre
-	WHERE Langue_sous_titre.Nom=@nom_sub)
-	    begin
+    WHERE Langue_sous_titre.Nom=@nom_sub)
+        begin
         print 'la langue sous titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans langues audio'
        
-	      IF EXISTS (SELECT * FROM Afficher
-	      WHERE Afficher.FK_langue=@nom_sub)
-		     begin
-		    print 'Cette langue sous-titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans rattacher';
-		     end
+          IF EXISTS (SELECT * FROM Afficher
+          WHERE Afficher.FK_langue=@nom_sub)
+             begin
+            print 'Cette langue sous-titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans rattacher';
+             end
 
-	     ELSE
-		    begin
-		    print 'Cette langue sous titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans rattacher';
-		    EXEC Afficher_creer @nom_sub
-		 end
-	END
+         ELSE
+            begin
+            print 'Cette langue sous titre'+cast(@nom_sub as NVARCHAR)+'existe déjà dans rattacher';
+            EXEC Afficher_creer @nom_sub
+         end
+    END
     ELSE
      /* la langue sous titre n'existe pas on va donc l'ajouté dans la liste de nos langues audio */
        BEGIN
@@ -2345,18 +2273,18 @@ declare @FK_numero_edition int
 set @counter = 1
 
 
-		EXEC exemplaire_creer @Date_approvisionnement_e @Taux_usure  @Disponibilite @FK_numero_edition;
+        EXEC exemplaire_creer @Date_approvisionnement_e @Taux_usure  @Disponibilite @FK_numero_edition;
 while @counter <= @nombreEx
-	begin
+    begin
 
-		set @counter = @counter +1;
-	end;
+        set @counter = @counter +1;
+    end;
 
 GO*/
 
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion Exemplaire */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
@@ -2389,22 +2317,22 @@ begin
 /* Tester si @numSerieEdition dans domaine */
 /* Tester si @numSerieEdition correspond a edition existante */
 IF  @numSerieEdition NOT LIKE '%[0-9]%'
-	BEGIN 
-		PRINT 'Le numero d''edition est pas valide';
-	RETURN 0;
+    BEGIN 
+        PRINT 'Le numero d''edition est pas valide';
+    RETURN 0;
         END 
 
 IF EXISTS (select * from Edition
   where
-	Edition.Nom=@NomE AND
-	Edition.Annee_de_sortie=@AnneeE AND
-	Edition.Duree_film=@Duree AND
-	Edition.limite_age=@limiteA AND
-	Edition.Support=@SupportE AND
-	Edition.Date_insertion=@Dinsertion AND
-	Edition.Type_couleur=@Tcouleur AND
-	Edition.Type_son=@Tson
-	)
+    Edition.Nom=@NomE AND
+    Edition.Annee_de_sortie=@AnneeE AND
+    Edition.Duree_film=@Duree AND
+    Edition.limite_age=@limiteA AND
+    Edition.Support=@SupportE AND
+    Edition.Date_insertion=@Dinsertion AND
+    Edition.Type_couleur=@Tcouleur AND
+    Edition.Type_son=@Tson
+    )
 begin
      print  cast(@NomE as NVARCHAR)+','+cast(@AnneeE as INT)+','+cast(@Duree as INT)+','+cast(@limiteA as INT)+','+cast(@SupportE as NVARCHAR)+','+cast(@Dinsertion as DATETIME)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
 return 0;
@@ -2413,39 +2341,39 @@ end
 /* Tester si @nombreEx dans domaine */
 
 IF  @nombreEx NOT LIKE '%[0-9]%'
-	BEGIN 
-		PRINT 'Le nombre d''exemplaire n''est pas valide';
-	RETURN 0;
+    BEGIN 
+        PRINT 'Le nombre d''exemplaire n''est pas valide';
+    RETURN 0;
 END 
 
 declare @counter int;
 set @counter = 1;
 
 while @counter <= @nombreEx
-	begin
-		insert into EXEMPLAIRE
-		(
-			Date_approvisionnement ,
-			Taux_usure ,
-			Disponibilite ,
-			FK_numero_edition
-		) 
-		values
-		(
-			@Date_approvisionnement ,
-			@Taux_usure ,
-			@Disponibilite ,
-			@FK_numero_edition
-		)
-		set @counter = @counter +1;
+    begin
+        insert into EXEMPLAIRE
+        (
+            Date_approvisionnement ,
+            Taux_usure ,
+            Disponibilite ,
+            FK_numero_edition
+        ) 
+        values
+        (
+            @Date_approvisionnement ,
+            @Taux_usure ,
+            @Disponibilite ,
+            @FK_numero_edition
+        )
+        set @counter = @counter +1;
           END
 
 END
 
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion abonne */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
@@ -2455,82 +2383,82 @@ GO
 
 CREATE procedure [dbo].[a_insertion_Abonne]
 
-	@Nom NVARCHAR (50),
-	@Prenom NVARCHAR (50),
-	@Pseudo NVARCHAR (50),
-	@Date_naissance DATE,
-	@Sexe NVARCHAR (50),
-	@Numero_de_voie NVARCHAR (50),
-	@Complement_de_voie NVARCHAR (50),
-	@Type_de_voie NVARCHAR (50),
-	@Libelle NVARCHAR (50),
-	@Complement_libelle NVARCHAR (50),
-	@Code_postal NVARCHAR (50),
-	@Ville NVARCHAR (50),
-	@Cedex NVARCHAR (50),
-	@Pays NVARCHAR (50),
-	@Numero_telephone NVARCHAR (50),
-	@Adresse_email NVARCHAR (50),
-	
-	/* Type_abonnement */
-	
-	@Type_abonnement NVARCHAR(50)  
+    @Nom NVARCHAR (50),
+    @Prenom NVARCHAR (50),
+    @Pseudo NVARCHAR (50),
+    @Date_naissance DATE,
+    @Sexe NVARCHAR (50),
+    @Numero_de_voie NVARCHAR (50),
+    @Complement_de_voie NVARCHAR (50),
+    @Type_de_voie NVARCHAR (50),
+    @Libelle NVARCHAR (50),
+    @Complement_libelle NVARCHAR (50),
+    @Code_postal NVARCHAR (50),
+    @Ville NVARCHAR (50),
+    @Cedex NVARCHAR (50),
+    @Pays NVARCHAR (50),
+    @Numero_telephone NVARCHAR (50),
+    @Adresse_email NVARCHAR (50),
+    
+    /* Type_abonnement */
+    
+    @Type_abonnement NVARCHAR(50)  
 
 as
 
 begin
 
-	declare @tmp int
-	declare @index int
-	declare @fin int
-	declare @er INT
-	declare @num_compte INT
-	declare @Date_crea DATETIME
+    declare @tmp int
+    declare @index int
+    declare @fin int
+    declare @er INT
+    declare @num_compte INT
+    declare @Date_crea DATETIME
 
 /* test type_abonnement */
 IF NOT EXISTS (
-	SELECT *
-	FROM Type_abonnement WHERE  Type_abonnement.Nom=@Type_abonnement )
-	BEGIN
-		PRINT'Le type d`abonnement n`existe pas';
-		RETURN 0;
+    SELECT *
+    FROM Type_abonnement WHERE  Type_abonnement.Nom=@Type_abonnement )
+    BEGIN
+        PRINT'Le type d`abonnement n`existe pas';
+        RETURN 0;
 END
  
 ELSE /* le type_abonnnemnt exist déjà */
-	BEGIN
-		/* ABONNEE */
-		print '-- ABONNEE --'
-		exec @er = Abonne_creer @Nom, @Prenom, @Date_naissance;
-		IF @er= 1 /* Abonne déjà au catalogue */
-			BEGIN
-				print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+'existe déjà';
-				return 0;
-			END
+    BEGIN
+        /* ABONNEE */
+        print '-- ABONNEE --'
+        exec @er = Abonne_creer @Nom, @Prenom, @Date_naissance;
+        IF @er= 1 /* Abonne déjà au catalogue */
+            BEGIN
+                print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+'existe déjà';
+                return 0;
+            END
 
-		ELSE /* Abonnee absent du catalogue */
-			BEGIN
-			print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+',  Abonnee absent du catalogue, à insérer';
-				
-				/* creation de compte*/
-				exec  compte_creer @er , 0  ;
-				set @num_compte=@@IDENTITY 
-				
-				/* creation de l''abonnement */
-				set @Date_crea = getdate()
-				declare @Dfin DATE
-				set @Dfin= CURRENT_TIMESTAMP+30
-		
-				
+        ELSE /* Abonnee absent du catalogue */
+            BEGIN
+            print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+',  Abonnee absent du catalogue, à insérer';
+                
+                /* creation de compte*/
+                exec  compte_creer @er , 0  ;
+                set @num_compte=@@IDENTITY 
+                
+                /* creation de l''abonnement */
+                set @Date_crea = getdate()
+                declare @Dfin DATE
+                set @Dfin= CURRENT_TIMESTAMP+30
+        
+                
 
-				exec @er = abonnement_creer Date_crea,Dfin,@num_compte,@Type_abonnement ;
-			/**/
-			END
-	END
-	END
-	GO
+                exec @er = abonnement_creer Date_crea,Dfin,@num_compte,@Type_abonnement ;
+            /**/
+            END
+    END
+    END
+    GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion type abonnement */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
@@ -2551,45 +2479,45 @@ as
 
 begin
 
-	
-	declare @index int
-	declare @fin int
-	declare @vide int
-	declare @er int
-	
-	/* catalogue */
-	IF EXISTS (SELECT * FROM Type_Abonnement
-	WHERE
-	     Type_Abonnement.Nom=@Nom and
-	     Type_Abonnement.Prix=@Prix and
- 	     Type_Abonnement.Prix_location=@Prix_location and
-	     Type_Abonnement.Exemplaires_simultanes=@NbSimuls and
+    
+    declare @index int
+    declare @fin int
+    declare @vide int
+    declare @er int
+    
+    /* catalogue */
+    IF EXISTS (SELECT * FROM Type_Abonnement
+    WHERE
+         Type_Abonnement.Nom=@Nom and
+         Type_Abonnement.Prix=@Prix and
+         Type_Abonnement.Prix_location=@Prix_location and
+         Type_Abonnement.Exemplaires_simultanes=@NbSimuls and
              Type_Abonnement.Prix_retard=@Prix_retard and
              Type_Abonnement.Duree_engagement=@Duree
-	)
-	begin
-	print cast(@Nom as NVARCHAR)+'exite deja';
-	return 0;
-	end
+    )
+    begin
+    print cast(@Nom as NVARCHAR)+'exite deja';
+    return 0;
+    end
 
-	ELSE /* Film absent au catalogue */
-	begin
-	print cast(@Nom as NVARCHAR)+'à insérer au type abonnement';
-	exec @er=Type_abonnement_creer @Nom, @Prix, @Prix_location, @NbSimuls, @Prix_retard, @Duree;
-	if @er <> 0 return 0
-	end
+    ELSE /* Film absent au catalogue */
+    begin
+    print cast(@Nom as NVARCHAR)+'à insérer au type abonnement';
+    exec @er=Type_abonnement_creer @Nom, @Prix, @Prix_location, @NbSimuls, @Prix_retard, @Duree;
+    if @er <> 0 return 0
+    end
 
 END 
 
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion location */
 /*Auteur(s): ELISE BROCHEN */
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN Mickael GOUALARD*/
 /*Intégrateur: SANDRA LADURANTI*/
-use ouftim
+use ouf_tim
 
 GO
 
@@ -2600,88 +2528,88 @@ CREATE procedure [dbo].[insere_location]
 AS
 
 BEGIN
-	DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128 ), @NbSimul INT
+    DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128 ), @NbSimul INT
 
-	IF @Num_exem < 0
-	BEGIN
-		PRINT 'Num exemplaire invalide'
-		RETURN;
-	END
+    IF @Num_exem < 0
+    BEGIN
+        PRINT 'Num exemplaire invalide'
+        RETURN;
+    END
 
-	IF @Num_abo < 0
-	BEGIN
-		PRINT 'Num abonnement invalide'
-		RETURN;
-	END
+    IF @Num_abo < 0
+    BEGIN
+        PRINT 'Num abonnement invalide'
+        RETURN;
+    END
 
-	
-	SET @Date_deb= CURRENT_TIMESTAMP
+    
+    SET @Date_deb= CURRENT_TIMESTAMP
 
-	SET @TaboNom = (SELECT FK_type_abonnement FROM dbo.Abonnement WHERE Abonnement.Numero_abonnement = @Num_abo)
-	IF @TaboNom IS NULL
-	BEGIN
-		PRINT 'Abonnement invalide'
-		RETURN;
-	END
+    SET @TaboNom = (SELECT FK_type_abonnement FROM dbo.Abonnement WHERE Abonnement.Numero_abonnement = @Num_abo)
+    IF @TaboNom IS NULL
+    BEGIN
+        PRINT 'Abonnement invalide'
+        RETURN;
+    END
 
-	SET @Duree = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
-	IF @Duree IS NULL
-	BEGIN
-		PRINT 'Duree d''abonnement invalide'
-		RETURN;
-	END
+    SET @Duree = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
+    IF @Duree IS NULL
+    BEGIN
+        PRINT 'Duree d''abonnement invalide'
+        RETURN;
+    END
 
-	IF (SELECT Disponibilite FROM dbo.Exemplaires WHERE  Exemplaires.Numero_exemplaire = @Num_exem) <> 1
-	BEGIN
-		PRINT 'Exemplaires non dispo'
-		RETURN;
-	END
+    IF (SELECT Disponibilite FROM dbo.Exemplaires WHERE  Exemplaires.Numero_exemplaire = @Num_exem) <> 1
+    BEGIN
+        PRINT 'Exemplaires non dispo'
+        RETURN;
+    END
 
-	SET @NbSimul = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
-	IF (SELECT COUNT(*) FROM dbo.Locations WHERE Locations.FK_num_abonnement = @Num_exem) >= @NbSimul
-	BEGIN
-		PRINT 'Trop de locations' 
-		RETURN;
-	END
+    SET @NbSimul = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
+    IF (SELECT COUNT(*) FROM dbo.Locations WHERE Locations.FK_num_abonnement = @Num_exem) >= @NbSimul
+    BEGIN
+        PRINT 'Trop de locations' 
+        RETURN;
+    END
 
 
 
-	IF NOT EXISTS (SELECT * FROM dbo.Locations WHERE Locations.FK_exemplaire=@Num_exem AND Locations.FK_num_abonnement=@Num_abo AND Locations.Date_debut=@Date_deb)
-	BEGIN
-		INSERT INTO dbo.Locations
-			(
-			Date_debut,
-			Duree, 
-			Date_fin_prevue,
-			Date_fin_reelle,
-			FK_exemplaire,
-			FK_num_abonnement
-			)
+    IF NOT EXISTS (SELECT * FROM dbo.Locations WHERE Locations.FK_exemplaire=@Num_exem AND Locations.FK_num_abonnement=@Num_abo AND Locations.Date_debut=@Date_deb)
+    BEGIN
+        INSERT INTO dbo.Locations
+            (
+            Date_debut,
+            Duree, 
+            Date_fin_prevue,
+            Date_fin_reelle,
+            FK_exemplaire,
+            FK_num_abonnement
+            )
 
-			VALUES
-			(
-			@Date_deb,
-			@Duree, 
-			NULL,
-			NULL,
-			@Num_exem,
-			@Num_abo
-			)
+            VALUES
+            (
+            @Date_deb,
+            @Duree, 
+            NULL,
+            NULL,
+            @Num_exem,
+            @Num_abo
+            )
 
-			UPDATE dbo.Exemplaires SET Disponibilite= 1 WHERE Exemplaires.FK_numero_edition = @Num_exem ;
-		PRINT 'Nouvel location ajoutée'
+            UPDATE dbo.Exemplaires SET Disponibilite= 1 WHERE Exemplaires.FK_numero_edition = @Num_exem ;
+        PRINT 'Nouvel location ajoutée'
 
-	END
+    END
 
-	ELSE
-	BEGIN
-		PRINT 'Cette location existe déjà'
-	END
+    ELSE
+    BEGIN
+        PRINT 'Cette location existe déjà'
+    END
 END
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
 /*Charindex - Insertion Abonnement */
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
@@ -2716,20 +2644,20 @@ IF NOT EXISTS (SELECT * FROM Abonne where Abonne.Nom=@Nom_Abonne and Abonne.Pren
 
    IF NOT EXISTS (SELECT * FROM Type_Abonnement where Type_Abonnement.Nom=@TAbonnement)
       BEGIN
-	print cast(@TAbonnement as NVARCHAR)+'Type Abonnement non existant'
+    print cast(@TAbonnement as NVARCHAR)+'Type Abonnement non existant'
       END
 
    ELSE
       BEGIN
-	IF NOT EXISTS (SELECT * FROM Compte WHERE Compte.Numero_compte=@Num_compte)
-	   BEGIN
+    IF NOT EXISTS (SELECT * FROM Compte WHERE Compte.Numero_compte=@Num_compte)
+       BEGIN
              print 'Votre compte n''existe pas'
-	     return 0;
+         return 0;
            END
         ELSE
-	    BEGIN
-	       EXEC Abonnement_creer @Num_compte,  @Date_creation, @Date_expiration, @TAbonnement
-	       EXEC Souscrire_creer  @Nom_Abonne, @Prenom_Abonne, @Pseudo_Abonne, @Num_compte
+        BEGIN
+           EXEC Abonnement_creer @Num_compte,  @Date_creation, @Date_expiration, @TAbonnement
+           EXEC Souscrire_creer  @Nom_Abonne, @Prenom_Abonne, @Pseudo_Abonne, @Num_compte
             END
       END
 
@@ -2739,22 +2667,109 @@ END
 
 GO
 
-/*L2 ATIC 2013 GROUPE Ouftim */
-/*BdD Ouftim */
-/*Procedure de creation d'une reservation */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):*/
-/*Intégrateur: */
 
-/* Des curseurs seront intégrés par la suite
-* pour le moment pas le code final */
+/*L2 ATIC 2013 GROUPE ouf_tim					  */
+/*BdD ouf_tim									  */
+/*Procedure avec curseur pour trouver une edition */
+/*Auteur(s): LADURANTI Sandra BROCHEN Elise       */
+/*Testeur(s):									  */
+/*Intégrateur: LADURANTI Sandra					  */
 
-USE ouftim
+USE ouf_tim
 
 GO 
 
-CREATE procedure [dbo].[insertion_reservation]
+if object_id('[dbo].[C_trouver_edition]') is not null
+drop procedure [dbo].[C_trouver_edition]
+GO
 
+CREATE procedure [dbo].[C_trouver_edition]
+(
+            @c_titre NVARCHAR (50),
+            @c_complement_titre nvarchar (50),
+            @c_support nvarchar (50),
+            @c_langue nvarchar (50),
+            @c_langue_sub nvarchar (50)
+)
+
+AS 
+
+    declare @num_exemplaire int;
+    declare @num_edition int;
+    declare @Titre nvarchar;
+    declare @Complement_titre nvarchar;
+    declare @Annee_de_sortie date;
+    declare @Support nvarchar;
+    declare @dispo bit;
+    declare @langue nvarchar;
+    declare @langue_sub nvarchar;
+    declare @fetch_edition int;
+
+    set @dispo = 0;
+
+    print 'je passe les set'
+
+    BEGIN 
+
+    select Rattacher.FK_edition From Rattacher WHERE FK_langue = @langue;
+     declare @cursor_langue_audio int;
+     declare @cursor_langue_sub int;
+	 declare @NULL int, @NLLU nvarchar(50), @NLULU datetime
+
+        declare crs2 cursor local for
+        select *
+        from [dbo].[Edition] ed
+        where ed.FK_titre = @c_titre and ed.FK_complement_titre = @c_complement_titre and ed.Support = @c_support 
+
+            OPEN crs2
+        
+        FETCH Next from crs2
+        INTO @fetch_edition,@NLLU,@NULL,@NULL,@NULL,@Support,@NLULU,@NLLU,@NLLU,@Titre, @Complement_titre /*@langue, @langue_sub,*/
+        print 'fetch initial' ;
+                IF @@FETCH_STATUS = - 1
+                BEGIN
+                    PRINT ' @@FETCH_STATUS = - 1 : aucun élément trouvé';
+                    close crs2
+                    deallocate crs2     
+                    RETURN - 1;
+                END
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            print 'fetch du while';
+            set @cursor_langue_audio = NULL;
+            set @cursor_langue_sub = NULL;
+            select @cursor_langue_audio = FK_edition From Rattacher WHERE FK_langue = @c_langue;
+            select @cursor_langue_sub = FK_edition From Afficher WHERE FK_langue = @c_langue_sub;
+            
+            IF @cursor_langue_audio is not null AND @cursor_langue_sub is not null
+            begin
+                print 'Titre: '+cast(@c_titre as NVARCHAR)+ ' complement: '+ cast(@c_complement_titre as NVARCHAR)+ ' Support: '+cast(@c_support as NVARCHAR)+ ' numero edition: ' + cast(@fetch_edition as NVARCHAR);
+            end
+        
+            FETCH Next from crs2
+             INTO @fetch_edition,@NLLU,@NULL,@NULL,@NULL,@Support,@NLULU,@NLLU,@NLLU,@Titre, @Complement_titre 
+        END
+        
+        close crs2
+        deallocate crs2
+
+        return 1;
+    END
+go
+
+/*L2 ATIC 2013 GROUPE ouf_tim						   */
+/*BdD ouf_tim										   */
+/*Procedure de recherche d'edition					   */
+/*Auteur(s): PATRICK POL LADURANTI SANDRA BROCHEN ELISE*/
+/*Testeur(s):										   */
+/*Intégrateur: LADURANTI SANDRA						   */
+
+USE ouf_tim
+
+GO 
+
+CREATE procedure [dbo].[recherche_edition]
+(
 /* Numero Abo */
 
 @Num_abonnement INT,
@@ -2768,20 +2783,20 @@ CREATE procedure [dbo].[insertion_reservation]
 /* Edition */
 
 @Support NVARCHAR (50),
-@Annee_sortie INT,
 
 /* Audio */
 @Langue_audio NVARCHAR (50),
 
 /* Sous-titre */
 @Langue_sub NVARCHAR (50)
+)
 
 AS
 
 BEGIN
 
 /* Numero Abo */
-print '----Votre num abonnement----'
+print 'numero abonnement'+cast(@Num_abonnement as NVARCHAR)
 
 
 
@@ -2795,56 +2810,39 @@ IF EXISTS (select * FROM Films
  
    begin 
    print cast(@Titre as VARCHAR)+','+cast(@Complement_titre as varchar)+'film existant'; 
-   return; 
    end
 
 /* Edition */
 
-IF EXISTS (select * FROM Edition WHERE Edition.Support=@Support AND Edition.Annee_de_sortie=@Annee_sortie)
+IF EXISTS (select * FROM Edition WHERE Edition.Support=@Support)
 begin 
-     print cast(@Support as VARCHAR)+','+cast(@Annee_sortie as INT)+'Edition Disponible'; 
-return; 
+     print cast(@Support as VARCHAR); 
 end
 
 ELSE
 begin 
-    print cast(@Support as VARCHAR)+','+cast(@Annee_sortie as INT)+'Edition recherche non existante';
+    print cast(@Support as VARCHAR)+'Edition recherche non existante';
+    return;
 END
 
 /* Audio */
 
-IF EXISTS (SELECT * FROM Langue_audio
-    WHERE
-        Langue_audio.Nom=@Langue_audio)
-    begin
-        print 'la langue audio'+cast(@Langue_audio as varchar)+'existe ';
-    
-        IF EXISTS (SELECT * FROM Rattacher
-        WHERE Rattacher.FK_langue=@Langue_audio)
-          begin
-            print 'Cette langue audio'+cast(@Langue_audio as varchar)+'existe déjà dans rattacher';
-          end
+   IF EXISTS (SELECT * FROM Rattacher
+   WHERE Rattacher.FK_langue=@Langue_audio)
+   begin
+	 print 'Cette langue audio'+cast(@Langue_audio as varchar)+'existe déjà dans rattacher';
+   end
 
-        ELSE
-           begin
-           print 'Cette langue audio'+cast(@Langue_audio as varchar)+'n''existe pas';
-        END
-   END 
-ELSE
-    begin
-    print cast(@Langue_audio as varchar)+'n''existe pas pour cette edition'
- END
+   ELSE
+   begin
+      print 'Cette langue audio'+cast(@Langue_audio as varchar)+'n''existe pas';
+      return;
+   END
 
 /* Sous-titre */
 
-IF EXISTS (SELECT * FROM Langue_sous_titre
-    WHERE Langue_sous_titre.Nom=@Langue_sub)
-    begin
-        print 'la langue sous titre'+cast(@Langue_sub as varchar)+'existe déjà dans langues audio'
-      
-	  	 /* la langue sous titre n'existe pas on va donc l'ajouter dans la liste de nos langues audio */ 
-        IF EXISTS (SELECT * FROM Afficher
-       WHERE Afficher.FK_langue=@Langue_sub)
+   IF EXISTS (SELECT * FROM Afficher
+   WHERE Afficher.FK_langue=@Langue_sub)
             begin
             print 'Cette langue sous-titre'+cast(@Langue_sub as varchar)+'existe déjà dans rattacher';
             end
@@ -2852,18 +2850,793 @@ IF EXISTS (SELECT * FROM Langue_sous_titre
         ELSE
           begin
           print 'Cette langue sous titre'+cast(@Langue_sub as varchar)+'n''existe pas';
+          return;
          END
-	END
-    ELSE
-     BEGIN
-     print cast(@Langue_sub as varchar)+'n''existe pas pour cette edition'
-     
-     END
 
-
-	 /*comme nous n'avons pas les curseurs on ne peut pas récuperer la dernière edition il faudra donc appeler
-	 la création de reservation ici
-
-	 EXEC reservation_creer @date_creation, @date_butoir, @etat, @FK_num_abonnement, @FK_num_exemplaire;*/
+     /* pas oublier de gerer si il n'y a pas de sous titres et pour les complements de titre */
+     EXEC C_trouver_edition @Titre, @Complement_titre, @Support, @Langue_audio, @Langue_sub;
 END
+GO
+
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						 */
+/*BdD ouf_tim										*/
+/*Procedure de creation d'une reservation immédiate */
+/*Auteur(s): LADURANTI SANDRA BROCHEN ELISE			*/
+/*Testeur(s): LADURANTI SANDRA BROCHEN ELISE		*/
+/*Intégrateur: LADURANTI SANDRA						*/
+
+IF OBJECT_ID('dbo.Reservation_immediate_creer', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.Reservation_immediate_creer;
+GO 
+CREATE PROCEDURE dbo.Reservation_immediate_creer
+(
+    @num_abonnement INT,
+    @num_edition INT
+)
+
+AS
+
+BEGIN
+	
+DECLARE @nom_abonnement NVARCHAR (50),
+		@nb_locations_sim INT,
+		@nom_abonne NVARCHAR (50),
+		@num_exemplaire INT
+
+		
+set @nb_locations_sim = NULL
+set @nom_abonnement = NULL
+
+
+select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonnement = @num_abonnement
+
+    IF @nom_abonnement = NULL
+  begin
+       PRINT 'mauvais nom abonnement'
+       return;
+  end
+
+  select @nb_locations_sim = Exemplaires_simultanes FROM Type_abonnement WHERE @nom_abonnement = Nom
+
+  IF (select count (*) FROM Locations WHERE FK_num_abonnement = @num_abonnement) >= @nb_locations_sim
+  begin
+	PRINT 'nombre locations max atteint'
+	return;
+  end
+
+  SELECT TOP 1 @num_exemplaire = Numero_exemplaire  FROM Exemplaires WHERE @num_edition = FK_numero_edition AND Disponibilite = 1
+  IF @num_exemplaire = NULL
+  begin
+    PRINT 'Aucun exemplaire de dispo'
+    return;
+  end
+
+  BEGIN 
+    INSERT INTO Reservation_immediate
+        ( 
+        HD_creation,
+        HD_butoir,
+        Etat,
+        FK_num_abonnement ,
+        FK_num_exemplaire
+        )        
+ 
+    VALUES  
+    (
+       CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP+'02:00:00',
+        'En cours',
+        @num_abonnement,
+        @num_exemplaire
+        )
+  END
+ 
+ UPDATE Exemplaires SET Disponibilite = 0 WHERE Numero_exemplaire = @num_exemplaire
+      PRINT 'Reservation créée'
+END
+
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim */
+/*BdD ouf_tim */
+/*Procedure de tache de fond reservation immediate */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):*/
+/*Intégrateur: LADURANTI SANDRA*/
+
+Use "ouf_tim" 
+
+IF OBJECT_ID('[dbo].[a_maj_reservation_imm]', 'P') IS NOT NULL
+DROP PROCEDURE [dbo].[a_maj_reservation_imm];
+
+GO
+CREATE procedure [dbo].[a_maj_reservation_imm]
+ /*reservation*/
+AS
+begin
+
+ /* declaree */
+ DECLARE @numero_reserv int
+ DECLARE @num_exem int
+ DECLARE @date_debut DATETIME
+ 
+ DECLARE cur_num_reservation CURSOR LOCAL FOR
+  SELECT Numero_reservation FROM dbo.Reservation_immediate
+	WHERE HD_creation - '02:00:00' > CURRENT_TIMESTAMP AND Etat='En cours'
+ 
+ 
+ OPEN cur_num_reservation;
+	FETCH NEXT FROM cur_num_reservation INTO @numero_reserv;
+	IF @@FETCH_STATUS =-1
+	BEGIN
+		PRINT 'AUCUNE RESERVATION SUPPRIMER'
+		RETURN 0;
+	END
+	ELSE
+ 
+ 
+	while(@@FETCH_STATUS = 0)
+ 
+	SET @num_exem =( SELECT FK_num_exemplaire FROM Reservation_immediate WHERE FK_num_exemplaire=@num_exem)
+	UPDATE Reservation_immediate SET Etat = 'Annule' WHERE Numero_reservation = @numero_reserv;
+	
+	UPDATE Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire = @num_exem;
+	UPDATE Exemplaires SET Reserve = 0 WHERE Numero_exemplaire = @num_exem;
+	SET @date_debut = CURRENT_TIMESTAMP
+	INSERT INTO annulation_reservation_imm (
+	FK_num_reservation,
+	HD_annulation 
+
+	)
+	VALUES
+	(
+	@numero_reserv,
+	@date_debut
+	)
+ PRINT @numero_reserv;
+ PRINT 'la reservation est annule par la tache de fond'
+ FETCH NEXT FROM cur_num_reservation INTO @numero_reserv; 
+
+ 
+ CLOSE cur_edition;
+ PRINT 'FIN DE LA TACHE DE FOND MAJ ANNULATION'
+ RETURN 1;
+END
+
+GO
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim					*/
+/*BdD ouf_tim									*/
+/*Procedure annulation de reservation immédiate */
+/*Auteur(s): PATRICK POL						*/
+/*Testeur(s):									*/
+/*Intégrateur: LADURANTI SANDRA					*/
+
+
+/* on rentre manuellement l'heure HD annulation afin de pouvoir réaliser
+* nos tests mais dans le rendu l'heure sera récupérée avec CURRENTTIME */
+IF OBJECT_ID ('annulation_reservation_imm_creer', 'P') IS NOT NULL
+DROP PROCEDURE annulation_reservation_imm_creer;
+GO
+CREATE PROCEDURE annulation_reservation_imm_creer(
+	@HD_annulation DATETIME,	
+	@FK_num_reservation INT,
+	@FK_num_abonnement INT
+	)
+
+	AS
+	BEGIN
+-- On verifie que l'annulation est faite avant 16h vu que à 16h son état passe à annule ou accomplie 
+-- En gros on verifie que son etat est toujours à en cours
+
+		IF @HD_annulation > '16:00:00'
+		 BEGIN
+			PRINT 'Delais d''annulation depasse'
+			Return;
+		 END
+ 
+		IF @FK_num_reservation NOT LIKE (SELECT Numero_reservation FROM Reservation_immediate WHERE Numero_reservation=@FK_num_reservation)
+		 BEGIN
+			PRINT 'Numero de reservation incorrect'
+			RETURN;
+		 END
+
+		IF @FK_num_abonnement NOT LIKE (SELECT Numero_abonnement FROM Abonnement WHERE Numero_abonnement= @FK_num_abonnement)
+		 BEGIN
+			PRINT 'Numero d''abonnement inexistant'
+			RETURN;
+		 END
+	
+	IF NOT EXISTS (SELECT * FROM annulation_reservation_imm)
+	 BEGIN
+			INSERT INTO annulation_reservation_imm(
+						HD_annulation,
+						FK_num_reservation,
+						FK_num_abonnement
+			)
+			VALUES(
+						CURRENT_TIMESTAMP,
+						@FK_num_reservation,
+						@FK_num_abonnement
+			)
+			UPDATE dbo.Reservation_immediate  SET Etat='Annule' WHERE Numero_reservation=@FK_num_reservation;
+
+		--MAJ de l'attribut Disponibilite
+		DECLARE @Exemplaire_id BIGINT;
+		DECLARE @Disponibilite BIT;
+
+		SET @Exemplaire_id = (SELECT FK_num_exemplaire FROM Reservation_immediate WHERE Numero_reservation=@FK_num_reservation);
+		PRINT @Exemplaire_id;
+
+		SET @Disponibilite = (SELECT Disponibilite FROM Exemplaires WHERE Numero_exemplaire=@Exemplaire_id);
+		PRINT @Disponibilite;
+
+		UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id;
+		PRINT @Disponibilite;
+
+		--MAJ de l'attribut reserve
+
+		DECLARE @Exemplaire_id1 BIGINT;
+		DECLARE @Reserve BIT;
+
+		SET @Exemplaire_id1 = (SELECT FK_num_exemplaire FROM Reservation_Livraison WHERE Numero_reservation = @FK_num_reservation);
+		PRINT @Exemplaire_id1;
+
+		SET @Reserve = (SELECT Reserve FROM Exemplaires WHERE Numero_exemplaire =@Exemplaire_id1);
+		PRINT @Reserve;
+
+		UPDATE dbo.Exemplaires SET Reserve = 0 WHERE Numero_exemplaire=@Exemplaire_id1;
+		PRINT @Reserve;
+
+											
+		PRINT 'Annulation effectuée'
+
+	END
+	ELSE
+		BEGIN
+    		PRINT 'Annulation impossible'
+	END
+END
+
+/*L2 ATIC 2013 GROUPE ouf_tim					*/
+/*BdD ouf_tim									*/
+/*Procedure annulation de reservation immédiate */
+/*Auteur(s): LADURANTI Sandra					*/
+/*Testeur(s):									*/
+/*Intégrateur: LADURANTI SANDRA					*/
+
+IF OBJECT_ID('Reservation_livraison_creer', 'P') IS NOT NULL
+	DROP PROCEDURE Reservation_livraison_creer;
+GO 
+CREATE PROCEDURE Reservation_livraison_creer
+(
+   @num_abonnement INT,
+    @num_edition INT
+)
+
+AS
+
+BEGIN
+	
+DECLARE @nom_abonnement NVARCHAR (50),
+		@nb_locations_sim INT,
+		@nom_abonne NVARCHAR (50),
+		@num_exemplaire INT ,
+		@HD_livraison DATETIME
+
+		
+set @nb_locations_sim = NULL
+set @nom_abonnement = NULL
+set @HD_livraison = '17:00:00'
+/* faut convertir pasque DATETIME demande une date + une heure
+mais GETDATE + 17:00:00 ça marche paset du coup faudrait faire le
+truc en dessous mais jyarrivepasetcamepeteseverelescouilles
+SELECT
+CONVERT(TIME,GETDATE()) AS HourMinuteSecond,
+GO
+*/
+
+
+select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonnement = @num_abonnement
+
+    IF @nom_abonnement = NULL
+  begin
+       PRINT 'mauvais nom abonnement'
+       return;
+  end
+
+  select @nb_locations_sim = Exemplaires_simultanes FROM Type_abonnement WHERE @nom_abonnement = Nom
+
+  IF (select count (*) FROM Locations WHERE FK_num_abonnement = @num_abonnement) >= @nb_locations_sim
+  begin
+	PRINT 'nombre locations max atteint'
+	return;
+  end
+
+  SELECT TOP 1 @num_exemplaire = Numero_exemplaire  FROM Exemplaires WHERE @num_edition = FK_numero_edition AND Disponibilite = 1
+  IF @num_exemplaire = NULL
+  begin
+    PRINT 'Aucun exemplaire de dispo'
+    return;
+  end
+
+  BEGIN 
+    INSERT INTO Reservation_Livraison
+        ( 
+        HD_creation,
+        HD_livraison,
+		HD_retour,
+        Etat,
+        FK_num_abonnement ,
+        FK_num_exemplaire
+        )        
+ 
+    VALUES  
+      (
+       CURRENT_TIMESTAMP,
+	   @HD_livraison,
+		CURRENT_TIMESTAMP+'48:00:00',
+        'En cours',
+        @num_abonnement,
+        @num_exemplaire
+        )
+  END
+ 
+ UPDATE Exemplaires SET Disponibilite = 0 WHERE Numero_exemplaire = @num_exemplaire
+      PRINT 'Reservation créée'
+END
+
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim					*/
+/*BdD ouf_tim									*/
+/*Procedure annulation de reservation immédiate */
+/*Auteur(s): PATRICK POL						*/
+/*Testeur(s):									*/
+/*Intégrateur: LADURANTI SANDRA					*/
+
+Use "ouf_tim" 
+
+IF OBJECT_ID('[dbo].[a_maj_reservation_liv]', 'P') IS NOT NULL
+DROP PROCEDURE [dbo].[a_maj_reservation_liv];
+
+GO
+CREATE procedure [dbo].[a_maj_reservation_liv]
+ /*reservation*/
+AS
+begin
+
+ /* declaree */
+ DECLARE @numero_reserv int
+ DECLARE @numero_abo int
+ DECLARE @num_exem int
+ DECLARE @Date_debut DATETIME
+ DECLARE @Duree int
+ DECLARE @Date_fin_prevue DATETIME
+ DECLARE @Date_fin_reelle DATETIME
+ 
+ DECLARE cur_num_reservation CURSOR LOCAL FOR
+  SELECT Numero_reservation FROM dbo.Reservation_livraison
+	WHERE CURRENT_TIMESTAMP-'16:00:00' > 0 AND Etat='En cours'
+ 
+ 
+ OPEN cur_num_reservation;
+	FETCH NEXT FROM cur_num_reservation INTO @numero_reserv;
+	IF @@FETCH_STATUS =-1
+	BEGIN
+		PRINT 'AUCUNE RESERVATION SUPPRIMER'
+		RETURN 0;
+	END
+	ELSE
+ 
+ 
+	while(@@FETCH_STATUS = 0)
+ 
+	SET @num_exem =( SELECT FK_num_exemplaire FROM Reservation_livraison WHERE FK_num_exemplaire=@num_exem)
+	UPDATE Reservation_livraison SET Etat = 'Accomplie' WHERE Numero_reservation  = @numero_reserv;	
+	
+	UPDATE Exemplaires SET Disponibilite = 0 WHERE Numero_exemplaire = @num_exem;
+	UPDATE Exemplaires SET Reserve = 1 WHERE Numero_exemplaire = @num_exem; 
+	
+	SET @numero_abo = (SELECT FK_num_abonnement FROM Reservation_Livraison WHERE FK_num_abonnement=@numero_abo)
+	SET @Date_debut = CURRENT_TIMESTAMP
+	SET @Duree = 24
+	SET @Date_fin_prevue = @date_debut + '24:00:00'
+	SET @Date_fin_reelle = @Date_fin_reelle + '01:00:00'
+	INSERT INTO Locations (
+	Date_debut,
+	Duree,
+	Date_fin_prevue,
+	Date_fin_reelle,
+	FK_exemplaire,
+	FK_num_abonnement
+	)
+	VALUES
+	(
+	@Date_debut,
+	@Duree,
+	@Date_fin_prevue,
+	@Date_fin_reelle,
+	@num_exem,
+	@numero_abo
+	)
+ PRINT @num_exem;
+ PRINT 'la reservation est envoyé à la poste par la tache de fond'
+ FETCH NEXT FROM cur_num_reservation INTO @numero_reserv; 
+
+ 
+ CLOSE cur_edition;
+ PRINT 'FIN DE LA TACHE DE FOND MAJ ANNULATION'
+ RETURN 1;
+END
+
+GO
+
+/*L2 ATIC 2013 GROUPE Ouftim */
+/*BdD Ouftim */
+/*procedure annulation livraison */
+/*Auteur(s): PATRICK POL*/
+/*Testeur(s):PATRICK POL */
+/*Intégrateur: SANDRA LADURANTI*/
+
+
+IF OBJECT_ID ('dbo.annulation_livraison_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.annulation_livraison_creer;
+GO
+CREATE PROCEDURE dbo.annulation_livraison_creer(
+	@HD_annulation DATETIME,
+	@FK_num_reservation INT,
+	@FK_num_abonnement INT
+	
+)
+
+AS
+BEGIN
+
+IF @HD_annulation > '16:00:00'
+		 BEGIN
+			PRINT 'Delais d''annulation depasse'
+			Return;
+		 END
+ 
+IF @FK_num_reservation NOT LIKE (SELECT Numero_reservation  FROM Reservation_livraison WHERE Numero_reservation=@FK_num_reservation)
+	BEGIN
+		PRINT 'Numero de reservation incorrect'
+		RETURN;
+	END
+
+IF @FK_num_abonnement NOT LIKE (SELECT Numero_abonnement FROM Abonnement WHERE Numero_abonnement=@FK_num_abonnement)
+	BEGIN
+		PRINT 'Numero d''abonnement inexistant'
+		RETURN;
+	END
+	
+IF NOT EXISTS (SELECT * FROM annulation_livraison)
+BEGIN
+	INSERT INTO annulation_livraison(
+		HD_annulation,
+		FK_num_reservation,
+		FK_num_abonnement
+		)
+	VALUES(
+		@HD_annulation,
+		@FK_num_reservation,
+		@FK_num_abonnement
+		)
+UPDATE dbo.Reservation_livraison  SET Etat='Annule' WHERE Numero_reservation=@FK_num_reservation;
+
+-- Technique de la variable interne pour mettre à jour la disponibilite de l'exemplaire
+
+
+DECLARE @Exemplaire_id BIGINT;
+DECLARE @Disponibilite BIT;
+
+SET @Exemplaire_id = (SELECT FK_num_exemplaire FROM Reservation_Livraison  WHERE Numero_reservation=@FK_num_reservation);
+PRINT @Exemplaire_id;
+
+SET @Disponibilite = (SELECT Disponibilite FROM Exemplaires WHERE Numero_exemplaire=@Exemplaire_id);
+PRINT @Disponibilite;
+
+UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id;
+PRINT @Disponibilite;
+
+-- Technique de la variable interne pour mettre à jour la disponibilite de l'exemplaire
+
+DECLARE @Exemplaire_id1 BIGINT;
+DECLARE @Reserve BIT;
+
+SET @Exemplaire_id1 = (SELECT FK_num_exemplaire FROM Reservation_Livraison WHERE Numero_reservation = @FK_num_reservation);
+PRINT @Exemplaire_id1;
+
+SET @Reserve = (SELECT Reserve FROM Exemplaires WHERE Numero_exemplaire =@Exemplaire_id1);
+PRINT @Reserve;
+
+UPDATE dbo.Exemplaires SET Reserve = 0 WHERE Numero_exemplaire=@Exemplaire_id1;
+PRINT @Reserve;
+
+											
+PRINT 'Annulation effectué'
+
+END
+ELSE
+BEGIN
+	PRINT 'Annulation impossible'
+END
+
+END
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure unitaire retour location				    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): BROCHEN Elise								*/
+/*Intégrateur: LADURANTI Sandra							*/
+
+
+IF OBJECT_ID('dbo.retour_location_creer', 'P') IS NOT NULL
+DROP PROCEDURE dbo.retour_location_creer;
+GO
+CREATE PROCEDURE dbo.retour_location_creer(
+	@Date_retour DATETIME,
+	@FK_num_location INT
+	
+)
+
+AS
+BEGIN
+	IF @Date_retour > GETDATE()
+	BEGIN
+		PRINT 'Date de retour impossible'
+		RETURN 0;
+	END
+	
+	IF @FK_num_location NOT LIKE (SELECT Numero_location FROM Locations WHERE Numero_location=@FK_num_location)
+	BEGIN
+		PRINT 'Numero de location inexistant'
+		RETURN 0;
+	END
+	
+	
+IF NOT EXISTS (SELECT * FROM Retour_location)
+BEGIN
+	INSERT INTO Retour_location(
+		Date_retour,
+		FK_num_location
+	)
+	VALUES(
+		@Date_retour,
+		@FK_num_location
+	)
+--On remet la disponibilité de l'exemplaire à 1
+	
+DECLARE @Exemplaire_id1 BIGINT;
+DECLARE @Disponibilite BIT;
+
+SET @Exemplaire_id1 = (SELECT FK_exemplaire FROM Locations WHERE Numero_location = @FK_num_location);
+PRINT @Exemplaire_id1;
+
+SET @Disponibilite = (SELECT Disponibilite FROM Exemplaires WHERE Numero_exemplaire =@Exemplaire_id1);
+PRINT @Disponibilite;
+
+UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id1;
+PRINT @Disponibilite;
+
+PRINT 'Votre retour a été prise en compte'
+RETURN 1;
+	 
+END	
+ELSE
+BEGIN
+	PRINT 'Impossible d''effectuer votre retour de location'
+END
+
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure retour location							    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): BROCHEN Elise								*/
+/*Intégrateur: LADURANTI Sandra							*/
+
+IF OBJECT_ID('[dbo].[retour_loc]', 'P') IS NOT NULL
+DROP PROCEDURE [dbo].[retour_loc];
+
+GO
+CREATE procedure [dbo].[retour_loc]
+ /*reservation*/
+AS
+begin
+
+ /* declaree */
+ DECLARE @Numero_location INT
+ DECLARE @Numero_retour INT
+ DECLARE @Numero_exem INT
+ DECLARE @Niveau_retard INT
+ DECLARE @Date_retour_loc DATETIME
+ DECLARE @Date_crea_retard DATETIME
+ DECLARE @MAJ_retard DATETIME
+ 
+ SET @Date_retour_loc = CURRENT_TIMESTAMP
+ 
+ DECLARE cur_num_retour_loc CURSOR LOCAL FOR
+  SELECT Numero_location FROM dbo.Locations
+	WHERE Date_fin_reelle < @Date_retour_loc AND (SELECT Niveau_de_retard FROM Relance_retards WHERE FK_num_location=Numero_location)<4
+ 
+ 
+ OPEN cur_num_retour_loc;
+	FETCH NEXT FROM cur_num_retour_loc INTO @Numero_retour;
+	IF @@FETCH_STATUS =-1
+	BEGIN
+		PRINT 'AUCUNE LOCATION EN RETARD'
+		RETURN 0;
+	END
+	ELSE
+ 
+ 
+	while(@@FETCH_STATUS = 0)
+ 
+	SET @Numero_exem =( SELECT FK_exemplaire FROM Locations  WHERE FK_exemplaire=@Numero_exem)
+	SET @Numero_location =(SELECT Numero_location FROM Locations WHERE Numero_location=@Numero_location)
+	UPDATE Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire = @Numero_exem;
+	UPDATE Exemplaires SET Reserve = 0 WHERE Numero_exemplaire = @Numero_exem;
+	SET @Niveau_retard = (SELECT Niveau_de_retard FROM Relance_retards WHERE FK_num_location=@Numero_location)
+	SET @Date_crea_retard = CURRENT_TIMESTAMP
+	SET @MAJ_retard = @Date_crea_retard + '24:00:00'
+	
+	
+	INSERT INTO Relance_retards (
+	Niveau_de_retard,
+	Date_creation,
+	Date_mise_a_jour,
+	FK_num_location 
+	)
+	VALUES
+	(
+	@Niveau_retard +1,
+	@Date_crea_retard,
+	@MAJ_retard,
+	@Numero_location
+	)
+ 
+ PRINT 'ATTENTION VOUS ETES EN RETARD SUR VOTRE LOCATION'
+ FETCH NEXT FROM cur_num_retour_loc INTO @Numero_retour; 
+
+ 
+ CLOSE cur_edition;
+ PRINT 'FIN DE LA TACHE DE FOND MAJ RELANCE RETARD'
+ RETURN 1;
+END
+
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure livraison colis							    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): BROCHEN Elise								*/
+/*Intégrateur: LADURANTI Sandra							*/
+
+USE "ouf_tim" 
+
+IF OBJECT_ID('[dbo].[preparation_colis]', 'P') IS NOT NULL
+DROP PROCEDURE [dbo].[preparation_colis];
+
+GO
+CREATE procedure [dbo].[preparation_colis]
+ /*reservation*/
+AS
+begin
+
+ /* declaree */
+ DECLARE @numero_reserv int
+ DECLARE @numero_abo int
+ DECLARE @num_exem int
+ DECLARE @Date_debut DATETIME
+ DECLARE @Duree INT
+ DECLARE @Date_fin_prevue DATETIME
+ DECLARE @Date_fin_reelle DATETIME
+
+ 
+ DECLARE @Nom NVARCHAR(50)
+ DECLARE @Prenom NVARCHAR(50)
+ DECLARE @Pseudo NVARCHAR(50)
+ DECLARE @Num_voie INT
+ DECLARE @Comp_voie NVARCHAR(50)
+ DECLARE @Type_voie NVARCHAR(50)
+ DECLARE @Libelle NVARCHAR(50)
+ DECLARE @Comp_libelle NVARCHAR(50)
+ DECLARE @Code_postal INT
+ DECLARE @Ville NVARCHAR(50)
+ DECLARE @Cedex NVARCHAR(50)
+ DECLARE @Pays NVARCHAR(50)
+ 
+ DECLARE cur_num_reservation CURSOR LOCAL FOR
+  SELECT Numero_reservation FROM dbo.Reservation_livraison
+	WHERE CURRENT_TIMESTAMP-'16:00:00' > 0 AND Etat='En cours'
+ 
+ 
+	OPEN cur_num_reservation;
+	FETCH NEXT FROM cur_num_reservation INTO @numero_reserv;
+	IF @@FETCH_STATUS =-1
+	BEGIN
+		PRINT 'AUCUNE RESERVATION SUPPRIMER'
+		RETURN 0;
+	END
+	ELSE
+ 
+ 
+	while(@@FETCH_STATUS = 0)
+	/*On met à jour l'etat de la reservation*/
+	SET @num_exem =( SELECT FK_num_exemplaire FROM Reservation_livraison WHERE FK_num_exemplaire=@num_exem)
+	UPDATE Reservation_livraison SET Etat = 'Accomplie' WHERE Numero_reservation  = @numero_reserv;
+	
+	/*On recupere le numero de l'abonnement */
+	SET @numero_abo =(SELECT FK_num_abonnement FROM Reservation_Livraison WHERE FK_num_abonnement=@numero_abo)
+	
+	/*On recupere les infos sur l'abonne via l'abonnement */
+	SET @Nom = (SELECT FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
+	SET @Prenom = (SELECT FK_prenom FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
+	SET @Pseudo =(SELECT FK_pseudo FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
+	SET @Num_voie = (SELECT Numero_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Comp_voie = (SELECT Complement_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Type_voie = (SELECT Type_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Libelle = (SELECT Libelle FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Comp_libelle = (SELECT Complement_libelle FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Code_postal = (SELECT Code_postal FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Ville = (SELECT Ville FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Cedex = (SELECT Cedex FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	SET @Pays = (SELECT Pays FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		
+	SET @Date_debut = CURRENT_TIMESTAMP
+	SET @Duree = 24
+	SET @Date_fin_prevue = @date_debut + '24:00:00'
+	SET @Date_fin_reelle = @Date_fin_reelle + '01:00:00'
+	
+	INSERT INTO Locations (
+	Date_debut,
+	Duree,
+	Date_fin_prevue,
+	Date_fin_reelle,
+	FK_exemplaire,
+	FK_num_abonnement
+	)
+	VALUES
+	(
+	@Date_debut,
+	@Duree,
+	@Date_fin_prevue,
+	@Date_fin_reelle,
+	@num_exem,
+	@numero_abo
+	)
+ PRINT 'Envoyé le: '+cast(@Date_debut as VARCHAR)
+	
+ PRINT 'Premiere Etiquette contenant l''adresse du client à imprime'
+ PRINT 'Nom : '+cast(@Nom as VARCHAR)
+ PRINT 'Prenom : '+cast(@Prenom as VARCHAR)
+ PRINT 'Pseudo : '+cast(@Pseudo as VARCHAR)
+ PRINT 'Adresse : '+cast(@Num_voie as VARCHAR)+' '+cast(@Comp_voie as VARCHAR)+' '+cast(@Type_voie as VARCHAR)+' '+cast(@Libelle as VARCHAR)+' '+cast(@Comp_libelle as VARCHAR)
+ PRINT 'Code Postal : '+cast(@Code_postal as VARCHAR)+' Ville:  '+cast(@Ville as VARCHAR)+' Cedex: '+cast(@Cedex as VARCHAR)
+ PRINT 'Pays: '+cast(@Pays as VARCHAR)
+ 
+ PRINT 'Deuxieme Etiquette Contenant l''exemplaire, l''abonnement et le jour de retour à imprime'
+ PRINT 'Numéro d''exemplaire: '+cast(@num_exem as VARCHAR)
+ PRINT 'Numéro d''abonnement: '+cast(@numero_abo as VARCHAR)
+ PRINT 'Date retour max: '+cast(@Date_fin_reelle as VARCHAR) 
+ 
+ 
+ FETCH NEXT FROM cur_num_reservation INTO @numero_reserv; 
+
+ 
+ CLOSE cur_edition;
+ PRINT 'FIN DE LA TACHE DE FOND POUR LES COLIS DU JOUR'
+ RETURN 1;
+END
+
 GO
