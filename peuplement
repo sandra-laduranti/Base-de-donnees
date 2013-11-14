@@ -58,6 +58,24 @@ values ('Musical');
 
 insert into APPARTENIR
 values ('Gladiator','','Péplum');
+insert into APPARTENIR
+values ('Terminator','1','Péplum');
+insert into APPARTENIR
+values ('Star Wars','La Menace Fantôme','Science-fiction');
+insert into APPARTENIR
+values ('Star Wars','L''Attaque des Clones','Science-fiction'); 
+insert into APPARTENIR
+values ('Star Wars','La Revanche Des Sites Web','Science-fiction'); 
+insert into APPARTENIR
+values ('X-Men','Le Commencement','Science-fiction'); 
+insert into APPARTENIR
+values ('Intouchables','','Comédie'); 
+insert into APPARTENIR
+values ('The Artist','','Comédie'); 
+insert into APPARTENIR
+values ('Asterix & Obelix','Mission Cléopatre','Comédie'); 
+insert into APPARTENIR
+values ('The Hobbit','La désolation de Smaug','Fantastique');
 
 insert into ACTEUR
 values ('Crowe','Russell','1964-02-10','Monsieur','','Rusty','','Néo-zélandaise/Australiene');
@@ -72,9 +90,12 @@ values ('McGregor','Ewan','1971-12-05','Monsieur','','','','Britannique')
 insert into ACTEUR
 values ('Berry','Halle','1966-10-12','Madame','','','','Américaine');
 
-
 insert into JOUER
 values ('Gladiator','','Crowe','Russell','1964-02-10');
+insert into JOUER
+values ('Star Wars','La Menace Fantôme','Portman','Natalie','1981-10-12');
+insert into JOUER
+values ('Star Wars','La Revanche Des Sites Web','Ford','Harrison','1942-03-13');
 
 insert into REALISATEUR
 values ('Scott','Ridley','1937-12-12','Monsieur',null,'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres...','Britannique');
@@ -82,10 +103,16 @@ insert into REALISATEUR
 values ('Jackson','Peter','1961-02-06','Monsieur',null,'','Néo-Zélandaise');
 insert into REALISER
 values ('Gladiator','','Scott','Ridley','1937-12-12');
+
 insert into DISTINCTIONS
 values('Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
+insert into DISTINCTIONS
+values('Ours d''or','un ours en or',2008);
+
 insert into ATTRIBUER
 values ('Gladiator','','Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
+insert into ATTRIBUER
+values ('Star Wars','La Menace Fantôme','Ours d''or','un ours en or',2008);
 
 --COMPTE
 Use "ouf_tim" 
@@ -109,12 +136,26 @@ SELECT * FROM Compte;
 Use "ouf_tim" 
 GO 
 EXEC Compte_creer
-	@Numero_bancaire = '4785145200347823',
+	@Numero_bancaire = '4785145269347823',
 	@Montant = 0,
 	@Somme_operations=0
 
+SELECT * FROM Compte;
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '41851565200347823',
+	@Montant = 0,
+	@Somme_operations=0
+
+SELECT * FROM Compte;
+
 insert into RELANCE_DECOUVERT (Niveau_decouvert, Date_creation, Date_mise_a_jour, FK_numero_compte)
 values(2,'2013-02-10 23:42:59','2013-02-11 22:05:10',1);
+
+insert into RELANCE_DECOUVERT (Niveau_decouvert, Date_creation, Date_mise_a_jour, FK_numero_compte)
+values(3,'2013-11-12 20:50:59','2013-12-12 21:08:10',2);
 
 
 insert into ABONNE
@@ -134,11 +175,7 @@ values ('Ghansum', 'Nourdine', 'NourdineG', '1992-07-07', 'Monsieur', '33', null
 insert into ABONNE
 values ('Goualard', 'Mickael', 'Zebrada', '1992-08-08', 'Monsieur', '88', null, 'rue', 'saint-jacques', null, '75007', 'Paris', null, 'France', '0645751859', 'goualard.mickael@gmail.com');
 insert into ABONNE
-values ('Haffner', 'Paul', 'PaulH','1992-09-09', 'Monsieur', '100', null, 'rue', 'gilbert', null, '75008', 'Paris', null, 'France', '0645281817', 'haffner.paul@gmail.com');
-insert into ABONNE
 values ('Hamyani', 'Yasmina', 'YasminaH', '1992-10-10', 'Madame', '56',null, 'rue', 'saint-jean', null, '75009', 'Paris', null, 'France', '0645451813', 'hamyani.yasmina@gmail.com');
-insert into ABONNE
-values ('Hua', 'Lucien', 'LordOfSushis', '1992-11-11', 'Monsieur', '28',null, 'rue', 'saint-michel', null, '75010', 'Paris', null, 'France', '0632121848', 'hua.lucien@gmail.com');
 insert into ABONNE
 values ('Ifrah', 'Eliahou Raphael', 'ElihouIf', '1992-12-12', 'Monsieur', '30',null, 'boulevard', 'saint-ploutre', null,'75011', 'Paris', null, 'France', '0623416578', 'ifrah.eliahou@gmail.com');
 insert into ABONNE
@@ -152,7 +189,7 @@ values ('Negro Castro', 'Lucas', 'LucasNC', '1992-01-20', 'Monsieur', '27', null
 insert into ABONNE
 values ('Petit', 'Clément', 'ClémentP', '1992-06-15', 'Monsieur', '36', null, 'rue', 'de la vie', null, '75016', 'Paris', null, 'France', '0636451285', 'petit.clement@gmail.com');
 insert into ABONNE
-values ('Piard-rousseau', 'Idriss', 'IdrissPR', '1992-04-16', 'Monsieur', '95', null, 'rue', 'saint-pascale', null, '75017', 'Paris', null, 'France', '0632659814', 'piardrousseau.idriss@gmail.com');
+values ('Piard-rousseau', 'Idriss', 'GRODEBILE', '1992-04-16', 'Monsieur', '95', null, 'rue', 'saint-pascale', null, '75017', 'Paris', null, 'France', '0632659814', 'piardrousseau.idriss@gmail.com');
 insert into ABONNE
 values ('Pol', 'Patrick', 'PatrickP', '1992-01-13', 'Monsieur', '84',null, 'boulevard', 'chinois', null, '75013', 'Paris', null, 'France', '0646215896', 'pol.patrick@gmail.com');
 insert into ABONNE
@@ -248,8 +285,17 @@ EXEC Abonnement_creer
 SELECT * FROM Abonnement;
 
 insert into SOUSCRIRE
-values ('AIT Ahmed','Kamel','KamelA',1);
+values ('Amri', 'Zakaria', 'ZakariaA',1);
+insert into SOUSCRIRE
+values ('Baskaramoorthy', 'Anusan','AnusanB',2);
+insert into SOUSCRIRE
+values ('Brochen', 'Elise','EliseB',3);
+insert into SOUSCRIRE
+values ('Danglet', 'Eric', 'EricD',3);
 
+
+insert into LANGUE_AUDIO
+values ('francais');
 insert into LANGUE_AUDIO 
 values ('Anglais'); 
 insert into LANGUE_AUDIO 
@@ -348,16 +394,31 @@ SELECT * FROM Edition;
 
 insert into RATTACHER 
 values ('anglais',1);
+insert into RATTACHER 
+values ('francais',1);
+insert into RATTACHER 
+values ('Russe',2);
+insert into RATTACHER 
+values ('anglais',3);
 
 insert into AFFICHER 
 values ('anglais',1);
+insert into AFFICHER 
+values ('francais',1);
+insert into AFFICHER 
+values ('Russe',2);
+insert into AFFICHER 
+values ('anglais',3);
 
 -- Exemplaires
 
 insert into EXEMPLAIRES
 values ('2007-10-10',1,1,1,1);
 insert into EXEMPLAIRES
-values ('2008-10-10',1,1,1,1);
+values ('2013-11-10',1,1,1,2);
+insert into EXEMPLAIRES
+values ('2012-07-05',1,0,0,3);
+
 
 /* reservation_livraisons*/
 
