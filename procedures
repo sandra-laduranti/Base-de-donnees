@@ -7,8 +7,6 @@ USE ouf_tim
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-use ouf_tim
-
 IF OBJECT_ID('dbo.Acteur_creer', 'P') IS NOT NULL
     DROP PROCEDURE dbo.Acteur_creer;
 GO 
@@ -27,13 +25,13 @@ CREATE PROCEDURE dbo.Acteur_creer
 AS
 
 BEGIN
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom  = ''
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' OR @Nom  = '' OR @Nom LIKE '%  %'
     BEGIN
         PRINT('Le nom n''est pas valide');
         RETURN 0;
     END
     
-    IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom  = ''
+    IF @Prenom LIKE '%[0-9/*%@(){}+&]%' OR @Prenom  = '' OR @Prenom LIKE '%  %'
     BEGIN
         PRINT('Le prenom n''est pas valide');
         RETURN 0;
@@ -45,7 +43,7 @@ BEGIN
         RETURN 0;
     END
 
-    IF @Sexe NOT LIKE '%[A-Za-z]%' OR @Sexe LIKE ''
+    IF @Sexe NOT LIKE 'Madame' AND @Sexe NOT LIKE 'Monsieur' OR @Sexe = '' OR @Sexe LIKE '%  %'
     BEGIN
         PRINT('Le sexe n''est pas valide');
         RETURN 0;
@@ -69,7 +67,7 @@ BEGIN
         RETURN 0;
     END
 
-    IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite = ''
+    IF @Nationalite LIKE '%[0-9/*%@(){}+&]%' OR @Nationalite = '' OR @Nationalite LIKE '%  %'
     BEGIN
         PRINT('La nationalite non valide');
         RETURN 0;
@@ -121,8 +119,6 @@ GO
 /*testeur(s): LADURANTI Sandra             */
 /*Intégrateur: LADURANTI Sandra            */
 ---------------------------------------------
-
-
 
 IF OBJECT_ID('dbo.Compte_creer', 'P') IS NOT NULL
     DROP PROCEDURE dbo.Compte_creer;
@@ -202,7 +198,7 @@ CREATE PROCEDURE dbo.Distinctions_creer
 AS
 
 BEGIN
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR  @Nom LIKE ''  OR @Nom LIKE ' ' 
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' OR  @Nom LIKE ''  OR @Nom LIKE '%  %' 
     BEGIN
         PRINT'Le nom de la distinction est non valide';
         RETURN 0;
@@ -255,8 +251,6 @@ GO
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-USE ouf_tim
-
 IF OBJECT_ID('dbo.Genre_creer', 'P') IS NOT NULL
     DROP PROCEDURE dbo.Genre_creer;
 GO 
@@ -269,7 +263,7 @@ AS
 
 BEGIN
     
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @NOM = ''
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' OR @NOM = '' OR @Nom LIKE '%  %'
     BEGIN
         PRINT('Le nom non valide');
         RETURN 0;
@@ -297,7 +291,6 @@ BEGIN
 END
 GO
 
-
 --------------------------------------------------
 /* BdD : < Ouf'tim >                            */
 /* Procédure de création d'un film          */
@@ -309,7 +302,6 @@ GO
 IF OBJECT_ID ('film_creer', 'P') IS NOT NULL
     DROP PROCEDURE  film_creer;
 GO
-
 CREATE PROCEDURE film_creer
 (
     @Titre NVARCHAR (50) ,
@@ -341,7 +333,7 @@ BEGIN
      RETURN 0; 
     END
 
-    IF @Nationalite NOT LIKE '%[A-Za-z ''-]%' OR @Nationalite LIKE ''
+    IF @Nationalite LIKE '%[0-9/*%@(){}+&]%' OR @Nationalite LIKE '' OR @Nationalite LIKE '%  %'
     BEGIN 
      PRINT 'La nationalite est non valide';
      RETURN 0; 
@@ -493,13 +485,13 @@ CREATE PROCEDURE dbo.Realisateur_creer
 AS
 
 BEGIN
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' Or @Nom LIKE '' Or @Nom LIKE ' '
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' Or @Nom LIKE '' Or @Nom LIKE '%  %'
     BEGIN
         PRINT 'Le nom n''est pas valide';
         RETURN 0;
     END
     
-    IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom LIKE '' Or @Prenom LIKE ' '
+    IF @Prenom LIKE '%[0-9/*%@(){}+&]%' OR @Prenom LIKE '' Or @Prenom LIKE '%  %'
     BEGIN
         PRINT 'Le prenom n''est pas valide';
         RETURN 0;
@@ -511,7 +503,7 @@ BEGIN
         RETURN 0;
     END
 
-    IF @Sexe NOT LIKE 'Madame' AND @Sexe NOT LIKE 'Monsieur' OR @Sexe = ''
+    IF @Sexe NOT LIKE 'Madame' AND @Sexe NOT LIKE 'Monsieur' OR @Sexe = '' OR @Sexe LIKE '%  %'
     BEGIN
         PRINT 'Le sexe n''est pas valide';
         RETURN 0;
@@ -589,7 +581,7 @@ AS
 
 BEGIN
     
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' OR @Nom LIKE '' OR @Nom LIKE '%  %' 
     BEGIN
         PRINT('Le nom n''est pas valide');
         RETURN 0;
@@ -731,8 +723,6 @@ GO
 /*Auteur(s): PATRICK POL*/
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
-
-USE ouf_tim
 
 IF OBJECT_ID ('Locations_creer', 'P') IS NOT NULL
 DROP PROCEDURE Locations_creer ;
@@ -897,19 +887,19 @@ AS
 
 BEGIN
     
-    IF @NOM NOT LIKE '%[A-Za-z ''-]%' OR @Nom = ''
+    IF @NOM LIKE '%[0-9/*%@(){}+&]%' OR @Nom = '' OR @Nom LIKE '%  %'
     BEGIN
         PRINT('Le nom est invalide');
         RETURN 0;
     END
 
-    IF @Prenom NOT LIKE '%[A-Za-z ''-]%' OR @Prenom = ''
+    IF @Prenom LIKE '%[0-9/*%@(){}+&]%' OR @Prenom = '' OR @Prenom LIKE '%  %'
     BEGIN
         PRINT('Le prenom est invalide');
         RETURN 0;
     END
 
-    IF @Pseudo NOT LIKE '%[A-Za-z ''-]%' OR @Pseudo = ''
+    IF @Pseudo NOT LIKE '%[A-Za-z ''-]%' OR @Pseudo = '' OR @Pseudo LIKE '%  %'
     BEGIN
         PRINT('Le pseudo est invalide');
         RETURN 0;
@@ -921,7 +911,7 @@ BEGIN
         RETURN 0;
     END
 
-    IF @Sexe  NOT LIKE '%[A-Za-z]%' OR @Sexe = ''
+    IF @Sexe  NOT LIKE 'Madame' OR @Sexe NOT LIKE 'Monsieur' OR @Sexe LIKE '%  %'
     BEGIN
         PRINT('Le sexe est invalide');
         RETURN 0;
@@ -975,13 +965,13 @@ BEGIN
         RETURN 0;
     END
 
-    IF @Pays NOT LIKE '%[A-Za-z ''-]%' OR @Pays = ''
+    IF @Pays LIKE '%[0-9/*%@(){}+&]%' OR @Pays = '' OR @Pays LIKE '%  %'
     BEGIN
         PRINT('Le pays est invalide');
         RETURN 0;
     END
 
-    IF @Numero_telephone NOT LIKE '%[0-9 .]%'
+    IF @Numero_telephone <= 0600000000 OR @Numero_telephone >= 0799999999
     BEGIN
         PRINT('Le numero de telephone est invalide');
         RETURN 0;
@@ -1053,8 +1043,6 @@ GO
 /*Auteur(s): BROCHEN Elise  LADURANTI Sandra */
 /*testeur(s): PATRICK POL LADURANTI Sandra   */
 /*Intégrateur: LADURANTI Sandra              */
-
-use ouf_tim
 
 IF OBJECT_ID ('dbo.Abonnement_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.Abonnement_creer ; 
@@ -1251,8 +1239,6 @@ GO
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
 
-USE ouf_tim
-
 IF OBJECT_ID ('dbo.Edition_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.Edition_creer ; 
 GO
@@ -1276,7 +1262,7 @@ AS
 BEGIN 
     
 
-    IF  @Nom NOT LIKE '%[A-Za-z ‘’-]%' OR @Nom = ''
+    IF  @Nom LIKE '%[0-9/*%@(){}+&]%' OR @Nom = '' OR @Nom LIKE '%  %'
     BEGIN 
         PRINT 'Nom edition non valide';
     RETURN 0;
@@ -1312,7 +1298,7 @@ END
     RETURN 0;
 END 
 
-    IF  @Type_couleur NOT LIKE '%[A-Za-z ‘’-]%' OR @Type_couleur = ''
+    IF  @Type_couleur LIKE '%[0-9/*%@(){}+&]%' OR @Type_couleur = '' OR @Type_couleur LIKE '%  %'
     BEGIN 
         PRINT 'Type couleur non valide';
     RETURN 0;
@@ -1363,6 +1349,7 @@ BEGIN
         PRINT 'L''édition existe déja';
     END
 END
+GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim                   */
 /*BdD ouf_tim                                   */
@@ -1373,9 +1360,7 @@ END
 
 IF OBJECT_ID ('dbo.Relance_decouvert_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.Relance_decouvert_creer ; 
-
 GO
-
 CREATE PROCEDURE dbo.Relance_decouvert_creer
 (
     @Niveau_decouvert INT,
@@ -1475,7 +1460,6 @@ BEGIN
 
     PRINT 'Attribuer Ajoute'
 
-
 END 
 GO
 
@@ -1503,7 +1487,7 @@ AS
 
 BEGIN
 
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' AND @Nom NOT LIKE '' AND @Nom NOT LIKE ' '
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' OR @Nom LIKE '' AND @Nom  LIKE '%  %'
     BEGIN
         PRINT'Le nom du type d''abonnement est non valide';
         RETURN 0;
@@ -1583,7 +1567,6 @@ GO
 IF OBJECT_ID ('rattacher_creer', 'P') IS NOT NULL
     DROP PROCEDURE  rattacher_creer;
 GO
-
 CREATE PROCEDURE rattacher_creer
 (
     @FK_langue NVARCHAR (50) ,
@@ -1615,7 +1598,6 @@ IF NOT EXISTS ((SELECT * FROM Rattacher WHERE FK_langue = @FK_langue AND FK_edit
     PRINT 'Ce rattachement existe déjà'
  END
 END
-
 GO
 
 -----------------------------------------------
@@ -1629,7 +1611,6 @@ GO
 IF OBJECT_ID ('afficher_creer', 'P') IS NOT NULL
     DROP PROCEDURE  afficher_creer;
 GO
-
 CREATE PROCEDURE afficher_creer
 (
     @FK_langue NVARCHAR (50) ,
@@ -1660,7 +1641,6 @@ IF NOT EXISTS ((SELECT * FROM Afficher WHERE FK_langue = @FK_langue AND FK_editi
     PRINT 'Cet affichage existe déjà'
  END
 END
-
 GO
 
 
@@ -1683,7 +1663,7 @@ AS
 
 BEGIN
     
-    IF @Nom NOT LIKE '%[A-Za-z ''-]%' OR @Nom LIKE ''
+    IF @Nom LIKE '%[0-9/*%@(){}+&]%' OR @Nom LIKE '' OR @Nom LIKE '%  %'
     BEGIN
         PRINT 'Le nom de la langue n''est pas valide';
         RETURN 0;
@@ -1719,10 +1699,9 @@ GO
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
 /*Intégrateur: SANDRA LADURANTI*/
 
-use ouf_tim
-
+IF OBJECT_ID ('dbo.ajouter_film', 'P') IS NOT NULL
+DROP PROCEDURE dbo.ajouter_film ; 
 GO
-
 CREATE procedure [dbo].[ajouter_film]
     /* catalogue */
     @Titre NVARCHAR(50),
@@ -1752,7 +1731,6 @@ CREATE procedure [dbo].[ajouter_film]
 --|nom|
 --pas de film sans genre
 
-    
 as
 
 begin
@@ -1861,9 +1839,6 @@ begin
             exec Jouer_creer @Titre, @Complement_titre, @nom_act, @pre_act, @date_naissance;
             end
         end
-        
-
-    
     
 end
 
@@ -1942,7 +1917,6 @@ while @index <> LEN(@liste_realisateurs) AND @vide=1
        end
     END
 
-
 /* DISTINCTION(S) */
 
 print '--Distinctions--';
@@ -1971,9 +1945,7 @@ print '--Distinctions--';
         declare @Nom NVARCHAR(50), @Lieu NVARCHAR(50), @Annee_d INT  
         set @bvirg1 = CHARINDEX(',', @liste_distinctions, @index+1)
         set @bvirg2 = CHARINDEX(',', @liste_distinctions, @bvirg1+1)
-        
-            
-    
+
         set @fin = CHARINDEX('|', @liste_distinctions, @index+1)
         
         set @Nom = LTRIM(SUBSTRING(@liste_distinctions, @index+1, @bvirg1 - @index -1))
@@ -2006,7 +1978,6 @@ print '--Distinctions--';
             exec Attribuer_creer @Titre, @Complement_titre, @Nom, @Lieu, @Annee_d;
             end
         end
-
 
         /*Genre*/
   print '--GENRE(S)--'
@@ -2061,8 +2032,6 @@ while @index <>LEN(@liste_genres) AND @vide=1
      exec Appartenir_creer @Titre,@Complement_titre,@nom_genre;
      END
 END
-
-
 GO
 
 
@@ -2075,9 +2044,9 @@ GO
 
 
 /*Charindex - Insertion Edition */
-
+IF OBJECT_ID ('dbo.a_insertion_edition', 'P') IS NOT NULL
+DROP PROCEDURE dbo.a_insertion_edition ; 
 GO
-
 CREATE procedure [dbo].[a_insertion_edition]
 @FK_titre NVARCHAR (50),
 @FK_complement_titre NVARCHAR(50),
@@ -2260,7 +2229,7 @@ while @index <>LEN(@liste_Langue_sous_titre) AND @vide=1
        exec Langue_sous_titre_creer @nom_sub;
        END
     END
-
+GO
 
 /* Exemplaire ==> a corriger*/
 
@@ -2282,7 +2251,6 @@ while @counter <= @nombreEx
 
 GO*/
 
-
 /*L2 ATIC 2013 GROUPE ouf_tim */
 /*BdD ouf_tim */
 /*Charindex - Insertion Exemplaire */
@@ -2290,8 +2258,9 @@ GO*/
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
 /*Intégrateur: SANDRA LADURANTI*/
 
+IF OBJECT_ID ('dbo.insere_exemplaire', 'P') IS NOT NULL
+DROP PROCEDURE dbo.insere_exemplaire ; 
 GO
-
 CREATE procedure [dbo].[insere_exemplaire]
 
 @numSerieEdition int,
@@ -2309,6 +2278,7 @@ CREATE procedure [dbo].[insere_exemplaire]
 @Date_approvisionnement DATETIME,
 @Taux_usure INT,
 @Disponibilite BIT,
+@Reserve INT,
 @FK_numero_edition INT
 as
 
@@ -2351,11 +2321,12 @@ set @counter = 1;
 
 while @counter <= @nombreEx
     begin
-        insert into EXEMPLAIRE
+        insert into EXEMPLAIRES
         (
             Date_approvisionnement ,
             Taux_usure ,
             Disponibilite ,
+			Reserve ,
             FK_numero_edition
         ) 
         values
@@ -2363,13 +2334,12 @@ while @counter <= @nombreEx
             @Date_approvisionnement ,
             @Taux_usure ,
             @Disponibilite ,
+			@Reserve ,
             @FK_numero_edition
         )
         set @counter = @counter +1;
           END
-
 END
-
 GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim */
@@ -2379,8 +2349,9 @@ GO
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
 /*Intégrateur: SANDRA LADURANTI*/
 
+IF OBJECT_ID ('dbo.a_insertion_Abonne', 'P') IS NOT NULL
+DROP PROCEDURE dbo.a_insertion_Abonne ; 
 GO
-
 CREATE procedure [dbo].[a_insertion_Abonne]
 
     @Nom NVARCHAR (50),
@@ -2454,8 +2425,8 @@ ELSE /* le type_abonnnemnt exist déjà */
             /**/
             END
     END
-    END
-    GO
+  END
+  GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim */
 /*BdD ouf_tim */
@@ -2464,8 +2435,9 @@ ELSE /* le type_abonnnemnt exist déjà */
 /*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
 /*Intégrateur: SANDRA LADURANTI*/
 
+IF OBJECT_ID ('dbo.a_insertion_type_abonnement', 'P') IS NOT NULL
+DROP PROCEDURE dbo.a_insertion_type_abonnement ; 
 GO
-
 Create procedure [dbo].[a_insertion_type_abonnement]
 @Nom NVARCHAR (50),
 @Prix MONEY,
@@ -2473,7 +2445,6 @@ Create procedure [dbo].[a_insertion_type_abonnement]
 @NbSimuls INT,
 @Prix_retard MONEY,
 @Duree INT
-
 
 as
 
@@ -2508,19 +2479,18 @@ begin
     end
 
 END 
-
 GO
 
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Charindex - Insertion location */
-/*Auteur(s): ELISE BROCHEN */
-/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN Mickael GOUALARD*/
-/*Intégrateur: SANDRA LADURANTI*/
-use ouf_tim
+/*L2 ATIC 2013 GROUPE ouf_tim											   */
+/*BdD ouf_tim															   */
+/*Charindex - Insertion location										   */
+/*Auteur(s): ELISE BROCHEN												   */
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN Mickael GOUALARD */
+/*Intégrateur: SANDRA LADURANTI											   */
 
+IF OBJECT_ID ('dbo.insere_location', 'P') IS NOT NULL
+DROP PROCEDURE dbo.insere_location ; 
 GO
-
 CREATE procedure [dbo].[insere_location]
 @Num_exem INT,
 @Num_abo INT
@@ -2608,17 +2578,18 @@ BEGIN
 END
 GO
 
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Charindex - Insertion Abonnement */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
-/*Intégrateur: SANDRA LADURANTI*/
+/*L2 ATIC 2013 GROUPE ouf_tim											   */
+/*BdD ouf_tim															   */
+/*Charindex - Insertion Abonnement										   */
+/*Auteur(s): PATRICK POL												   */
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD */
+/*Intégrateur: SANDRA LADURANTI											   */
 
 /*Charindex - Insertion Abonnement */
 
+IF OBJECT_ID ('dbo.a_insertion_abonnement', 'P') IS NOT NULL
+DROP PROCEDURE dbo.a_insertion_abonnement ; 
 GO
-
 CREATE procedure [dbo].[a_insertion_abonnement]
 
 /* On dresse la liste des abonnes qui ont le meme abonnement */
@@ -2664,7 +2635,6 @@ IF NOT EXISTS (SELECT * FROM Abonne where Abonne.Nom=@Nom_Abonne and Abonne.Pren
    END
 
 END
-
 GO
 
 
@@ -2672,17 +2642,12 @@ GO
 /*BdD ouf_tim									  */
 /*Procedure avec curseur pour trouver une edition */
 /*Auteur(s): LADURANTI Sandra BROCHEN Elise       */
-/*Testeur(s):									  */
+/*Testeur(s): LADURANTI Sandra BROCHEN Elise	  */
 /*Intégrateur: LADURANTI Sandra					  */
-
-USE ouf_tim
-
-GO 
 
 if object_id('[dbo].[C_trouver_edition]') is not null
 drop procedure [dbo].[C_trouver_edition]
 GO
-
 CREATE procedure [dbo].[C_trouver_edition]
 (
             @c_titre NVARCHAR (50),
@@ -2707,7 +2672,6 @@ AS
 
     set @dispo = 0;
 
-    print 'je passe les set'
 
     BEGIN 
 
@@ -2755,19 +2719,18 @@ AS
 
         return 1;
     END
-go
+GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim						   */
 /*BdD ouf_tim										   */
 /*Procedure de recherche d'edition					   */
 /*Auteur(s): PATRICK POL LADURANTI SANDRA BROCHEN ELISE*/
-/*Testeur(s):										   */
+/*Testeur(s): SANDRA LADURANTI BROCHEN ELISE		   */
 /*Intégrateur: LADURANTI SANDRA						   */
 
-USE ouf_tim
-
+IF OBJECT_ID ('dbo.recherche_edition', 'P') IS NOT NULL
+DROP PROCEDURE dbo.recherche_edition ; 
 GO 
-
 CREATE procedure [dbo].[recherche_edition]
 (
 /* Numero Abo */
@@ -2858,13 +2821,12 @@ END
 END
 GO
 
-
-
 /*L2 ATIC 2013 GROUPE ouf_tim						 */
 /*BdD ouf_tim										*/
 /*Procedure de creation d'une reservation immédiate */
 /*Auteur(s): LADURANTI SANDRA BROCHEN ELISE			*/
 /*Testeur(s): LADURANTI SANDRA BROCHEN ELISE		*/
+/*Correcteur: GOUALARD Mickael						*/
 /*Intégrateur: LADURANTI SANDRA						*/
 
 IF OBJECT_ID('dbo.Reservation_immediate_creer', 'P') IS NOT NULL
@@ -2889,25 +2851,31 @@ DECLARE @nom_abonnement NVARCHAR (50),
 set @nb_locations_sim = NULL
 set @nom_abonnement = NULL
 
+IF @num_abonnement NOT LIKE (SELECT Numero_abonnement FROM Abonnement WHERE Numero_abonnement=@num_abonnement)
+	BEGIN
+		PRINT 'Le numero d''abonnement n''existe pas'
+		return;
+	END
+
 
 select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonnement = @num_abonnement
 
-    IF @nom_abonnement = NULL
-  begin
+IF @nom_abonnement IS NULL
+	begin
        PRINT 'mauvais nom abonnement'
        return;
-  end
+	end
 
-  select @nb_locations_sim = Exemplaires_simultanes FROM Type_abonnement WHERE @nom_abonnement = Nom
+select @nb_locations_sim = Exemplaires_simultanes FROM Type_abonnement WHERE @nom_abonnement = Nom
 
-  IF (select count (*) FROM Locations WHERE FK_num_abonnement = @num_abonnement) >= @nb_locations_sim
+IF (select count (*) FROM Locations WHERE FK_num_abonnement = @num_abonnement) >= @nb_locations_sim
   begin
 	PRINT 'nombre locations max atteint'
 	return;
   end
 
   SELECT TOP 1 @num_exemplaire = Numero_exemplaire  FROM Exemplaires WHERE @num_edition = FK_numero_edition AND Disponibilite = 1
-  IF @num_exemplaire = NULL
+  IF @num_exemplaire IS NULL
   begin
     PRINT 'Aucun exemplaire de dispo'
     return;
@@ -2925,7 +2893,7 @@ select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonne
  
     VALUES  
     (
-       CURRENT_TIMESTAMP,
+		CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP+'02:00:00',
         'En cours',
         @num_abonnement,
@@ -2936,21 +2904,17 @@ select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonne
  UPDATE Exemplaires SET Disponibilite = 0 WHERE Numero_exemplaire = @num_exemplaire
       PRINT 'Reservation créée'
 END
-
 GO
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
+	
+/*L2 ATIC 2013 GROUPE ouf_tim					   */
+/*BdD ouf_tim									   */
 /*Procedure de tache de fond reservation immediate */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):*/
-/*Intégrateur: LADURANTI SANDRA*/
-
-Use "ouf_tim" 
+/*Auteur(s): PATRICK POL MICKAEL GOUALARD		   */
+/*Testeur(s): LADURANTI SANDRA BROCHEN ELISE	   */
+/*Intégrateur: LADURANTI SANDRA					   */
 
 IF OBJECT_ID('[dbo].[a_maj_reservation_imm]', 'P') IS NOT NULL
 DROP PROCEDURE [dbo].[a_maj_reservation_imm];
-
 GO
 CREATE procedure [dbo].[a_maj_reservation_imm]
  /*reservation*/
@@ -3004,25 +2968,21 @@ begin
  PRINT 'FIN DE LA TACHE DE FOND MAJ ANNULATION'
  RETURN 1;
 END
-
 GO
-
 
 /*L2 ATIC 2013 GROUPE ouf_tim					*/
 /*BdD ouf_tim									*/
 /*Procedure annulation de reservation immédiate */
 /*Auteur(s): PATRICK POL						*/
-/*Testeur(s):									*/
+/*Testeur(s): Mickael GOUALARD					*/
+/*Correcteur: Mickael GOUALARD                  */
 /*Intégrateur: LADURANTI SANDRA					*/
 
-
-/* on rentre manuellement l'heure HD annulation afin de pouvoir réaliser
-* nos tests mais dans le rendu l'heure sera récupérée avec CURRENTTIME */
 IF OBJECT_ID ('annulation_reservation_imm_creer', 'P') IS NOT NULL
 DROP PROCEDURE annulation_reservation_imm_creer;
 GO
 CREATE PROCEDURE annulation_reservation_imm_creer(
-	@HD_annulation DATETIME,	
+	@HD_annulation DATETIME,
 	@FK_num_reservation INT,
 	@FK_num_abonnement INT
 	)
@@ -3032,7 +2992,7 @@ CREATE PROCEDURE annulation_reservation_imm_creer(
 -- On verifie que l'annulation est faite avant 16h vu que à 16h son état passe à annule ou accomplie 
 -- En gros on verifie que son etat est toujours à en cours
 
-		IF @HD_annulation > '16:00:00'
+		IF @HD_annulation> (SELECT HD_Butoir FROM Reservation_immediate WHERE @FK_num_reservation=Numero_reservation) 
 		 BEGIN
 			PRINT 'Delais d''annulation depasse'
 			Return;
@@ -3049,13 +3009,18 @@ CREATE PROCEDURE annulation_reservation_imm_creer(
 			PRINT 'Numero d''abonnement inexistant'
 			RETURN;
 		 END
-	
-	IF NOT EXISTS (SELECT * FROM annulation_reservation_imm)
-	 BEGIN
+		
+		IF NOT EXISTS (SELECT * FROM Reservation_immediate WHERE Numero_reservation=@FK_num_reservation AND FK_num_abonnement = @FK_num_abonnement)
+		BEGIN
+			PRINT 'Aucune reservation correspondante a l''abonnement'
+			RETURN;
+		END
+		IF NOT EXISTS (SELECT * FROM annulation_reservation_imm WHERE FK_num_reservation = @FK_num_reservation AND FK_num_abonnement = @FK_num_abonnement)
+			BEGIN
 			INSERT INTO annulation_reservation_imm(
-						HD_annulation,
-						FK_num_reservation,
-						FK_num_abonnement
+					HD_annulation,
+					FK_num_reservation,
+					FK_num_abonnement
 			)
 			VALUES(
 						CURRENT_TIMESTAMP,
@@ -3097,15 +3062,17 @@ CREATE PROCEDURE annulation_reservation_imm_creer(
 	END
 	ELSE
 		BEGIN
-    		PRINT 'Annulation impossible'
+    		PRINT 'Annulation deja effectue'
 	END
 END
+GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim					*/
 /*BdD ouf_tim									*/
-/*Procedure annulation de reservation immédiate */
-/*Auteur(s): LADURANTI Sandra					*/
-/*Testeur(s):									*/
+/*Procedure reservation livraison creer		    */
+/*Auteur(s): LADURANTI Sandra BROCHEN ELISE		*/
+/*Testeur(s): PATRICK POL MICKAEL GOUALARD		*/
+/*Correcteur: GOUALARD MICKAEL                  */
 /*Intégrateur: LADURANTI SANDRA					*/
 
 IF OBJECT_ID('Reservation_livraison_creer', 'P') IS NOT NULL
@@ -3114,7 +3081,7 @@ GO
 CREATE PROCEDURE Reservation_livraison_creer
 (
    @num_abonnement INT,
-    @num_edition INT
+   @num_edition INT
 )
 
 AS
@@ -3124,13 +3091,11 @@ BEGIN
 DECLARE @nom_abonnement NVARCHAR (50),
 		@nb_locations_sim INT,
 		@nom_abonne NVARCHAR (50),
-		@num_exemplaire INT ,
-		@HD_livraison DATETIME
+		@num_exemplaire INT 
 
 		
 set @nb_locations_sim = NULL
 set @nom_abonnement = NULL
-set @HD_livraison = '17:00:00'
 /* faut convertir pasque DATETIME demande une date + une heure
 mais GETDATE + 17:00:00 ça marche paset du coup faudrait faire le
 truc en dessous mais jyarrivepasetcamepeteseverelescouilles
@@ -3139,10 +3104,9 @@ CONVERT(TIME,GETDATE()) AS HourMinuteSecond,
 GO
 */
 
-
 select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonnement = @num_abonnement
 
-    IF @nom_abonnement = NULL
+    IF @nom_abonnement IS NULL
   begin
        PRINT 'mauvais nom abonnement'
        return;
@@ -3157,7 +3121,7 @@ select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonne
   end
 
   SELECT TOP 1 @num_exemplaire = Numero_exemplaire  FROM Exemplaires WHERE @num_edition = FK_numero_edition AND Disponibilite = 1
-  IF @num_exemplaire = NULL
+  IF @num_exemplaire IS NULL
   begin
     PRINT 'Aucun exemplaire de dispo'
     return;
@@ -3167,7 +3131,6 @@ select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonne
     INSERT INTO Reservation_Livraison
         ( 
         HD_creation,
-        HD_livraison,
 		HD_retour,
         Etat,
         FK_num_abonnement ,
@@ -3176,9 +3139,8 @@ select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonne
  
     VALUES  
       (
-       CURRENT_TIMESTAMP,
-	   @HD_livraison,
-		CURRENT_TIMESTAMP+'48:00:00',
+		CURRENT_TIMESTAMP,
+		CURRENT_TIMESTAMP+1,
         'En cours',
         @num_abonnement,
         @num_exemplaire
@@ -3188,21 +3150,17 @@ select @nom_abonnement = FK_type_abonnement FROM Abonnement where  Numero_abonne
  UPDATE Exemplaires SET Disponibilite = 0 WHERE Numero_exemplaire = @num_exemplaire
       PRINT 'Reservation créée'
 END
-
 GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim					*/
 /*BdD ouf_tim									*/
-/*Procedure annulation de reservation immédiate */
-/*Auteur(s): PATRICK POL						*/
-/*Testeur(s):									*/
+/*Tache de fond reservation livraison		    */
+/*Auteur(s): PATRICK POL MICHAEL GOUALARD		*/
+/*Testeur(s): LADURANTI SANDRA BROCHEN ELISE	*/
 /*Intégrateur: LADURANTI SANDRA					*/
-
-Use "ouf_tim" 
 
 IF OBJECT_ID('[dbo].[a_maj_reservation_liv]', 'P') IS NOT NULL
 DROP PROCEDURE [dbo].[a_maj_reservation_liv];
-
 GO
 CREATE procedure [dbo].[a_maj_reservation_liv]
  /*reservation*/
@@ -3272,16 +3230,14 @@ begin
  PRINT 'FIN DE LA TACHE DE FOND MAJ ANNULATION'
  RETURN 1;
 END
-
 GO
 
 /*L2 ATIC 2013 GROUPE Ouftim */
 /*BdD Ouftim */
 /*procedure annulation livraison */
-/*Auteur(s): PATRICK POL*/
+/*Auteur(s): PATRICK POL MICKAEL GOUALARD */
 /*Testeur(s):PATRICK POL */
 /*Intégrateur: SANDRA LADURANTI*/
-
 
 IF OBJECT_ID ('dbo.annulation_livraison_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.annulation_livraison_creer;
@@ -3296,7 +3252,7 @@ CREATE PROCEDURE dbo.annulation_livraison_creer(
 AS
 BEGIN
 
-IF @HD_annulation > '16:00:00'
+IF CONVERT(TIME, @HD_annulation) > '16:00:00'
 		 BEGIN
 			PRINT 'Delais d''annulation depasse'
 			Return;
@@ -3322,7 +3278,7 @@ BEGIN
 		FK_num_abonnement
 		)
 	VALUES(
-		@HD_annulation,
+		CURRENT_TIMESTAMP,
 		@FK_num_reservation,
 		@FK_num_abonnement
 		)
@@ -3362,28 +3318,25 @@ PRINT 'Annulation effectué'
 
 END
 ELSE
-BEGIN
+  BEGIN
 	PRINT 'Annulation impossible'
+  END
 END
-
-END
-
+GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim						    */
 /*BdD ouf_tim										    */
 /*Procedure unitaire retour location				    */
-/*Auteur(s): PATRICK POL								*/
+/*Auteur(s): PATRICK POL GOUALARD MICHAEL				*/
 /*testeur(s): BROCHEN Elise								*/
 /*Intégrateur: LADURANTI Sandra							*/
-
 
 IF OBJECT_ID('dbo.retour_location_creer', 'P') IS NOT NULL
 DROP PROCEDURE dbo.retour_location_creer;
 GO
 CREATE PROCEDURE dbo.retour_location_creer(
 	@Date_retour DATETIME,
-	@FK_num_location INT
-	
+	@FK_num_location INT	
 )
 
 AS
@@ -3446,7 +3399,6 @@ GO
 
 IF OBJECT_ID('[dbo].[retour_loc]', 'P') IS NOT NULL
 DROP PROCEDURE [dbo].[retour_loc];
-
 GO
 CREATE procedure [dbo].[retour_loc]
  /*reservation*/
@@ -3507,26 +3459,21 @@ begin
  PRINT 'ATTENTION VOUS ETES EN RETARD SUR VOTRE LOCATION'
  FETCH NEXT FROM cur_num_retour_loc INTO @Numero_retour; 
 
- 
  CLOSE cur_edition;
  PRINT 'FIN DE LA TACHE DE FOND MAJ RELANCE RETARD'
  RETURN 1;
 END
-
 GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim						    */
 /*BdD ouf_tim										    */
-/*Procedure livraison colis							    */
-/*Auteur(s): PATRICK POL								*/
+/*Procedure preparation livraison colis				    */
+/*Auteur(s): PATRICK POL	GOUALARD MICKAEL			*/
 /*testeur(s): BROCHEN Elise								*/
 /*Intégrateur: LADURANTI Sandra							*/
 
-USE "ouf_tim" 
-
 IF OBJECT_ID('[dbo].[preparation_colis]', 'P') IS NOT NULL
 DROP PROCEDURE [dbo].[preparation_colis];
-
 GO
 CREATE procedure [dbo].[preparation_colis]
  /*reservation*/
@@ -3565,7 +3512,7 @@ begin
 	FETCH NEXT FROM cur_num_reservation INTO @numero_reserv;
 	IF @@FETCH_STATUS =-1
 	BEGIN
-		PRINT 'AUCUNE RESERVATION SUPPRIMER'
+		PRINT 'AUCUNE COLIS A PREPARER'
 		RETURN 0;
 	END
 	ELSE
@@ -3636,7 +3583,8 @@ begin
  
  CLOSE cur_edition;
  PRINT 'FIN DE LA TACHE DE FOND POUR LES COLIS DU JOUR'
+
+ /* utiliser cette procédure pour faire un appel à location? */
  RETURN 1;
 END
-
 GO
