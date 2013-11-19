@@ -108,6 +108,42 @@ insert into DISTINCTIONS
 values('Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
 insert into DISTINCTIONS
 values('Ours d''or','un ours en or',2008);
+Use "ouf_tim"
+GO
+EXEC Distinctions_creer
+	@Nom='Oskar',
+	@Lieu='Los Angeles',
+	@Annee=2013
+	
+SELECT * FROM Distinctions;
+
+Use "ouf_tim"
+GO
+EXEC Distinctions_creer
+	@Nom='Palme d''Or',
+	@Lieu='Cannes',
+	@Annee=2012
+	
+SELECT * FROM Distinctions;
+
+Use "ouf_tim"
+GO
+EXEC Distinctions_creer
+	@Nom='Cesar du Cinema',
+	@Lieu='Paris',
+	@Annee=2011
+	
+SELECT * FROM Distinctions;
+
+Use "ouf_tim"
+GO
+EXEC Distinctions_creer
+	@Nom='Deutscher Filmpreis',
+	@Lieu='Berlin',
+	@Annee=2010
+	
+SELECT * FROM Distinctions;
+
 
 insert into ATTRIBUER
 values ('Gladiator','','Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
@@ -149,6 +185,63 @@ EXEC Compte_creer
 	@Montant = 0,
 	@Somme_operations=0
 
+SELECT * FROM Compte;
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347800',
+	@Montant = 99,
+	@Somme_operations=3
+	
+SELECT * FROM Compte;
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347811',
+	@Montant = 0,
+	@Somme_operations=0
+	
+SELECT * FROM Compte;
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347822',
+	@Montant = 88,
+	@Somme_operations=1
+	
+SELECT * FROM Compte;
+
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347833',
+	@Montant = 33,
+	@Somme_operations=0
+	
+SELECT * FROM Compte;
+
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347844',
+	@Montant = 44,
+	@Somme_operations=0
+	
+SELECT * FROM Compte;
+
+
+Use "ouf_tim" 
+GO 
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347855',
+	@Montant = 55,
+	@Somme_operations=0
+	
 SELECT * FROM Compte;
 
 insert into RELANCE_DECOUVERT (Niveau_decouvert, Date_creation, Date_mise_a_jour, FK_numero_compte)
@@ -284,6 +377,91 @@ EXEC Abonnement_creer
 	
 SELECT * FROM Abonnement;
 
+Use "ouf_tim"
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=4,
+	@FK_type_abonnement ='Familiale'
+SELECT * FROM Abonnement;
+
+Use "ouf_tim"
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=5,
+	@FK_type_abonnement ='Scolaire'
+SELECT * FROM Abonnement;
+
+
+Use "ouf_tim"
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=6,
+	@FK_type_abonnement ='Familiale'
+SELECT * FROM Abonnement;
+
+Use "ouf_tim"
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=7,
+	@FK_type_abonnement ='premium'
+SELECT * FROM Abonnement;
+
+Use "ouf_tim"
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=8,
+	@FK_type_abonnement ='Familiale'
+SELECT * FROM Abonnement;
+
+Use "ouf_tim"
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=9,
+	@FK_type_abonnement ='Familiale'
+SELECT * FROM Abonnement;
+
 insert into SOUSCRIRE
 values ('Amri', 'Zakaria', 'ZakariaA',1);
 insert into SOUSCRIRE
@@ -391,6 +569,42 @@ EXEC Edition_creer
     @FK_complement_titre = ''
 SELECT * FROM Edition;
 
+USE "ouf_tim"
+GO
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
+
+EXEC Edition_creer
+	@Nom='Extended',
+	@Annee_de_sortie=2011,
+	@Duree_film =150,
+	@limite_age=12,
+    @Support = 'DVD' ,
+    @Date_insertion = @inser,
+    @Type_couleur ='Couleur',
+    @Type_son='5.1',
+    @FK_titre= 'X-Men',
+    @FK_complement_titre = 'Le Commencement'
+SELECT * FROM Edition;
+
+USE "ouf_tim"
+GO
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
+
+EXEC Edition_creer
+	@Nom='Empire Vision',
+	@Annee_de_sortie=2012,
+	@Duree_film =130,
+	@limite_age=16,
+    @Support = 'VHS' ,
+    @Date_insertion = @inser,
+    @Type_couleur ='Couleur',
+    @Type_son='2',
+    @FK_titre= 'Gladiator',
+    @FK_complement_titre = ''
+SELECT * FROM Edition;
+
 
 insert into RATTACHER 
 values ('anglais',1);
@@ -419,6 +633,65 @@ values ('2013-11-10',1,1,1,2);
 insert into EXEMPLAIRES
 values ('2012-07-05',1,0,0,3);
 
+USE "ouf_tim"
+GO
+
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2007-02-10',
+	@Taux_usure= 0,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 1
+	
+SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2012-08-10',
+	@Taux_usure= 1,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 2
+	
+SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2006-10-12',
+	@Taux_usure= 2,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 3
+	
+SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2011-11-11',
+	@Taux_usure= 0,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 4
+	
+SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2012-12-12',
+	@Taux_usure= 2,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 5
+	
+SELECT * FROM Exemplaires;
 
 /* reservation_livraisons*/
 
