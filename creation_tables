@@ -47,7 +47,7 @@ CREATE TABLE Films(
     [Nationalite] [nvarchar](50) NOT NULL,
     [Duree] [int] NOT NULL,
 	[Cache] [bit] NOT NULL,
-	[supprimer] [bit] NOT NULL
+	[supprimer] [bit] NULL
 
 CONSTRAINT PK_FILMS PRIMARY KEY ( Titre, Complement_titre)
 );
@@ -482,13 +482,14 @@ CONSTRAINT PK_RESERVATION PRIMARY KEY (Numero_reservation),
 	);
 
 
+/* on considere une HD livraison sous entendue dans les règles de gestions à 17h du jour 
+* de reservation */
 	IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_Livraison' AND xtype = 'U')
 DROP TABLE Reservation_Livraison ; 
 
 CREATE TABLE Reservation_Livraison (
 	[Numero_reservation] [int] IDENTITY(1,1) NOT NULL,
 	[HD_creation] [DATETIME] NOT NULL,
-	[HD_livraison] [DATETIME] NOT NULL,
 	[HD_retour] [DATETIME] NOT NULL,
 	[Etat] [NVARCHAR] (50) NOT NULL,
 	[FK_num_abonnement] [int] NOT NULL ,
