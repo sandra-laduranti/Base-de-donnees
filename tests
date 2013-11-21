@@ -1602,3 +1602,271 @@ SELECT * FROM Abonnement
 SELECT * FROM Exemplaires 
 SELECT * FROM Edition
 SELECT * FROM Locations 
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*test livraison 9									    */
+/*Auteur(s): PATRICK POL								*/
+/*Intégrateur: LADURANTI Sandra							*/
+
+-- Remplissage en exemplaire pour les editions
+
+USE "ouf_tim"
+GO
+DECLARE @Dinser DATETIME
+SET @Dinser = CURRENT_TIMESTAMP;
+DECLARE @Dappro DATETIME
+SET @Dappro = CURRENT_TIMESTAMP;
+EXEC insere_exemplaire
+@numSerieEdition = 7,
+@nombreEx = 10,
+
+@NomE = 'Unlimited',
+@AnneeE = 2013,
+@Duree = 95,
+@limiteA =12,
+@SupportE ='Bluray',
+@Dinsertion =@Dinser,
+@Tcouleur = 'Couleur',
+@Tson = '13.9',
+
+@Date_approvisionnement = @Dappro,
+@Taux_usure = 1,
+@Disponibilite = 1,
+@Reserve = 0,
+@FK_numero_edition = 7
+
+SELECT * FROM Exemplaires
+
+USE "ouf_tim"
+GO
+DECLARE @Dinser DATETIME
+SET @Dinser = CURRENT_TIMESTAMP;
+DECLARE @Dappro DATETIME
+SET @Dappro = CURRENT_TIMESTAMP;
+EXEC insere_exemplaire
+@numSerieEdition = 6,
+@nombreEx = 10,
+
+@NomE = 'GEEK COLLECTION',
+@AnneeE = 2006,
+@Duree = 95,
+@limiteA =12,
+@SupportE ='DVD',
+@Dinsertion =@Dinser,
+@Tcouleur = 'Couleur',
+@Tson = '13.9',
+
+@Date_approvisionnement = @Dappro,
+@Taux_usure = 1,
+@Disponibilite = 1,
+@Reserve = 0,
+@FK_numero_edition = 6
+
+SELECT * FROM Exemplaires
+
+USE "ouf_tim"
+GO
+DECLARE @Dinser DATETIME
+SET @Dinser = CURRENT_TIMESTAMP;
+DECLARE @Dappro DATETIME
+SET @Dappro = CURRENT_TIMESTAMP;
+EXEC insere_exemplaire
+@numSerieEdition = 5,
+@nombreEx = 10,
+
+@NomE = 'Master Version',
+@AnneeE = 2013,
+@Duree = 95,
+@limiteA =12,
+@SupportE ='Bluray',
+@Dinsertion =@Dinser,
+@Tcouleur = 'Couleur',
+@Tson = '13.9',
+
+@Date_approvisionnement = @Dappro,
+@Taux_usure = 1,
+@Disponibilite = 1,
+@Reserve = 0,
+@FK_numero_edition = 5
+
+SELECT * FROM Exemplaires
+
+
+USE "ouf_tim"
+GO
+DECLARE @Dinser DATETIME
+SET @Dinser = CURRENT_TIMESTAMP;
+DECLARE @Dappro DATETIME
+SET @Dappro = CURRENT_TIMESTAMP;
+EXEC insere_exemplaire
+@numSerieEdition = 4,
+@nombreEx = 10,
+
+@NomE = 'Fansub X-men',
+@AnneeE = 2013,
+@Duree = 95,
+@limiteA =12,
+@SupportE ='Bluray',
+@Dinsertion =@Dinser,
+@Tcouleur = 'Couleur',
+@Tson = '13.9',
+
+@Date_approvisionnement = @Dappro,
+@Taux_usure = 1,
+@Disponibilite = 1,
+@Reserve = 0,
+@FK_numero_edition = 4
+
+SELECT * FROM Exemplaires
+
+USE "ouf_tim"
+GO
+DECLARE @Dinser DATETIME
+SET @Dinser = CURRENT_TIMESTAMP;
+DECLARE @Dappro DATETIME
+SET @Dappro = CURRENT_TIMESTAMP;
+EXEC insere_exemplaire
+@numSerieEdition = 3,
+@nombreEx = 10,
+
+@NomE = 'Emotional Edition',
+@AnneeE = 2013,
+@Duree = 95,
+@limiteA =12,
+@SupportE ='Bluray',
+@Dinsertion =@Dinser,
+@Tcouleur = 'Couleur',
+@Tson = '13.9',
+
+@Date_approvisionnement = @Dappro,
+@Taux_usure = 1,
+@Disponibilite = 1,
+@Reserve = 0,
+@FK_numero_edition = 3
+
+SELECT * FROM Exemplaires
+
+
+USE "ouf_tim"
+GO
+DECLARE @Dinser DATETIME
+SET @Dinser = CURRENT_TIMESTAMP;
+DECLARE @Dappro DATETIME
+SET @Dappro = CURRENT_TIMESTAMP;
+EXEC insere_exemplaire
+@numSerieEdition = 2,
+@nombreEx = 10,
+
+@NomE = 'Ring Collector',
+@AnneeE = 2013,
+@Duree = 95,
+@limiteA =12,
+@SupportE ='Bluray',
+@Dinsertion =@Dinser,
+@Tcouleur = 'Couleur',
+@Tson = '13.9',
+
+@Date_approvisionnement = @Dappro,
+@Taux_usure = 1,
+@Disponibilite = 1,
+@Reserve = 0,
+@FK_numero_edition = 2
+
+SELECT * FROM Exemplaires
+
+-- RESERVATION LIVRAISON TEST
+--Edition existante
+USE "ouf_tim"
+
+GO
+EXEC Reservation_livraison_creer
+	@num_abonnement = 2,
+	@num_edition = 7
+SELECT * FROM Reservation_Livraison
+
+--Edition non existante
+USE "ouf_tim"
+
+GO
+EXEC Reservation_livraison_creer
+	@num_abonnement = 2,
+	@num_edition = 8
+SELECT * FROM Reservation_Livraison
+
+--Abonnement non existant
+USE "ouf_tim"
+
+GO
+EXEC Reservation_livraison_creer
+	@num_abonnement = 10,
+	@num_edition = 7
+SELECT * FROM Reservation_Livraison
+
+
+-- ANNULATION LIVRAISON
+--Annulation reussi
+USE "ouf_tim"
+GO
+DECLARE @Dannulation DATETIME
+SET @Dannulation = CURRENT_TIMESTAMP;
+EXEC annulation_livraison_creer
+	@HD_annulation = @Dannulation,
+	@FK_num_reservation = 3,
+	@FK_num_abonnement = 2
+SELECT * FROM annulation_livraison 
+
+--Annulation impossible
+USE "ouf_tim"
+GO
+DECLARE @Dannulation DATETIME
+SET @Dannulation = CURRENT_TIMESTAMP;
+EXEC annulation_livraison_creer
+	@HD_annulation = @Dannulation,
+	@FK_num_reservation = 5,
+	@FK_num_abonnement = 2
+SELECT * FROM annulation_livraison 
+
+
+--Test pour Livraison 9
+
+USE "ouf_tim"
+GO
+EXEC insere_location
+  @Num_exem = 10,
+  @Num_abo = 3
+    
+SELECT * from Compte
+
+USE "ouf_tim"
+GO
+EXEC insere_location
+  @Num_exem = 9,
+  @Num_abo = 2
+SELECT * FROM Locations
+
+SELECT * FROM Abonnement
+SELECT * FROM Exemplaires
+
+
+--Test retour_location
+USE "ouf_tim"
+GO
+DECLARE @Dretour DATETIME
+SET @Dretour = CURRENT_TIMESTAMP;
+EXEC retour_location_creer
+	@Date_retour = @Dretour,
+	@FK_num_location = 1
+	
+SELECT * FROM Retour_location
+
+USE "ouf_tim"
+GO
+DECLARE @Dretour DATETIME
+SET @Dretour = CURRENT_TIMESTAMP;
+EXEC retour_location_creer
+	@Date_retour = @Dretour,
+	@FK_num_location = 3
+	
+SELECT * FROM Retour_location
