@@ -2498,7 +2498,7 @@ CREATE procedure [dbo].[insere_location]
 AS
 
 BEGIN
-    DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128 ), @NbSimul INT
+    DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128 ), @NbSimul INT, @Date_fin DATETIME
 
     IF @Num_exem < 0
     BEGIN
@@ -2542,7 +2542,7 @@ BEGIN
         RETURN;
     END
 
-
+	SET @Date_fin= DATEADD(HOUR,@Duree,CURRENT_TIMESTAMP)
 
     IF NOT EXISTS (SELECT * FROM dbo.Locations WHERE Locations.FK_exemplaire=@Num_exem AND Locations.FK_num_abonnement=@Num_abo AND Locations.Date_debut=@Date_deb)
     BEGIN
@@ -2560,7 +2560,7 @@ BEGIN
             (
             @Date_deb,
             @Duree, 
-            NULL,
+            @Date_fin,
             NULL,
             @Num_exem,
             @Num_abo
@@ -3175,10 +3175,10 @@ begin
  DECLARE @Duree int
  DECLARE @Date_fin_prevue DATETIME
  DECLARE @Date_fin_reelle DATETIME
- 
+
  DECLARE cur_num_reservation CURSOR LOCAL FOR
   SELECT Numero_reservation FROM dbo.Reservation_livraison
-	WHERE CURRENT_TIMESTAMP-'16:00:00' > 0 AND Etat='En cours'
+	WHERE CONVERT(TIME,HD_creation) > '16:00:00' AND Etat='En cours'
  
  
  OPEN cur_num_reservation;
@@ -3336,12 +3336,13 @@ DROP PROCEDURE dbo.retour_location_creer;
 GO
 CREATE PROCEDURE dbo.retour_location_creer(
 	@Date_retour DATETIME,
-	@FK_num_location INT	
+	@FK_num_location INT,
+	@FK_num_abonnement INT
 )
 
 AS
 BEGIN
-	IF @Date_retour > GETDATE()
+	IF @Date_retour > (SELECT Date_fin_prevue FROM Locations WHERE Numero_location = @FK_num_location)
 	BEGIN
 		PRINT 'Date de retour impossible'
 		RETURN 0;
@@ -3353,41 +3354,99 @@ BEGIN
 		RETURN 0;
 	END
 	
+	IF @FK_num_abonnement NOT LIKE (SELECT FK_num_abonnement FROM Locations WHERE Numero_location=@FK_num_location)
+	BEGIN
+		PRINT 'Le numero d''abonnement correspond à aucune réservation'
+		RETURN 0;
+	END
 	
-IF NOT EXISTS (SELECT * FROM Retour_location)
-BEGIN
-	INSERT INTO Retour_location(
-		Date_retour,
-		FK_num_location
-	)
-	VALUES(
-		@Date_retour,
-		@FK_num_location
-	)
+	IF NOT EXISTS (SELECT * FROM Retour_location)
+	BEGIN
+		INSERT INTO Retour_location(
+					Date_retour,
+					FK_num_location
+		)
+		VALUES(
+				@Date_retour,
+				@FK_num_location
+		)
+	END
+	
+--On met à jour la date de retour dans la table location
+
+	UPDATE dbo.Locations SET Date_fin_reelle = @Date_retour  FROM Locations WHERE Numero_location = @FK_num_location;	
+	
 --On remet la disponibilité de l'exemplaire à 1
 	
-DECLARE @Exemplaire_id1 BIGINT;
-DECLARE @Disponibilite BIT;
+	DECLARE @Exemplaire_id1 BIGINT;
+	DECLARE @Disponibilite BIT;
 
-SET @Exemplaire_id1 = (SELECT FK_exemplaire FROM Locations WHERE Numero_location = @FK_num_location);
-PRINT @Exemplaire_id1;
+	SET @Exemplaire_id1 = (SELECT FK_exemplaire FROM Locations WHERE Numero_location = @FK_num_location);
+	PRINT @Exemplaire_id1;
 
-SET @Disponibilite = (SELECT Disponibilite FROM Exemplaires WHERE Numero_exemplaire =@Exemplaire_id1);
-PRINT @Disponibilite;
+	SET @Disponibilite = (SELECT Disponibilite FROM Exemplaires WHERE Numero_exemplaire =@Exemplaire_id1);
+	PRINT @Disponibilite;
 
-UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id1;
-PRINT @Disponibilite;
+	UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id1;
+	PRINT @Disponibilite;
 
-PRINT 'Votre retour a été prise en compte'
-RETURN 1;
-	 
+--On augment le niveau d'usure de l'exemplaire de 1
+
+	DECLARE @Exemplaire_id2 BIGINT;
+	DECLARE @Usure INT;
+
+	SET @Exemplaire_id2 = (SELECT FK_exemplaire FROM Locations WHERE Numero_location = @FK_num_location);
+	PRINT @Exemplaire_id2;
+
+	SET @Usure = (SELECT Taux_usure FROM Exemplaires WHERE Numero_exemplaire = @Exemplaire_id2);
+	PRINT @Usure;
+
+	UPDATE dbo.Exemplaires SET Taux_usure = @Usure + 1 WHERE Numero_exemplaire=@Exemplaire_id2;
+	PRINT @Usure;
+
+-- On fait paye le client lors de son retour et on verifie en meme temps si il est en retard
+
+	DECLARE @Date_finP DATETIME;
+
+	DECLARE @Locations_id INT;
+	DECLARE @Abonnement_id INT;
+	DECLARE @Compte_id INT;
+	DECLARE @Type_abo_id NVARCHAR (50);
+	DECLARE @Solde MONEY;
+	DECLARE @Prix_location MONEY;
+	DECLARE @Prix_retard MONEY;
+	DECLARE @New_Solde MONEY;
+
+	SET @Date_finP = (SELECT Date_fin_prevue FROM Locations WHERE Numero_location =@Locations_id)
+	PRINT @Date_finP;
+
+	SET @Abonnement_id = @FK_num_abonnement 
+	PRINT @Abonnement_id;  
+	SET @Compte_id = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @Abonnement_id )
+	PRINT @Compte_id;
+	SET @Type_abo_id = (SELECT FK_type_abonnement FROM Abonnement WHERE Numero_abonnement = @Abonnement_id)
+	PRINT @Type_abo_id;
+	SET @Solde = (SELECT Montant FROM Compte WHERE Numero_compte = @Compte_id)
+	PRINT @Solde;
+	SET @Prix_location = (SELECT Prix_location FROM Type_abonnement WHERE Nom = @Type_abo_id)
+	PRINT @Prix_location;
+	SET @Prix_retard = (SELECT Prix_retard FROM Type_abonnement WHERE Nom = @Type_abo_id)
+	PRINT @Prix_retard;
+
+		IF @Date_finP < @Date_retour
+		BEGIN
+			SET @New_Solde = @Solde - @Prix_location
+			UPDATE dbo.Compte SET Montant = @New_Solde WHERE Numero_compte = @Compte_id;
+		END
+		ELSE
+	    BEGIN
+			SET @New_Solde = @Solde - @Prix_location - @Prix_retard
+			UPDATE dbo.Compte SET Montant = @New_Solde WHERE Numero_compte = @Compte_id;
+		END
+
+	PRINT 'Votre retour a été pris en compte'
+	RETURN 1;	 
 END	
-ELSE
-BEGIN
-	PRINT 'Impossible d''effectuer votre retour de location'
-END
-
-END
 GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim						    */
@@ -3512,79 +3571,197 @@ begin
 	FETCH NEXT FROM cur_num_reservation INTO @numero_reserv;
 	IF @@FETCH_STATUS =-1
 	BEGIN
-		PRINT 'AUCUNE COLIS A PREPARER'
+		PRINT 'AUCUN COLIS A PREPARER'
 		RETURN 0;
 	END
 	ELSE
  
  
 	while(@@FETCH_STATUS = 0)
-	/*On met à jour l'etat de la reservation*/
-	SET @num_exem =( SELECT FK_num_exemplaire FROM Reservation_livraison WHERE FK_num_exemplaire=@num_exem)
-	UPDATE Reservation_livraison SET Etat = 'Accomplie' WHERE Numero_reservation  = @numero_reserv;
+	BEGIN
+		/*On met à jour l'etat de la reservation*/
+		SET @num_exem =( SELECT FK_num_exemplaire FROM Reservation_livraison WHERE FK_num_exemplaire=@num_exem)
+		UPDATE Reservation_livraison SET Etat = 'Accomplie' WHERE Numero_reservation  = @numero_reserv;
 	
-	/*On recupere le numero de l'abonnement */
-	SET @numero_abo =(SELECT FK_num_abonnement FROM Reservation_Livraison WHERE FK_num_abonnement=@numero_abo)
+		/*On recupere le numero de l'abonnement */
+		SET @numero_abo =(SELECT FK_num_abonnement FROM Reservation_Livraison WHERE FK_num_abonnement=@numero_abo)
 	
-	/*On recupere les infos sur l'abonne via l'abonnement */
-	SET @Nom = (SELECT FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
-	SET @Prenom = (SELECT FK_prenom FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
-	SET @Pseudo =(SELECT FK_pseudo FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
-	SET @Num_voie = (SELECT Numero_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Comp_voie = (SELECT Complement_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Type_voie = (SELECT Type_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Libelle = (SELECT Libelle FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Comp_libelle = (SELECT Complement_libelle FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Code_postal = (SELECT Code_postal FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Ville = (SELECT Ville FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Cedex = (SELECT Cedex FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
-	SET @Pays = (SELECT Pays FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		/*On recupere les infos sur l'abonne via l'abonnement */
+		SET @Nom = (SELECT FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
+		SET @Prenom = (SELECT FK_prenom FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
+		SET @Pseudo =(SELECT FK_pseudo FROM Souscrire WHERE FK_num_abonnement=@numero_abo)
+		SET @Num_voie = (SELECT Numero_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Comp_voie = (SELECT Complement_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Type_voie = (SELECT Type_de_voie FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Libelle = (SELECT Libelle FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Comp_libelle = (SELECT Complement_libelle FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Code_postal = (SELECT Code_postal FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Ville = (SELECT Ville FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Cedex = (SELECT Cedex FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+		SET @Pays = (SELECT Pays FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
 		
-	SET @Date_debut = CURRENT_TIMESTAMP
-	SET @Duree = 24
-	SET @Date_fin_prevue = @date_debut + '24:00:00'
-	SET @Date_fin_reelle = @Date_fin_reelle + '01:00:00'
+		SET @Date_debut = CURRENT_TIMESTAMP
+		SET @Duree = 24
+		SET @Date_fin_prevue = DATEADD(HOUR,24,CURRENT_TIMESTAMP)
+		SET @Date_fin_reelle = DATEADD(HOUR,25,CURRENT_TIMESTAMP)
 	
-	INSERT INTO Locations (
-	Date_debut,
-	Duree,
-	Date_fin_prevue,
-	Date_fin_reelle,
-	FK_exemplaire,
-	FK_num_abonnement
-	)
-	VALUES
-	(
-	@Date_debut,
-	@Duree,
-	@Date_fin_prevue,
-	@Date_fin_reelle,
-	@num_exem,
-	@numero_abo
-	)
- PRINT 'Envoyé le: '+cast(@Date_debut as VARCHAR)
+		INSERT INTO Locations (
+			Date_debut,
+			Duree,
+			Date_fin_prevue,
+			Date_fin_reelle,
+			FK_exemplaire,
+			FK_num_abonnement
+			)
+		VALUES
+			(
+			@Date_debut,
+			@Duree,
+			@Date_fin_prevue,
+			@Date_fin_reelle,
+			@num_exem,
+			@numero_abo
+			)
+		 PRINT 'Envoyé le: '+cast(@Date_debut as VARCHAR)
 	
- PRINT 'Premiere Etiquette contenant l''adresse du client à imprime'
- PRINT 'Nom : '+cast(@Nom as VARCHAR)
- PRINT 'Prenom : '+cast(@Prenom as VARCHAR)
- PRINT 'Pseudo : '+cast(@Pseudo as VARCHAR)
- PRINT 'Adresse : '+cast(@Num_voie as VARCHAR)+' '+cast(@Comp_voie as VARCHAR)+' '+cast(@Type_voie as VARCHAR)+' '+cast(@Libelle as VARCHAR)+' '+cast(@Comp_libelle as VARCHAR)
- PRINT 'Code Postal : '+cast(@Code_postal as VARCHAR)+' Ville:  '+cast(@Ville as VARCHAR)+' Cedex: '+cast(@Cedex as VARCHAR)
- PRINT 'Pays: '+cast(@Pays as VARCHAR)
+		PRINT 'Premiere Etiquette contenant l''adresse du client à imprime'
+		PRINT 'Nom : '+cast(@Nom as VARCHAR)
+	    PRINT 'Prenom : '+cast(@Prenom as VARCHAR)
+		PRINT 'Pseudo : '+cast(@Pseudo as VARCHAR)
+	    PRINT 'Adresse : '+cast(@Num_voie as VARCHAR)+' '+cast(@Comp_voie as VARCHAR)+' '+cast(@Type_voie as VARCHAR)+' '+cast(@Libelle as VARCHAR)+' '+cast(@Comp_libelle as VARCHAR)
+	    PRINT 'Code Postal : '+cast(@Code_postal as VARCHAR)+' Ville:  '+cast(@Ville as VARCHAR)+' Cedex: '+cast(@Cedex as VARCHAR)
+		PRINT 'Pays: '+cast(@Pays as VARCHAR)
  
- PRINT 'Deuxieme Etiquette Contenant l''exemplaire, l''abonnement et le jour de retour à imprime'
- PRINT 'Numéro d''exemplaire: '+cast(@num_exem as VARCHAR)
- PRINT 'Numéro d''abonnement: '+cast(@numero_abo as VARCHAR)
- PRINT 'Date retour max: '+cast(@Date_fin_reelle as VARCHAR) 
+	    PRINT 'Deuxieme Etiquette Contenant l''exemplaire, l''abonnement et le jour de retour à imprime'
+		PRINT 'Numéro d''exemplaire: '+cast(@num_exem as VARCHAR)
+		PRINT 'Numéro d''abonnement: '+cast(@numero_abo as VARCHAR)
+		PRINT 'Date retour max: '+cast(@Date_fin_reelle as VARCHAR) 
  
  
- FETCH NEXT FROM cur_num_reservation INTO @numero_reserv; 
-
+		 FETCH NEXT FROM cur_num_reservation INTO @numero_reserv; 
+	END
  
  CLOSE cur_edition;
+ DEALLOCATE cur_edition;
  PRINT 'FIN DE LA TACHE DE FOND POUR LES COLIS DU JOUR'
 
  /* utiliser cette procédure pour faire un appel à location? */
  RETURN 1;
 END
+GO
+
+--------------------------------------------------------------------
+/* Déclencheur type AFTER UPDATE                                  */
+/* Déclencheur à chaque mise à jour d'un compte (crédit ou débit) */
+/* Cf. " Trigger - Compte - After Update - MC "                   */
+/* Auteur(s) : LADURANTI Sandra, BROCHEN Elise					  */ 
+/* Correcteur: TSVETKOV Alexandre								  */
+/* Testeur(s) : TSVETKOV Alexandre								  */ 
+/* Intégrateur(s) : LADURANTI Sandra							  */ 
+--------------------------------------------------------------------------- 
+
+IF OBJECT_ID('dbo.declencheur_retrait_exemplaire_use') IS NOT NULL
+DROP TRIGGER dbo.declencheur_retrait_exemplaire_use;
+GO
+CREATE TRIGGER declencheur_retrait_exemplaire_use
+ON dbo.Exemplaires
+AFTER UPDATE
+AS
+	DECLARE @Date_approvisionnement DATETIME;
+	DECLARE @Taux_usure int;
+	DECLARE @Disponibilite bit;
+	DECLARE @Reserve int;
+	DECLARE @FK_numero_edition int;
+	DECLARE @Exemp int;
+	
+	SET @Exemp = 1;
+/* 
+Mise à jour est une suppression suivie d'une insertion :
+- anciennes lignes d'abord copiées dans table deleted, 
+- nouvelles lignes ensuite copiées dans table inserted et dans table du déclencheur.
+Pour définir les conditions du déclencheur :
+- utiliser les tables inserted et deleted de façon appropriée, 
+- ie en fonction de l'action qui a activé le déclencheur.
+*/
+
+	SELECT @Taux_usure = Taux_usure, @Disponibilite = Disponibilite
+	FROM inserted;
+	/* pas dispo = 0, dispo = 1 */
+	IF @Taux_usure >= 5 AND @Disponibilite = 1
+	BEGIN
+		/*IF EXISTS(SELECT * FROM Exemplaires WHERE Disponibilite = 1)
+		BEGIN*/
+			DELETE FROM Exemplaires WHERE Taux_usure >= 5 AND Disponibilite = 1;
+			PRINT 'Exemplaire supprimé a cause d''usure';	
+	/*	END
+		ELSE
+		BEGIN
+			PRINT 'Il n''y a qu''un seul exemplaire de ce type';
+		END		*/
+	END			
+GO
+
+--------------------------------------------------------------------
+/* Déclencheur type INSTEAD OF DELETE                             */
+/* Déclencheur sur tentative de suppression d'un compte           */
+/* Cf. " Trigger - Compte - Instead of Delete - MC "              */
+/* Auteur(s) : TSVETKOV Alexandre								  */ 
+/* Testeur(s) : TSVETKOV Alexandre								  */ 
+/* Intégrateur(s) :  LADURANTI Sandra							  */ 
+--------------------------------------------------------------------------- 
+USE "ouf_tim"
+
+IF EXISTS (SELECT * FROM dbo.sysobjects 
+WHERE id = OBJECT_ID('delete_compte_MC'))
+BEGIN
+DROP TRIGGER delete_compte_MC
+END;
+GO
+
+
+CREATE TRIGGER delete_compte_MC
+ON Compte
+INSTEAD OF DELETE
+AS
+BEGIN
+	DECLARE @id int;
+	DECLARE @flag_relance BIT;
+	
+/* 
+Mise à jour est une suppression suivie d'une insertion :
+- anciennes lignes d'abord copiées dans table deleted, 
+- nouvelles lignes ensuite copiées dans table inserted et dans table du déclencheur.
+Pour définir les conditions du déclencheur :
+- utiliser les tables inserted et deleted de façon appropriée, 
+- ie en fonction de l'action qui a activé le déclencheur.
+*/
+
+	SELECT @id = Numero_compte FROM deleted;
+	IF @@ERROR <> 0
+	BEGIN
+		PRINT '(Trigger delete_compte_MC) Erreur, vérifier si le compte existe';
+		RETURN;
+	END
+	
+	IF EXISTS (SELECT *
+			   FROM Relance_decouvert
+			   WHERE FK_Numero_compte = @id)
+	BEGIN
+		PRINT 'Ne pas supprimer le compte, car relance en cours';
+		RETURN;
+	END
+	
+	IF EXISTS (SELECT *
+			   FROM Abonnement
+			   WHERE FK_numcompte = @id)
+	BEGIN
+		PRINT 'Ne pas supprimer le compte, car abonnement attaché';
+		RETURN;
+	END
+	
+	DELETE FROM Compte
+    WHERE Numero_compte = @id	
+    	
+END
+
 GO
