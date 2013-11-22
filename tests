@@ -1593,11 +1593,10 @@ DECLARE @Dretour DATETIME
 SET @Dretour = CURRENT_TIMESTAMP;
 EXEC retour_location_creer
 	@Date_retour = @Dretour,
-	@FK_num_location = 1
+	@FK_num_location = 1,
+	@FK_num_abonnement = 2
 	
 SELECT * FROM retour_location
-
-
 SELECT * FROM Abonnement
 SELECT * FROM Exemplaires 
 SELECT * FROM Edition
@@ -1857,9 +1856,19 @@ DECLARE @Dretour DATETIME
 SET @Dretour = CURRENT_TIMESTAMP;
 EXEC retour_location_creer
 	@Date_retour = @Dretour,
-	@FK_num_location = 1
+	@FK_num_location = 1,
+	@FK_num_abonnement = 1
 	
 SELECT * FROM Retour_location
+
+
+USE "ouf_tim"
+GO
+EXEC insere_location
+	@num_exem=12,
+	@Num_abo = 2
+SELECT * FROM Locations
+
 
 USE "ouf_tim"
 GO
@@ -1867,6 +1876,193 @@ DECLARE @Dretour DATETIME
 SET @Dretour = CURRENT_TIMESTAMP;
 EXEC retour_location_creer
 	@Date_retour = @Dretour,
-	@FK_num_location = 3
+	@FK_num_location = 7,
+	@FK_num_abonnement = 2
 	
 SELECT * FROM Retour_location
+
+
+
+
+USE "ouf_tim"
+GO
+DECLARE @Dretour DATETIME
+SET @Dretour = CURRENT_TIMESTAMP;
+EXEC retour_location_creer
+	@Date_retour = @Dretour,
+	@FK_num_location = 2,
+	@FK_num_abonnement = 2
+	
+SELECT * FROM Retour_location
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*test livraison 9									    */
+/*Auteur(s): LADURANTI Sandra							*/
+/*Intégrateur: LADURANTI Sandra							*/
+
+use "ouf_tim"
+GO
+UPDATE Exemplaires 
+SET Taux_usure = 5
+WHERE Numero_exemplaire = 4
+SELECT * FROM Exemplaires
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*test livraison 9									    */
+/*Auteur(s): PATRICK POL								*/
+/*Intégrateur: LADURANTI Sandra							*/
+
+-- Reservation immediate
+USE "ouf_tim"
+GO
+EXEC Reservation_immediate_creer
+ @num_abonnement = 2 ,
+ @num_edition = 6 
+ 
+SELECT * FROM Reservation_livraison
+
+USE "ouf_tim"
+GO
+EXEC a_maj_reservation_liv
+SELECT * FROM annulation_reservation_imm
+
+USE "ouf_tim"
+GO
+EXEC preparation_colis
+
+USE "ouf_tim"
+GO
+DECLARE @Dcreation DATETIME
+SET @Dcreation = CURRENT_TIMESTAMP;
+DECLARE @Dexpi DATETIME
+SET @Dexpi = @Dcreation + 30;
+EXEC Abonnement_creer
+  @Date_creation = @Dcreation,
+  @Date_expiration = @Dexpi,
+  @FK_numcompte = 11,
+  @FK_type_abonnement = 'Familiale'
+SELECT * FROM Abonnement
+SELECT * FROM Type_abonnement
+
+SELECT * FROM Locations
+SELECT * FROM Compte
+
+USE "ouf_tim"
+GO
+EXEC insere_location
+  @Num_exem = 17,
+  @Num_abo = 2
+   
+SELECT * FROM Locations
+
+
+USE "ouf_tim"
+GO
+DECLARE @Dretour DATETIME
+SET @Dretour = CURRENT_TIMESTAMP 
+EXEC retour_location_creer
+	@Date_retour = @Dretour,
+	@FK_num_location = 6,
+	@FK_num_abonnement = 2
+	
+	
+USE "ouf_tim"
+GO
+EXEC a_maj_reservation_liv
+
+USE "ouf_tim"
+GO
+EXEC a_maj_reservation_imm
+
+
+--------------------------------------------------------------------
+/* Déclencheur type AFTER UPDATE                                  */
+/* Déclencheur à chaque mise à jour d'un compte (crédit ou débit) */
+/* Cf. " Trigger - Compte - After Update - MC "                   */
+/* Auteur(s) : TSVETKOV Alexandre, LADURANTI Sandra, BROCHEN Elise*/
+/* Testeur(s) : TSVETKOV Alexandre				 */ 
+/* Intégrateur(s) :  */ 
+--------------------------------------------------------------------------- 
+
+IF OBJECT_ID('dbo.declencheur_retrait_exemplaire_use') IS NOT NULL
+DROP TRIGGER dbo.declencheur_retrait_exemplaire_use;
+GO
+CREATE TRIGGER declencheur_retrait_exemplaire_use
+ON dbo.Exemplaires
+AFTER UPDATE
+AS
+	DECLARE @Date_approvisionnement DATETIME;
+	DECLARE @Taux_usure int;
+	DECLARE @Disponibilite bit;
+	DECLARE @Reserve int;
+	DECLARE @FK_numero_edition int;
+	DECLARE @Exemp int;
+	
+	SET @Exemp = 1;
+/* 
+Mise à jour est une suppression suivie d'une insertion :
+- anciennes lignes d'abord copiées dans table deleted, 
+- nouvelles lignes ensuite copiées dans table inserted et dans table du déclencheur.
+Pour définir les conditions du déclencheur :
+- utiliser les tables inserted et deleted de façon appropriée, 
+- ie en fonction de l'action qui a activé le déclencheur.
+*/
+
+	SELECT @Taux_usure = Taux_usure, @Disponibilite = Disponibilite
+	FROM inserted;
+	/* pas dispo = 0, dispo = 1 */
+	IF @Taux_usure >= 5 AND @Disponibilite = 1
+	BEGIN
+		/*IF EXISTS(SELECT * FROM Exemplaires WHERE Disponibilite = 1)
+		BEGIN*/
+			DELETE FROM Exemplaires WHERE Taux_usure >= 5 AND Disponibilite = 1;
+			PRINT 'Exemplaire supprimé a cause d''usure';	
+	/*	END
+		ELSE
+		BEGIN
+			PRINT 'Il n''y a qu''un seul exemplaire de ce type';
+		END		*/
+	END			
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim											*/
+/*BdD ouf_tim															*/
+/*TEST des TRIGGERS sur COMPTE (UPDATE/DELETE) et EXEMPLAIRE sur UPDATE */
+/*Auteur(s): TSVETKOV Alexandre											*/
+/*Intégrateur:LADURANTI Sandra											*/
+
+USE ouf_tim
+
+/* TEST sur UPDATE d'un compte qui est DEBITé (donc relance CREE par le trigger) */
+UPDATE Compte
+SET    Montant = -99
+WHERE  Numero_bancaire = '4931056145138999'
+
+select * from Compte
+select * from Relance_decouvert
+
+/* TEST sur UPDATE d'un compte qui est REAPROVISIONNE (donc relance SUPPRIMEE par le trigger) */
+UPDATE Compte
+SET    Montant = 100
+WHERE  Numero_bancaire = '4931056145138999'
+
+select * from Compte
+select * from Relance_decouvert
+
+
+/* TEST sur DELETE d'un compte*/
+DELETE FROM Compte
+WHERE Numero_compte = 4
+
+select * from Compte
+
+/* AFFICHE TOUS LES TRIGGERS */
+
+select object_name(id), object_name(deltrig),
+object_name(instrig), object_name(updtrig)
+from sysobjects
+where xtype ='U'
+and
+(deltrig > 0 or instrig > 0 or updtrig > 0)
