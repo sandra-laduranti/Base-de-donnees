@@ -11,25 +11,29 @@
 USE ouf_tim
 
 insert into FILMS 
-values ('Gladiator','',2000,'USA',155,0,0); 
+values ('Gladiator','',2000,'USA',155,0); 
 insert into FILMS 
-values ('Terminator','1',1984,'USA',107,1,0); 
+values ('Terminator','1',1984,'USA',107,0); 
 insert into FILMS 
-values ('Star Wars','La Menace Fantôme',1999,'USA',130,0,0); 
+values ('Star Wars','La Menace Fantôme',1999,'USA',130,0); 
 insert into FILMS 
-values ('Star Wars','L''Attaque des Clones',2002,'USA',136,1,0); 
+values ('Star Wars','L''Attaque des Clones',2002,'USA',136,0); 
 insert into FILMS 
-values ('Star Wars','La Revanche Des Sites Web',2005,'USA',140,0,0); 
+values ('Star Wars','La Revanche Des Sites Web',2005,'USA',140,0); 
 insert into FILMS 
-values ('X-Men','Le Commencement',2011,'USA',132,1,0); 
+values ('X-Men','Le Commencement',2011,'USA',132,0); 
 insert into FILMS 
-values ('Intouchables','',2011,'France',113,0,0); 
+values ('Intouchables','',2011,'France',113,0); 
 insert into FILMS 
-values ('The Artist','',2011,'France',100,1,0); 
+values ('The Artist','',2011,'France',100,0); 
 insert into FILMS 
-values ('Asterix & Obelix','Mission Cléopatre',2002,'France',107,1,0); 
+values ('Asterix & Obelix','Mission Cléopatre',2002,'France',107,0); 
 insert into FILMS 
-values ('The Hobbit','La désolation de Smaug',2013,'USA',165,0,0); 
+values ('The Hobbit','La désolation de Smaug',2013,'USA',165,0); 
+insert into Films
+values ('Thor','Le monde des ténébres', 2013,'USA',130,0);
+insert into Films
+values ('Avenger','2', 2013,'USA',130,0);
 
 insert into GENRE
 values ('Péplum');
@@ -57,417 +61,166 @@ insert into GENRE
 values ('Musical');
 
 insert into APPARTENIR
-values ('Gladiator','','Péplum');
+values (0,'Gladiator','','Péplum');
 insert into APPARTENIR
-values ('Terminator','1','Péplum');
+values (0,'Terminator','1','Péplum');
 insert into APPARTENIR
-values ('Star Wars','La Menace Fantôme','Science-fiction');
+values (0,'Star Wars','La Menace Fantôme','Science-fiction');
 insert into APPARTENIR
-values ('Star Wars','L''Attaque des Clones','Science-fiction'); 
+values (0,'Star Wars','L''Attaque des Clones','Science-fiction'); 
 insert into APPARTENIR
-values ('Star Wars','La Revanche Des Sites Web','Science-fiction'); 
+values (0,'Star Wars','La Revanche Des Sites Web','Science-fiction'); 
 insert into APPARTENIR
-values ('X-Men','Le Commencement','Science-fiction'); 
+values (0,'X-Men','Le Commencement','Science-fiction'); 
 insert into APPARTENIR
-values ('Intouchables','','Comédie'); 
+values (0,'Intouchables','','Comédie'); 
 insert into APPARTENIR
-values ('The Artist','','Comédie'); 
+values (0,'The Artist','','Comédie'); 
 insert into APPARTENIR
-values ('Asterix & Obelix','Mission Cléopatre','Comédie'); 
+values (0,'Asterix & Obelix','Mission Cléopatre','Comédie'); 
 insert into APPARTENIR
-values ('The Hobbit','La désolation de Smaug','Fantastique');
+values (0,'The Hobbit','La désolation de Smaug','Fantastique');
 
 insert into ACTEUR
-values ('Crowe','Russell','1964-02-10','Monsieur','','Rusty','','Néo-zélandaise/Australiene');
+values ('Crowe','Russell','1964-02-10','Monsieur','','Rusty','','Néo-zélandaise/Australiene',0);
 insert into ACTEUR
-values ('Ford','Harrison','1942-03-13','Monsieur','','','','Américaine');
+values ('Ford','Harrison','1942-03-13','Monsieur','','','','Américaine',0);
 insert into ACTEUR
-values ('Jackman','Hugh','1968-06-07','Monsieur','','','','Australienne');
+values ('Jackman','Hugh','1968-06-07','Monsieur','','','','Australienne',0);
 insert into ACTEUR
-values ('Portman','Natalie','1981-10-12','Madame','','','','Américaine');
+values ('Portman','Natalie','1981-10-12','Madame','','','','Américaine',0);
 insert into ACTEUR
-values ('McGregor','Ewan','1971-12-05','Monsieur','','','','Britannique')
+values ('McGregor','Ewan','1971-12-05','Monsieur','','','','Britannique',0);
 insert into ACTEUR
-values ('Berry','Halle','1966-10-12','Madame','','','','Américaine');
+values ('Berry','Halle','1966-10-12','Madame','','','','Américaine',0);
 
 insert into JOUER
-values ('Gladiator','','Crowe','Russell','1964-02-10');
+values (0,'Gladiator','','Crowe','Russell','1964-02-10');
 insert into JOUER
-values ('Star Wars','La Menace Fantôme','Portman','Natalie','1981-10-12');
+values (0,'Star Wars','La Menace Fantôme','Portman','Natalie','1981-10-12');
 insert into JOUER
-values ('Star Wars','La Revanche Des Sites Web','Ford','Harrison','1942-03-13');
+values (0,'Star Wars','La Revanche Des Sites Web','Ford','Harrison','1942-03-13');
 
 insert into REALISATEUR
-values ('Scott','Ridley','1937-12-12','Monsieur',null,'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres...','Britannique');
+values ('Scott','Ridley','1937-12-12','Monsieur',null,'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres...','Britannique',0);
 insert into REALISATEUR
-values ('Jackson','Peter','1961-02-06','Monsieur',null,'','Néo-Zélandaise');
+values ('Jackson','Peter','1961-02-06','Monsieur',null,'','Néo-Zélandaise',0);
+
 insert into REALISER
-values ('Gladiator','','Scott','Ridley','1937-12-12');
+values (0,'Gladiator','','Scott','Ridley','1937-12-12');
 
 insert into DISTINCTIONS
 values('Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
 insert into DISTINCTIONS
 values('Ours d''or','un ours en or',2008);
-Use "ouf_tim"
-GO
-EXEC Distinctions_creer
-	@Nom='Oskar',
-	@Lieu='Los Angeles',
-	@Annee=2013
-	
-SELECT * FROM Distinctions;
-
-Use "ouf_tim"
-GO
-EXEC Distinctions_creer
-	@Nom='Palme d''Or',
-	@Lieu='Cannes',
-	@Annee=2012
-	
-SELECT * FROM Distinctions;
-
-Use "ouf_tim"
-GO
-EXEC Distinctions_creer
-	@Nom='Cesar du Cinema',
-	@Lieu='Paris',
-	@Annee=2011
-	
-SELECT * FROM Distinctions;
-
-Use "ouf_tim"
-GO
-EXEC Distinctions_creer
-	@Nom='Deutscher Filmpreis',
-	@Lieu='Berlin',
-	@Annee=2010
-	
-SELECT * FROM Distinctions;
 
 
 insert into ATTRIBUER
-values ('Gladiator','','Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
+values (0,'Gladiator','','Meilleur Film','73e cérémonie des oscars du cinéma à Los Angeles',2001);
 insert into ATTRIBUER
-values ('Star Wars','La Menace Fantôme','Ours d''or','un ours en or',2008);
-
---COMPTE
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145212347869',
-	@Montant = 300,
-	@Somme_operations=0
-	
-SELECT * FROM Compte;
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145212347823',
-	@Montant = 100,
-	@Somme_operations=0
-	
-SELECT * FROM Compte;
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145269347823',
-	@Montant = 0,
-	@Somme_operations=0
-
-SELECT * FROM Compte;
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '41851565200347823',
-	@Montant = 0,
-	@Somme_operations=0
-
-SELECT * FROM Compte;
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145200347800',
-	@Montant = 99,
-	@Somme_operations=3
-	
-SELECT * FROM Compte;
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145200347811',
-	@Montant = 0,
-	@Somme_operations=0
-	
-SELECT * FROM Compte;
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145200347822',
-	@Montant = 88,
-	@Somme_operations=1
-	
-SELECT * FROM Compte;
+values (0,'Star Wars','La Menace Fantôme','Ours d''or','un ours en or',2008);
 
 
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145200347833',
-	@Montant = 33,
-	@Somme_operations=0
-	
-SELECT * FROM Compte;
+insert into COMPTE
+values ( '4785145212347869', 300, 0, 0)
+insert into COMPTE
+values ( '4785145212347823', 0, 0, 0)
+insert into COMPTE
+values ('4785145269347999', 100, 0, 0)
+insert into COMPTE
+values ('41851565200347823', 0, 0, 0)
+insert into COMPTE
+values ('4785145200347800', 99, 3, 0)
+insert into COMPTE
+values ('4785145200347811', -200, 0, 0)
+insert into COMPTE
+values ('4785145200347822', 88, 1, 0)
+insert into COMPTE
+values ('4785145200347833', 33, 0, 0)
+insert into COMPTE
+values ('4785145200347844', -44, 0, 0)
 
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145200347844',
-	@Montant = 44,
-	@Somme_operations=0
-	
-SELECT * FROM Compte;
-
-
-Use "ouf_tim" 
-GO 
-EXEC Compte_creer
-	@Numero_bancaire = '4785145200347855',
-	@Montant = 55,
-	@Somme_operations=0
-	
-SELECT * FROM Compte;
 
 insert into RELANCE_DECOUVERT (Niveau_decouvert, Date_creation, Date_mise_a_jour, FK_numero_compte)
-values(2,'2013-02-10 23:42:59','2013-02-11 22:05:10',1);
+values(2,'2013-02-10 23:42:59','2013-02-11 22:05:10',6);
 insert into RELANCE_DECOUVERT (Niveau_decouvert, Date_creation, Date_mise_a_jour, FK_numero_compte)
-values(3,'2013-11-12 20:50:59','2013-12-12 21:08:10',2);
+values(3,'2013-11-12 20:50:59','2013-12-12 21:08:10',9);
 
 insert into ABONNE
-values ('AIT Ahmed', 'Kamel', 'KamelA', '1992-01-01', 'Monsieur', '14', null, 'boulevard', 'du Dome', null, '75015', 'Paris', null, 'France', '0669453218', 'kamel.ait.ahmed@gmail.com');
+values ('AIT Ahmed', 'Kamel', 'KamelA', '1992-01-01', 'Monsieur', '14', null, 'boulevard', 'du Dome', null, '75015', 'Paris', null, 'France', '0669453218', 'kamel.ait.ahmed@gmail.com',0);
 insert into ABONNE
-values ('Amri', 'Zakaria', 'ZakariaA', '1992-02-02', 'Monsieur', '24', null, 'rue', 'saint-martin', null, '75001', 'Paris', null, 'France', '0664751823', 'amri.zakaria@gmail.com');
+values ('Amri', 'Zakaria', 'ZakariaA', '1992-02-02', 'Monsieur', '24', null, 'rue', 'saint-martin', null, '75001', 'Paris', null, 'France', '0664751823', 'amri.zakaria@gmail.com',0);
 insert into ABONNE
-values ('Baskaramoorthy', 'Anusan','AnusanB', '1992-03-03', 'Monsieur', '37', null, 'rue', 'saint-georges', null, '75002', 'Paris', null, 'France', '0667451823', 'baskaramoothy.anusan@gmail.com');
+values ('Baskaramoorthy', 'Anusan','AnusanB', '1992-03-03', 'Monsieur', '37', null, 'rue', 'saint-georges', null, '75002', 'Paris', null, 'France', '0667451823', 'baskaramoothy.anusan@gmail.com',0);
 insert into ABONNE
-values ('Brochen', 'Elise','EliseB', '1992-04-04', 'Madame', '3', null, 'rue', 'saint-claude', null, '75003', 'Paris', null, 'France', '0663114752', 'brochen.elise@gmail.com'); 
+values ('Brochen', 'Elise','EliseB', '1992-04-04', 'Madame', '3', null, 'rue', 'saint-claude', null, '75003', 'Paris', null, 'France', '0663114752', 'brochen.elise@gmail.com',0); 
 insert into ABONNE
-values ('Danglet', 'Eric', 'EricD', '1992-05-05', 'Monsieur', '17', null, 'rue', 'saint-patrick', null, '75004', 'Paris', null, 'France', '0675451823', 'danglet.eric@gmail.com');
+values ('Danglet', 'Eric', 'EricD', '1992-05-05', 'Monsieur', '17', null, 'rue', 'saint-patrick', null, '75004', 'Paris', null, 'France', '0675451823', 'danglet.eric@gmail.com',0);
 insert into ABONNE
-values ('El Khazzar', 'Aimad', 'AimadEK', '1992-06-06', 'Monsieur', '19', null, 'rue', 'saint-marcel', null, '75005', 'Paris', null, 'France', '0678123456', 'alkhazzar.aimad@gmail.com');
+values ('El Khazzar', 'Aimad', 'AimadEK', '1992-06-06', 'Monsieur', '19', null, 'rue', 'saint-marcel', null, '75005', 'Paris', null, 'France', '0678123456', 'alkhazzar.aimad@gmail.com',0);
 insert into ABONNE
-values ('Ghansum', 'Nourdine', 'NourdineG', '1992-07-07', 'Monsieur', '33', null, 'rue', 'saint-bernad', null, '75006', 'Paris', null, 'France', '0784321529', 'ghansum.nourdine@gmail.com');
+values ('Ghansum', 'Nourdine', 'NourdineG', '1992-07-07', 'Monsieur', '33', null, 'rue', 'saint-bernad', null, '75006', 'Paris', null, 'France', '0784321529', 'ghansum.nourdine@gmail.com',0);
 insert into ABONNE
-values ('Goualard', 'Mickael', 'Zebrada', '1992-08-08', 'Monsieur', '88', null, 'rue', 'saint-jacques', null, '75007', 'Paris', null, 'France', '0645751859', 'goualard.mickael@gmail.com');
+values ('Goualard', 'Mickael', 'Zebrada', '1992-08-08', 'Monsieur', '88', null, 'rue', 'saint-jacques', null, '75007', 'Paris', null, 'France', '0645751859', 'goualard.mickael@gmail.com',0);
 insert into ABONNE
-values ('Hamyani', 'Yasmina', 'YasminaH', '1992-10-10', 'Madame', '56',null, 'rue', 'saint-jean', null, '75009', 'Paris', null, 'France', '0645451813', 'hamyani.yasmina@gmail.com');
+values ('Hamyani', 'Yasmina', 'YasminaH', '1992-10-10', 'Madame', '56',null, 'rue', 'saint-jean', null, '75009', 'Paris', null, 'France', '0645451813', 'hamyani.yasmina@gmail.com',0);
 insert into ABONNE
-values ('Ifrah', 'Eliahou Raphael', 'ElihouIf', '1992-12-12', 'Monsieur', '30',null, 'boulevard', 'saint-ploutre', null,'75011', 'Paris', null, 'France', '0623416578', 'ifrah.eliahou@gmail.com');
+values ('Ifrah', 'Eliahou Raphael', 'ElihouIf', '1992-12-12', 'Monsieur', '30',null, 'boulevard', 'saint-ploutre', null,'75011', 'Paris', null, 'France', '0623416578', 'ifrah.eliahou@gmail.com',0);
 insert into ABONNE
-values ('Laduranti', 'Sandra', 'PatateMasquee', '1991-12-30', 'Madame', '10', null, 'rue', 'patate douce',null, '75012', 'Paris', null, 'France', '0645187823', 'laduranti.sandra@gmail.com');
+values ('Laduranti', 'Sandra', 'PatateMasquee', '1991-12-30', 'Madame', '10', null, 'rue', 'patate douce',null, '75012', 'Paris', null, 'France', '0645187823', 'laduranti.sandra@gmail.com',0);
 insert into ABONNE
-values ('Loutfi', 'Ibouroihim', 'LoutfiI', '1992-01-12', 'Monsieur', '13', null, 'rue', 'saint-pizza',null, '75013', 'Paris', null, 'France', '0645859674', 'loutfi.ibouroihim@gmail.com');
+values ('Loutfi', 'Ibouroihim', 'LoutfiI', '1992-01-12', 'Monsieur', '13', null, 'rue', 'saint-pizza',null, '75013', 'Paris', null, 'France', '0645859674', 'loutfi.ibouroihim@gmail.com',0);
 insert into ABONNE
-values ('Nasser', 'Ashraf', 'AshrafN', '1992-06-14', 'Monsieur', '14', null, 'rue', 'saint-kebab',null, '75014', 'Paris', null, 'France', '0612457896', 'nasser.ashraf@gmail.com');
+values ('Nasser', 'Ashraf', 'AshrafN', '1992-06-14', 'Monsieur', '14', null, 'rue', 'saint-kebab',null, '75014', 'Paris', null, 'France', '0612457896', 'nasser.ashraf@gmail.com',0);
 insert into ABONNE
-values ('Negro Castro', 'Lucas', 'LucasNC', '1992-01-20', 'Monsieur', '27', null, 'rue', 'de la musique',null,'75015', 'Paris', null, 'France', '0645783625', 'negrocastro.lucas@gmail.com'); 
+values ('Negro Castro', 'Lucas', 'LucasNC', '1992-01-20', 'Monsieur', '27', null, 'rue', 'de la musique',null,'75015', 'Paris', null, 'France', '0645783625', 'negrocastro.lucas@gmail.com',0); 
 insert into ABONNE
-values ('Petit', 'Clément', 'ClémentP', '1992-06-15', 'Monsieur', '36', null, 'rue', 'de la vie', null, '75016', 'Paris', null, 'France', '0636451285', 'petit.clement@gmail.com');
+values ('Petit', 'Clément', 'ClémentP', '1992-06-15', 'Monsieur', '36', null, 'rue', 'de la vie', null, '75016', 'Paris', null, 'France', '0636451285', 'petit.clement@gmail.com',0);
 insert into ABONNE
-values ('Piard-rousseau', 'Idriss', 'GRODEBILE', '1992-04-16', 'Monsieur', '95', null, 'rue', 'saint-pascale', null, '75017', 'Paris', null, 'France', '0632659814', 'piardrousseau.idriss@gmail.com');
+values ('Piard-rousseau', 'Idriss', 'GRODEBILE', '1992-04-16', 'Monsieur', '95', null, 'rue', 'saint-pascale', null, '75017', 'Paris', null, 'France', '0632659814', 'piardrousseau.idriss@gmail.com',0);
 insert into ABONNE
-values ('Pol', 'Patrick', 'PatrickP', '1992-01-13', 'Monsieur', '84',null, 'boulevard', 'chinois', null, '75013', 'Paris', null, 'France', '0646215896', 'pol.patrick@gmail.com');
+values ('Pol', 'Patrick', 'PatrickP', '1992-01-13', 'Monsieur', '84',null, 'boulevard', 'chinois', null, '75013', 'Paris', null, 'France', '0646215896', 'pol.patrick@gmail.com',0);
 insert into ABONNE
-values ('Roman', 'Alexander', 'ARC', '1991-02-05', 'Monsieur', '157', null, 'rue', 'du lapin', null, '78000', 'Versailles',null, 'France', '0645856525', 'roman.alexander@gmail.com');
+values ('Roman', 'Alexander', 'ARC', '1991-02-05', 'Monsieur', '157', null, 'rue', 'du lapin', null, '78000', 'Versailles',null, 'France', '0645856525', 'roman.alexander@gmail.com',0);
 insert into ABONNE
-values ('Serin', 'Damien', 'DamienS', '1991-11-12', 'Monsieur', '102', null, 'rue', 'du renouveau', null, '75019','Paris', null, 'France', '0623142536', 'serin.damien@gmail.com');
+values ('Serin', 'Damien', 'DamienS', '1991-11-12', 'Monsieur', '102', null, 'rue', 'du renouveau', null, '75019','Paris', null, 'France', '0623142536', 'serin.damien@gmail.com',0);
 insert into ABONNE
-values ('Sivanathan', 'Sinthujan', 'SinthujanS', '1992-05-11', 'Monsieur', '80', null, 'rue', 'de lafievre', null, '75020','Paris', null, 'France', '0666415278', 'sivanathan.sinthujan@gmail.com');
+values ('Sivanathan', 'Sinthujan', 'SinthujanS', '1992-05-11', 'Monsieur', '80', null, 'rue', 'de lafievre', null, '75020','Paris', null, 'France', '0666415278', 'sivanathan.sinthujan@gmail.com',0);
 insert into ABONNE
-values ('Tsvetkov', 'Alexandre', 'AlexandreT', '1992-06-04', 'Monsieur', '45', null, 'rue', 'du vodka', null, '75001','Paris', null, 'France', '0642152536', 'tsvetkov.alexandre@gmail.com');
+values ('Tsvetkov', 'Alexandre', 'AlexandreT', '1992-06-04', 'Monsieur', '45', null, 'rue', 'du vodka', null, '75001','Paris', null, 'France', '0642152536', 'tsvetkov.alexandre@gmail.com',0);
 
 
 --TYPE ABONNEMENT
+insert into TYPE_ABONNEMENT
+values ('Familiale', 60, 2, 5, 1,72);
+insert into TYPE_ABONNEMENT
+values ('Premium', 20, 150, 2, 1,72);
+insert into TYPE_ABONNEMENT
+values ('Scolaire', 80, 3, 8, 2,72);
 
-Use "ouf_tim" 
-GO
-EXEC Type_abonnement_creer
-	@Nom = 'Familiale',
-	@Prix = 60,
-	@Prix_location = 2,
-	@Exemplaires_simultanes = 5,
-	@Prix_retard = 1,
-	@Duree_engagement = 72
-	
-SELECT * FROM Type_abonnement;
+-- ABONNEMENT
 
-Use "ouf_tim"
-GO
-EXEC Type_abonnement_creer
-	@Nom='premium',
-	@Prix=20,
-	@Prix_location=150,
-	@Exemplaires_simultanes=2,
-	@Prix_retard=1,
-	@Duree_engagement = 72
-	
-SELECT * FROM Type_abonnement;
-Use "ouf_tim"
-GO
-
-EXEC Type_abonnement_creer
-	@Nom='Scolaire',
-	@Prix=80,
-	@Prix_location=3,
-	@Exemplaires_simultanes=8,
-	@Prix_retard=2,
-	@Duree_engagement=72
-	
--- ABONNMENET
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=2,
-	@FK_type_abonnement ='Familiale'
-SELECT * FROM Abonnement;
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=1,
-	@FK_type_abonnement ='premium'	
-SELECT * FROM Abonnement;
-Use "ouf_tim"
-GO
-
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer	
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=3,
-	@FK_type_abonnement ='Scolaire'
-	
-SELECT * FROM Abonnement;
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=4,
-	@FK_type_abonnement ='Familiale'
-SELECT * FROM Abonnement;
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=5,
-	@FK_type_abonnement ='Scolaire'
-SELECT * FROM Abonnement;
-
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=6,
-	@FK_type_abonnement ='Familiale'
-SELECT * FROM Abonnement;
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=7,
-	@FK_type_abonnement ='premium'
-SELECT * FROM Abonnement;
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=8,
-	@FK_type_abonnement ='Familiale'
-SELECT * FROM Abonnement;
-
-Use "ouf_tim"
-GO
-Declare @creation DATETIME
-SET @creation = CURRENT_TIMESTAMP;
-Declare @expi DATETIME
-SET @expi = @creation + '20:00:00';
-
-EXEC Abonnement_creer
-	@Date_creation=@creation,
-	@Date_expiration=@expi,
-	@FK_numcompte=9,
-	@FK_type_abonnement ='Familiale'
-SELECT * FROM Abonnement;
+insert into ABONNEMENT
+values ('2013-10-30 23:00:00','2025-10-30 23:00:00',1,'Familiale',0)
+insert into ABONNEMENT
+values ('2012-11-20','2015-11-30',2,'Premium',0)
+insert into ABONNEMENT
+values ('2012-12-20','2015-12-30',3,'Scolaire',0)
+insert into ABONNEMENT
+values ('2007-07-20','2014-10-30',4,'Familiale',0)
+insert into ABONNEMENT
+values ('2008-08-20','2014-10-30',5,'Scolaire',0)
+insert into ABONNEMENT
+values ('2008-06-20','2014-11-30',6,'Premium',0)
 
 insert into SOUSCRIRE
-values ('Amri', 'Zakaria', 'ZakariaA',1);
+values (0,'Amri', 'Zakaria', 'ZakariaA',1);
 insert into SOUSCRIRE
-values ('Baskaramoorthy', 'Anusan','AnusanB',2);
+values (0,'Baskaramoorthy', 'Anusan','AnusanB',2);
 insert into SOUSCRIRE
-values ('Brochen', 'Elise','EliseB',3);
+values (0,'Brochen', 'Elise','EliseB',3);
 insert into SOUSCRIRE
-values ('Danglet', 'Eric', 'EricD',3);
+values (0,'Danglet', 'Eric', 'EricD',3);
 
 
 insert into LANGUE_AUDIO
@@ -513,195 +266,49 @@ insert into LANGUE_SOUS_TITRE
 values ('Finnois');
 
 -- Edition
-USE "ouf_tim"
-GO
-Declare @inser DATETIME
-SET @inser = CURRENT_TIMESTAMP;
 
-EXEC Edition_creer
-	@Nom='GOLD',
-	@Annee_de_sortie=2004,
-	@Duree_film =120,
-	@limite_age=12,
-    @Support = 'DVD' ,
-    @Date_insertion = @inser,
-    @Type_couleur ='Couleur',
-    @Type_son='5.1',
-    @FK_titre= 'Star Wars',
-    @FK_complement_titre = 'La Revanche Des Sites Web'
-SELECT * FROM Edition;
-
-USE "ouf_tim"
-GO
-Declare @inser DATETIME
-SET @inser = CURRENT_TIMESTAMP;
-
-EXEC Edition_creer
-	@Nom='Collector',
-	@Annee_de_sortie=2013,
-	@Duree_film =120,
-	@limite_age=10,
-    @Support = 'Bluray' ,
-    @Date_insertion = @inser,
-    @Type_couleur ='Couleur',
-    @Type_son='5.1',
-    @FK_titre= 'The Hobbit',
-    @FK_complement_titre = 'La désolation de Smaug'
-SELECT * FROM Edition;
-
-
-USE "ouf_tim"
-GO
-Declare @inser DATETIME
-SET @inser = CURRENT_TIMESTAMP;
-EXEC Edition_creer
-	@Nom='Introuvable',
-	@Annee_de_sortie=2013,
-	@Duree_film =120,
-	@limite_age=10,
-    @Support = 'Bluray' ,
-    @Date_insertion = @inser,
-    @Type_couleur ='Couleur',
-    @Type_son='5.1',
-    @FK_titre= 'Intouchables',
-    @FK_complement_titre = ''
-SELECT * FROM Edition;
-
-USE "ouf_tim"
-GO
-Declare @inser DATETIME
-SET @inser = CURRENT_TIMESTAMP;
-
-EXEC Edition_creer
-	@Nom='Extended',
-	@Annee_de_sortie=2011,
-	@Duree_film =150,
-	@limite_age=12,
-    @Support = 'DVD' ,
-    @Date_insertion = @inser,
-    @Type_couleur ='Couleur',
-    @Type_son='5.1',
-    @FK_titre= 'X-Men',
-    @FK_complement_titre = 'Le Commencement'
-SELECT * FROM Edition;
-
-USE "ouf_tim"
-GO
-Declare @inser DATETIME
-SET @inser = CURRENT_TIMESTAMP;
-
-EXEC Edition_creer
-	@Nom='Empire Vision',
-	@Annee_de_sortie=2012,
-	@Duree_film =130,
-	@limite_age=16,
-    @Support = 'VHS' ,
-    @Date_insertion = @inser,
-    @Type_couleur ='Couleur',
-    @Type_son='2',
-    @FK_titre= 'Gladiator',
-    @FK_complement_titre = ''
-SELECT * FROM Edition;
-
+insert into Edition
+values ('GOLD', 2004, 120, 12, 'DVD', '2007-12-12', 'Couleur', '5.1', 0,'Star Wars', 'La Revanche Des Sites Web')
+insert into Edition
+values ('Collector',2013,120,10,'Bluray','2013-12-01','Couleur','5.1', 0,'The Hobbit', 'La désolation de Smaug')
 
 insert into RATTACHER 
-values ('anglais',1);
+values (0,'anglais',1);
 insert into RATTACHER 
-values ('francais',1);
+values (0,'francais',1);
 insert into RATTACHER 
-values ('Russe',2);
+values (0,'Russe',2);
 insert into RATTACHER 
-values ('anglais',3);
+values (0,'anglais',2);
 
 insert into AFFICHER 
-values ('anglais',1);
+values (0,'anglais',1);
 insert into AFFICHER 
-values ('francais',1);
+values (0,'francais',1);
 insert into AFFICHER 
-values ('Russe',2);
+values (0,'Russe',2);
 insert into AFFICHER 
-values ('anglais',3);
+values (0,'anglais',2);
 
 -- Exemplaires
 
 insert into EXEMPLAIRES
-values ('2007-10-10',1,1,1,1);
+values ('2007-10-10',1,1,1,0,1);
 insert into EXEMPLAIRES
-values ('2013-11-10',1,1,1,2);
+values ('2007-10-10',1,1,0,0,1);
 insert into EXEMPLAIRES
-values ('2012-07-05',1,0,0,3);
-insert into EXEMPLAIRES
-values ('2013-12-11',5,1,0,1);
-
-USE "ouf_tim"
-GO
-EXEC exemplaires_creer
-	@Date_approvisionnement= '2007-02-10',
-	@Taux_usure= 0,
-	@Disponibilite= 1,
-	@Reserve = 0,
-	@FK_numero_edition= 1
-	
-SELECT * FROM Exemplaires;
-
-USE "ouf_tim"
-GO
-EXEC exemplaires_creer
-	@Date_approvisionnement= '2012-08-10',
-	@Taux_usure= 1,
-	@Disponibilite= 1,
-	@Reserve = 0,
-	@FK_numero_edition= 2
-	
-SELECT * FROM Exemplaires;
-
-USE "ouf_tim"
-GO
-EXEC exemplaires_creer
-	@Date_approvisionnement= '2006-10-12',
-	@Taux_usure= 2,
-	@Disponibilite= 1,
-	@Reserve = 0,
-	@FK_numero_edition= 3
-	
-SELECT * FROM Exemplaires;
-
-USE "ouf_tim"
-GO
-EXEC exemplaires_creer
-	@Date_approvisionnement= '2011-11-11',
-	@Taux_usure= 0,
-	@Disponibilite= 1,
-	@Reserve = 0,
-	@FK_numero_edition= 4
-	
-SELECT * FROM Exemplaires;
-
-USE "ouf_tim"
-GO
-EXEC exemplaires_creer
-	@Date_approvisionnement= '2012-12-12',
-	@Taux_usure= 2,
-	@Disponibilite= 1,
-	@Reserve = 0,
-	@FK_numero_edition= 5
-	
-SELECT * FROM Exemplaires;
+values ('2013-11-10',1,1,1,0,2);
 
 
 
-/* reservation_livraisons*/
+/* Locations*/	
 
-insert into LOCATIONS (Date_debut, Duree, Date_fin_prevue, Date_fin_reelle, FK_exemplaire,FK_num_abonnement)
-values ('2013-09-25 22:05:10',24,'2013-09-26 10:05:20','2013-09-27 02:21:30',1,1);
-insert into LOCATIONS (Date_debut, Duree, Date_fin_prevue, Date_fin_reelle, FK_exemplaire,FK_num_abonnement)
-values ('2013-08-15 22:05:10',24,'2013-12-25 10:05:20','2013-12-25 10:05:20',1,1);
-insert into LOCATIONS (Date_debut, Duree, Date_fin_prevue, Date_fin_reelle, FK_exemplaire,FK_num_abonnement)
-values ('2013-08-15 22:05:10',24,'2013-11-23 10:05:20','2013-11-21 10:05:20',1,2);
-
-
-insert into RELANCE_RETARDS (Niveau_de_retard, Date_creation, Date_mise_a_jour, FK_num_location)
-values (2,'2013-09-26 23:15:06','2013-09-26 20:25:53',1);
+insert into LOCATIONS
+values ('2013-09-25 22:05:10',24,'2013-09-26 10:05:20','2013-09-27 02:21:30',1,1)
+insert into LOCATIONS
+values ('2013-08-15 22:05:10',24,'2013-08-15 22:05:10','2013-08-15 22:05:10',1,1)
+insert into LOCATIONS
+values ('2013-08-15 22:05:10',24,'2013-11-23 10:05:20','2013-11-21 10:05:20',1,2)
 
 PRINT 'Peuplement OK'
 
