@@ -1,1853 +1,404 @@
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Procedure de creation de genre */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):PATRICK POL */
-/*Intégrateur: SANDRA LADURANTI*/
-
-/***  TEST  ***/
+/* TESTS OUF'TIM */
 
 USE ouf_tim
 
-GO 
-EXEC Acteur_creer
-    @Nom = 'test',
-    @Prenom = 'Ashley',     
-    @Date_naissance = '1989-12-18',
-    @Sexe = 'Femme',
-    @Date_deces = NULL,
-    @Nom_de_scene = NULL,
-    @Biographie = 'Ashley Benson est une actrice et mannequin américaine. [...]',
-    @Nationalite = 'Américaine' 
 
-Select * from Acteur;
+/* PEUPLEMENT SECONDAIRE PAR EXECUTION DE PROCEDURES */
 
-/***  TEST 2 ***/
+/*L2 ATIC 2013 GROUPE ouf_tim						 */
+/*BdD ouf_tim										 */
+/*Auteur(s): PATRICK POL BROCHEN ELISE				 */
+/*Intégrateur: SANDRA LADURANTI						 */
+
+/* Test de la procédure unitaire de Distinctions_creer */
+USE ouf_tim
+GO
+EXEC Distinctions_creer
+	@Nom='Palme d''Or',
+	@Lieu='Cannes',
+	@Annee=2012
+
+-- SELECT * FROM Distinctions
+
+/* Test de la procédure unitaire de Compte_creer */
+USE ouf_tim
+GO
+EXEC Compte_creer
+	@Numero_bancaire = '4785145200347855',
+	@Montant = 55,
+	@Somme_operations=0
+	
+-- SELECT * FROM Compte
+
+/* Test de la procédure unitaire de Type_abonnement_creer */
+USE ouf_tim
+GO
+EXEC Type_abonnement_creer
+	@Nom = 'Pauvre',
+	@Prix = 10,
+	@Prix_location = 1,
+	@Exemplaires_simultanes = 3,
+	@Prix_retard = 1,
+	@Duree_engagement = 72
+
+-- SELECT * FROM Type_abonnement
+
+/* Test de la procédure unitaire de Abonnement_creer */
+USE ouf_tim
+GO
+Declare @creation DATETIME
+SET @creation = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = @creation + '20:00:00';
+
+EXEC Abonnement_creer
+	@Date_creation=@creation,
+	@Date_expiration=@expi,
+	@FK_numcompte=7,
+	@FK_type_abonnement ='premium'
+
+-- SELECT * FROM Abonnement;
+
+/* Test de la procédure unitaire de Edition_creer */
+USE ouf_tim
+GO
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
+EXEC Edition_creer
+	@Nom='Introuvable',
+	@Annee_de_sortie=2013,
+	@Duree_film =120,
+	@limite_age=10,
+    @Support = 'Bluray' ,
+    @Date_insertion = @inser,
+    @Type_couleur ='Couleur',
+    @Type_son='5.1',
+    @FK_titre= 'Intouchables',
+    @FK_complement_titre = ''
+
+-- SELECT * FROM Edition;
+
+/* Test de la procédure charindex d'insertion_edition */
+USE "ouf_tim"
+GO
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
 
 USE ouf_tim
+GO
+DECLARE @FK_titre NVARCHAR(50) = 'Gladiator',
+		@FK_complement_titre NVARCHAR(50)='',
+		@Nom NVARCHAR(50) = 'Empire Vision',
+		@Annee_de_sortie INT = 2012,
+		@Duree_film INT = 130,
+		@limite_age INT = 16,
+		@support NVARCHAR(50)= 'DVD',
+		@Dinsertion DATETIME = CURRENT_TIMESTAMP,
+		@Tcouleur NVARCHAR(50)='Couleur',
+		@Tson NVARCHAR(50)='Dolby',
+		@liste_Langue_audio NVARCHAR(1000) = 'Francais|Chinois|Anglais',
+		@liste_Langue_sous_titre NVARCHAR(1000)= 'Francais|Chinois|Anglais'
+		
+EXEC dbo.a_insertion_edition @FK_titre, @FK_complement_titre, @Nom, @Annee_de_sortie, @Duree_film, @limite_age, @support, @Dinsertion, @Tcouleur, @Tson, @liste_Langue_audio, @liste_Langue_sous_titre
 
-GO 
-EXEC Acteur_creer
-    @Nom = 'Nathalie',
-    @Prenom = 'Portmann',       
-    @Date_naissance = '1989-06-18',
+-- SELECT * FROM Edition
+-- SELECT * FROM Langue_audio
+-- SELECT * FROM Langue_sous_titre
+
+/* Test de la procédure charindex d'insertion_edition */
+USE "ouf_tim"
+GO
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
+
+USE ouf_tim
+GO
+DECLARE @FK_titre NVARCHAR(50) = 'X-Men',
+		@FK_complement_titre NVARCHAR(50)='Le Commencement',
+		@Nom NVARCHAR(50) = 'Extended',
+		@Annee_de_sortie INT = 2011,
+		@Duree_film INT = 150,
+		@limite_age INT = 12,
+		@support NVARCHAR(50)= 'DVD',
+		@Dinsertion DATETIME = CURRENT_TIMESTAMP,
+		@Tcouleur NVARCHAR(50)='Couleur',
+		@Tson NVARCHAR(50)='5.1',
+		@liste_Langue_audio NVARCHAR(1000) = 'Francais|Anglais|Finnois',
+		@liste_Langue_sous_titre NVARCHAR(1000)= 'Francais|Anglais|Finnois'
+		
+EXEC dbo.a_insertion_edition @FK_titre, @FK_complement_titre, @Nom, @Annee_de_sortie, @Duree_film, @limite_age, @support, @Dinsertion, @Tcouleur, @Tson, @liste_Langue_audio, @liste_Langue_sous_titre
+
+-- SELECT * FROM Edition
+-- SELECT * FROM Langue_audio
+-- SELECT * FROM Langue_sous_titre
+
+/* Test de la procédure unitaire d'Exemplaires_creer */
+
+USE "ouf_tim"
+GO
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2007-02-10',
+	@Taux_usure= 0,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 1
+	
+-- SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2012-08-10',
+	@Taux_usure= 1,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 2
+	
+-- SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2006-10-12',
+	@Taux_usure= 2,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 3
+	
+-- SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2011-11-11',
+	@Taux_usure= 0,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 4
+	
+-- SELECT * FROM Exemplaires;
+
+USE "ouf_tim"
+GO
+EXEC exemplaires_creer
+	@Date_approvisionnement= '2012-12-12',
+	@Taux_usure= 2,
+	@Disponibilite= 1,
+	@Reserve = 0,
+	@FK_numero_edition= 5
+	
+-- SELECT * FROM Exemplaires;
+
+/* Test de la procédure charindex d'insertion_film */
+USE ouf_tim
+GO
+DECLARE @Titre NVARCHAR(50) = 'Machinous',
+		@Complement_titre NVARCHAR(50)='bidulous',
+		@Annee INT = 2013,
+		@Nationalite NVARCHAR (50)= 'Dalek',
+		@Duree INT = 42,
+		@liste_acteurs NVARCHAR(1000)= 'jeannette,elise,1995-12-12,madame,1997-12-12,noobette,lol,france|jeannetta,sandra,1995-12-12,madame,1997-12-12,pommedeterre,lol,france',
+		@liste_realisateurs NVARCHAR(500)= 'jeannette,elise,1995-12-12,madame,1997-12-12,noobette,france|jeannetta,sandra,1995-12-12,madame,1997-12-12,pommedeterre,france',
+		@liste_distinctions NVARCHAR(500)='cesar,paris,2000|oscar,berlin,2002',
+		@liste_genres NVARCHAR(100)='Obiwan|Kenobi'
+		
+EXEC dbo.ajouter_film @Titre, @Complement_titre, @Annee, @Nationalite, @Duree, @liste_acteurs, @liste_realisateurs, @liste_distinctions, @liste_genres 
+
+-- SELECT * FROM Films
+-- SELECT * FROM Acteur
+-- SELECT * FROM Realisateur
+-- SELECT * FROM Distinctions
+-- SELECT * FROM Genre
+
+/* TESTS PAR ACTIONS DE L'UTILISATEUR */
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						 */
+/*BdD ouf_tim										 */
+/* Test d'insertion d'un abonné avec compte et abonnement */
+/*Auteur(s): LADURANTI SANDRA						 */
+/*Intégrateur: SANDRA LADURANTI						 */
+
+/* un abonné s'inscrit, on effectue son inscription par procedures unitaires en attendant la correction du charindex*/
+
+USE "ouf_tim"
+GO
+EXEC Abonne_creer
+    @Nom = 'Bochard',
+    @Prenom = 'Stephanie',
+    @Pseudo = 'Steph',
+    @Date_de_naissance = '1990-07-21',
     @Sexe = 'Madame',
-    @Date_deces = NULL,
-    @Nom_de_scene = NULL,
-    @Biographie = 'Nathalie Portmann est une actrice et réalisatrice américaine. [...]',
-    @Nationalite = 'Américaine' 
+    @Numero_de_voie = '25',
+    @Complement_de_voie = '',
+    @Type_de_voie = 'rue',
+    @Libelle = 'des papillons',
+    @Complement_libelle = '',
+    @Code_postal = '91800',
+    @Ville = 'Brunoy',
+    @Cedex = '',
+    @Pays = 'France',
+    @Numero_telephone = '0666666666',
+    @Adresse_email = 'stephanie.bochard@gmail.com'
 
-Select * from Acteur;
+SELECT * FROM ABONNE WHERE Nom = 'Bochard'
 
-/***  TEST 3 ***/
-
-USE ouf_tim
-
-GO 
-EXEC Acteur_creer
-    @Nom = 'Bob',
-    @Prenom = 'Babar',      
-    @Date_naissance = '2030-06-18',
-    @Sexe = 'Homme',
-    @Date_deces = NULL,
-    @Nom_de_scene = NULL,
-    @Biographie = 'Babar est un acteur japonais. [...]',
-    @Nationalite = 'Japonais'   
-
-Select * from Acteur;
-
-/* Test 4 */
-
-USE ouf_tim
-
+USE "ouf_tim"
 GO
-EXEC Acteur_creer
-    @Nom = '',
-    @Prenom = 'Dianna',     
-    @Date_naissance = '1980-12-18',
-    @Sexe = 'Femme',
-    @Date_deces = NULL,
-    @Nom_de_scene = NULL,
-    @Biographie = 'Dianna est une actrice et mannequin américaine. [...]',
-    @Nationalite = 'Américaine'
-
-Select * from Acteur;
-
-/* Test 5 */
-
-USE ouf_tim
-
-GO
-EXEC Acteur_creer
-    @Nom = 'truc',
-    @Prenom = '123',        
-    @Date_naissance = '1980-12-18',
-    @Sexe = 'Femme',
-    @Date_deces = NULL,
-    @Nom_de_scene = NULL,
-    @Biographie = 'Dianna est une actrice et mannequin américaine. [...]',
-    @Nationalite = 'Américaine'
-
-Select * from Acteur;
-
-/* Test 4 */
-
-USE ouf_tim
-
-GO
-EXEC Acteur_creer
-    @Nom = 'Agrion',
-    @Prenom = 'Dianna',     
-    @Date_naissance = '1980-12-18',
-    @Sexe = 'Femme',
-    @Date_deces = NULL,
-    @Nom_de_scene = NULL,
-    @Biographie = 'Dianna est une actrice et mannequin américaine. [...]',
-    @Nationalite = '25'
-
-Select * from Acteur;
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*test de la procédure genre_creer */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):PATRICK POL */
-/*Intégrateur: SANDRA LADURANTI*/
-
-/* Test Genre 1*/
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = 'Animation'
-
-Select * from Genre;
-
-/* Test Genre 2*/
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = 'Guerre'
-
-Select * from Genre;
-
-/* Test Genre 3*/
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = 'Erotique'
-
-Select * from Genre;
-
-/* Test Genre 4 */
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = ''
-
-Select * from Genre;
-
-/* Test Genre 5 */
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = '42'
-
-Select * from Genre;
-
-/* Test Genre 6 */
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = '$$$$$$'
-
-Select * from Genre;
-
-
-/* Test Genre 7 */
-
-USE ouf_tim
-
-GO
-EXEC Genre_creer
-    @Nom = 3
-
-Select * from Genre;
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Procedure de creation d'une edition */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):PATRICK POL */
-/*Intégrateur: SANDRA LADURANTI*/
-
-/* Test 1 */
-
-USE ouf_tim
-
-GO
-
-EXEC Edition_creer
-    @Nom = 'much',
-    @Annee_de_sortie = '2012',
-    @Duree_film = 120,
-    @limite_age = 12,
-    @Support = 'BluRay',
-    @Date_insertion = '2013',
-    @Type_couleur = 'Couleur',
-    @Type_son = '5.1',
-    @FK_titre = 'Terminator',
-    @FK_complement_titre = '1'
-    
-Select * from Edition
-
-
-/* Test 2 */
-
-USE ouf_tim
-
-GO
-EXEC Edition_creer
-    @Nom = '',
-    @Annee_de_sortie = '2012',
-    @Duree_film = 120,
-    @limite_age = 12,
-    @Support = 'BluRay',
-    @Date_insertion = '2013',
-    @Type_couleur = 'Couleur',
-    @Type_son = '5.1',
-    @FK_titre = 'X-Men',
-    @FK_complement_titre = 'Le Commencement'
-    
-
-Select * from Edition
-
-
-/* Test 3 */
-/* QUESTION: est-ce qu'il faut gerer les cast de int dans les messages d'erreur? */
-
-USE ouf_tim
-
-GO
-EXEC Edition_creer
-    @Nom = 'Standard',
-    @Annee_de_sortie = '2012',
-    @Duree_film = 12,
-    @limite_age = 12,
-    @Support = 'BluRay',
-    @Date_insertion = '2013',
-    @Type_couleur = 'Couleur',
-    @Type_son = '5.1',
-    @FK_titre = 'Gladiator',
-    @FK_complement_titre = ''
-    
-
-Select * from Edition
-
-/* Test 4*/
-
-USE ouf_tim
-
-GO
-EXEC Edition_creer
-    @Nom = 'Standard',
-    @Annee_de_sortie = '2012',
-    @Duree_film = 200,
-    @limite_age = 12,
-    @Support = 'DVD',
-    @Date_insertion = '2013',
-    @Type_couleur = 15,
-    @Type_son = '5.1',
-    @FK_titre = 'Intouchables',
-    @FK_complement_titre = ''
-    
-
-Select * from Edition
-
-/*L2 ATIC 2013 GROUPE ouf_tim							    	 */
-/*BdD ouf_tim												     */
-/*Procedure de creation d'un type d'abonnement					 */
-/*Auteur(s): Tsvetkov Alexandre Laduranti Sandra Elise Brochen   */
-/*Intégrateur: Laduranti Sandra								     */
-
-/* Test 1 (marche) */
-USE ouf_tim
-
-GO
-EXEC Type_abonnement_creer
-    @Nom = 'Familiale',
-    @Prix = 30,
-    @Prix_location = 5,
-    @Exemplaires_simultanes = 3,
-    @Prix_retard = 200,
-    @Duree_engagement = 1 /* an */
-
-Select * from Type_abonnement
-
-
-/* Test 2 (marche pas) */
-USE ouf_tim
-
-GO
-EXEC Type_abonnement_creer
-    @Nom = ' ',     /* impossible */
-    @Prix = 30,
-    @Prix_location = 5,
-    @Exemplaires_simultanes = 3,
-    @Prix_retard = 200,
-    @Duree_engagement = 0.1 
-
-Select * from Type_abonnement
-
-/* Test 3 (marche pas) */
-USE ouf_tim
-
-GO
-EXEC Type_abonnement_creer
-    @Nom = 'haha',
-    @Prix = -50,        /* impossible */
-    @Prix_location = 5,
-    @Exemplaires_simultanes = 60,
-    @Prix_retard = 200,
-    @Duree_engagement = 0.1 
-
-Select * from Type_abonnement
-
-/* Test 4 (marche pas) */
-USE ouf_tim
-
-GO
-EXEC Type_abonnement_creer
-    @Nom = '$',     /* impossible */
-    @Prix = 50,     
-    @Prix_location = 5,
-    @Exemplaires_simultanes = 60,
-    @Prix_retard = 200,
-    @Duree_engagement = 0.1 
-
-Select * from Type_abonnement
-
-/* Test 5 */
-USE ouf_tim
-
-GO
-EXEC Type_abonnement_creer
-    @Nom = 'ceci est un nom composé',
-    @Prix = 50,     
-    @Prix_location = 5,
-    @Exemplaires_simultanes = 30,
-    @Prix_retard = 200,
-    @Duree_engagement = 10 
-
-Select * from Type_abonnement
-
-/*ELISE*/
-
-/* Test Abonnement */
-
-USE ouf_tim
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dexpi DATE
-SET @Dexpi = CURRENT_TIMESTAMP+40;
-
-EXEC Abonnement_creer
-    @Date_creation = @Dcrea,
-    @Date_expiration = @Dexpi,
-    @FK_numcompte = 1,
-    @FK_type_abonnement = 'familiale'
-
-
-Select * from Abonnement
-
-
-
-/* Test Abonnement */
-
-USE ouf_tim
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dexpi DATE
-SET @Dexpi = CURRENT_TIMESTAMP+40;
-
-EXEC Abonnement_creer
-    @Date_creation = @Dcrea,
-    @Date_expiration = '1900-12-30 22:21:20',
-    @FK_numcompte = 1,
-    @FK_type_abonnement = 'familiale'
-
-
-Select * from Abonnement
-
-
-/* Test Abonnement */
-
-USE ouf_tim
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dexpi DATE
-SET @Dexpi = CURRENT_TIMESTAMP+40;
-
-EXEC Abonnement_creer
-    @Date_creation = @Dcrea,
-    @Date_expiration = '2013-12-30 22:21:20',
-    @FK_numcompte = '1',
-    @FK_type_abonnement = 'Familiale'
-
-
-Select * from Abonnement
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim							    	 */
-/*BdD ouf_tim												     */
-/*test exemplaires creer										 */
-/*Auteur(s): Elise Brochen									     */
-/*Intégrateur: Laduranti Sandra								     */
-
-
-/* Test Exemplaires */
-
-/* a corriger recuperer la version precedente */
-
-/* Test Exemplaires */
-
-/*a corriger rajouter les bons select qui vont bien */
-
-/* a corriger par rapprt au peuplement
-
-USE ouf_tim
-GO
-EXEC Exemplaires_creer
-    @Date_approvisionnement = 'jeudi10',
-    @Taux_usure = 1,
-    @Disponibilite = 0,
-	@Reserve=0,
-    @FK_numero_edition = 1
-	*/
-
-/* Test Exemplaires */
-
-USE ouf_tim
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-EXEC Exemplaires_creer
-    @Date_approvisionnement =  @Dcrea,
-    @Taux_usure = 100,
-    @Disponibilite = 0,
-	@Reserve=0,
-    @FK_numero_edition = 1
-
-
-/* Test Exemplaires */
-
-USE ouf_tim
-GO
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-EXEC Exemplaires_creer
-    @Date_approvisionnement =  @Dcrea,
-    @Taux_usure = 1,
-    @Disponibilite = 1,
-	@Reserve=0,
-    @FK_numero_edition = 1
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim			 */
-/*BdD ouf_tim							 */
-/*TEST	Distinctions creer				 */
-/*Auteur(s):  LADURANTI Sandra           */
-/*Intégrateur: LADURANTI Sandra			 */
-
-/* Test Distinction */
-/* Test 1 (marche) */
-
-USE ouf_tim
-
-GO 
-EXEC Distinctions_creer
-    @Nom = 'Oscar',
-    @Lieu = 'croisette',
-    @Annee = 2013
-
-Select * from Distinctions;
-
-/* Test 2 (marche pas) */
-
-USE ouf_tim
-
-GO 
-EXEC Distinctions_creer
-    @Nom = 'Oscar',
-    @Lieu = 'Paris',
-    @Annee = 3333
-
-Select * from Distinctions;
-
-/* Test 3 (marche pas) */
-
-USE ouf_tim
-
-GO 
-EXEC Distinctions_creer
-    @Nom = 'Meilleur Film',
-    @Lieu = 'µ',
-    @Annee = 2013
-
-Select * from Distinctions;
-
-/* Test 3 (marche pas) */
-
-USE ouf_tim
-
-GO 
-EXEC Distinctions_creer
-    @Nom = '',
-    @Lieu = 'Croisette',
-    @Annee = 2013
-
-Select * from Distinctions;
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Procedure de creation d'un réalisteur */
-/*Auteur(s): BROCHEN Elise*/
-/*testeur(s): PATRICK POL LADURANTI Sandra*/
-/*Intégrateur: LADURANTI Sandra */
-
-/* Test Realisateur */
-
-USE ouf_tim
-
-GO 
-EXEC Realisateur_creer
-        @Nom = '',
-        @Prenom = 'Ridley',
-        @Date_naissance = '1937-12-12',
-        @Sexe = 'Monsieur',
-        @Date_deces = NULL,
-        @Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
-        @Nationalite = 'Britannique';
-
-Select * from Realisateur;
-
-USE ouf_tim
-
-GO 
-EXEC Realisateur_creer
-        @Nom = 'Scott',
-        @Prenom = 'Ridley8',
-        @Date_naissance = '1937-12-12',
-        @Sexe = 'Monsieur',
-        @Date_deces = NULL,
-        @Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
-        @Nationalite = 'Britannique';
-
-Select * from Realisateur;
-
-USE ouf_tim
-
-GO 
-EXEC Realisateur_creer
-        @Nom = 'Scott',
-        @Prenom = 'Ridley',
-        @Date_naissance = '2000-12-12',
-        @Sexe = 'Monsieur',
-        @Date_deces = NULL,
-        @Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
-        @Nationalite = 'Britannique';
-
-Select * from Realisateur;
-
-
-USE ouf_tim
-
-GO 
-EXEC Realisateur_creer
-        @Nom = 'Scott',
-        @Prenom = 'Ridley',
-        @Date_naissance = '1991-12-12',
-        @Sexe = '',
-        @Date_deces = NULL,
-        @Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
-        @Nationalite = 'Britannique';
-
-Select * from Realisateur;
-
-
-USE ouf_tim
-
-GO 
-EXEC Realisateur_creer
-        @Nom = 'Scott',
-        @Prenom = 'Ridley',
-        @Date_naissance = '1937-12-12',
-        @Sexe = 'Monsieur',
-        @Date_deces = '1937-10-12',
-        @Biographie = 'Ridley Scott étudie au West Hartpool College of Art et au Royal College of Art de Londres',
-        @Nationalite = 'Britannique';
-
-Select * from Realisateur;
-
-/*L2 ATIC 2013 GROUPE ouf_tim               */
-/*BdD ouf_tim                               */
-/*Procedure de creation de relance_retards */
-/*Auteur(s): BROCHEN Elise                 */
-/*testeur(s): BROCHEN Elise                */
-/*Intégrateur: LADURANTI Sandra            */
-
-/* Relance Retard */
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Relance_retards_creer
-    @Niveau_de_retard = 1,
-    @Date_creation = @Dcrea,
-    @Date_mise_a_jour = @Dmaj,
-    @FK_num_location = 1
-
-Select * from Relance_retards
-
-/* Relance Retard */
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Relance_retards_creer
-    @Niveau_de_retard = 2,
-    @Date_creation = @Dcrea,
-    @Date_mise_a_jour = @Dmaj,
-    @FK_num_location = 1
-
-select * from Relance_retards
-
-
-/* Relance Retard */
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Relance_retards_creer
-    @Niveau_de_retard = 2,
-	 @Date_creation = @Dcrea,	
-    @Date_mise_a_jour = @Dmaj,
-    @FK_num_location = 1
-
-select * from Relance_retards
-
---------------------------------------------
-/* Groupe : < Ouf'Tim >                    */
-/* Procedure de creation d'un exemplaire   */
-/* Auteur: BROCHEN Elise                   */
-/*testeur(s): BROCHEN Elise        */
-/*Intégrateur: LADURANTI Sandra            */
---------------------------------------------
-
-/* Test Exemplaires */
-
-USE ouf_tim
-GO
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-EXEC Exemplaires_creer
-    @Date_approvisionnement = @Dcrea,
-    @Taux_usure = 1,
-    @Disponibilite = 1,
-	@reserve = 0,
-    @FK_numero_edition = 1
-
-Select * from Exemplaires
-
-
-
-/* Test Exemplaires */
-
-USE ouf_tim
-GO
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-EXEC Exemplaires_creer
-    @Date_approvisionnement = @Dcrea,
-    @Taux_usure = 1,
-    @Disponibilite = 0,
-	@reserve = 0,	
-    @FK_numero_edition = 1
-
-Select * from Exemplaires
-
-
-/* Test Exemplaires */
-
-USE ouf_tim
-GO
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-EXEC Exemplaires_creer
-    @Date_approvisionnement = @Dcrea,
-    @Taux_usure = 100,
-    @Disponibilite = 0,
-	@reserve = 0,
-    @FK_numero_edition = 1
-
-Select * from Exemplaires
-
-
-/* Test Exemplaires */
-
-USE ouf_tim
-GO
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-EXEC Exemplaires_creer
-    @Date_approvisionnement = @Dcrea,
-    @Taux_usure = 1,
-    @Disponibilite = 0,
-	@reserve = 0,
-    @FK_numero_edition = 1
-
-Select * from Exemplaires
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim            */
-/*BdD ouf_tim                    */
-/*Procedure de creation de langue audio     */
-/*Auteur(s): GOUALARD Mickael           */
-/*testeur(s): GOUALARD Mickael          */
-/*Intégrateur: LADURANTI Sandra             */
-
-
-/* Test Audio OK */
-
-USE ouf_tim
-
-GO 
-EXEC Langue_audio_creer
-    @Nom = 'Combodgien' 
-
-Select * from Langue_audio;
-
-/* Test Audio KO */
-
-USE ouf_tim
-
-GO 
-EXEC Langue_audio_creer
-    @Nom = '1789'   
-
-Select * from Langue_audio;
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim            */
-/*BdD ouf_tim                    */
-/*Procedure de creation de langue sous-titre        */
-/*Auteur(s): LADURANTI Sandra       */
-/*testeur(s): LADURANTI Sandra          */
-/*Intégrateur: LADURANTI Sandra             */
-
-
-/* Test Audio OK */
-
-USE ouf_tim
-
-GO 
-EXEC Langue_sous_titre_creer
-    @Nom = 'irlandais'  
-
-Select * from Langue_sous_titre;
-
-/* Test Audio KO */
-
-USE ouf_tim
-
-GO 
-EXEC Langue_sous_titre_creer
-    @Nom = ''   
-
-Select * from Langue_sous_titre;
-
-USE ouf_tim
-
-
---------------------------------------------------
-/* BdD : < Ouf'tim >                            */
-/* Procédure de création d'un film          */
-/* Auteur : GOUALARD Mickael                    */
-/*testeur(s): GOUALARD Mickael          */
-/*Intégrateur: LADURANTI Sandra         */
---------------------------------------------------
-
-/* Test Film OK */
-
-USE ouf_tim
-
-GO 
-EXEC Film_creer
-    @Titre = 'Avenger',
-    @Complement_titre = '2',
-    @Annee_de_sortie = '2013',
-    @Nationalite = 'Americaine',
-    @Duree = 105,
-	@cache = 0
-Select * from Films;
-
-
-/* Test Film KO */
-
-USE ouf_tim
-
-GO 
-EXEC Film_creer
-    @Titre = '564',
-    @Complement_titre = '',
-    @Annee_de_sortie = '2013',
-    @Nationalite = 'Americaine',
-    @Duree = 105,
-	@cache = 0
-
-Select * from Films;
-
-/* Test Film KO */
-
-USE ouf_tim
-
-GO 
-EXEC Film_creer
-    @Titre = 'Avenger',
-    @Complement_titre = '',
-    @Annee_de_sortie = '2015',
-    @Nationalite = 'Americaine',
-    @Duree = 105,
-	@cache = 0
-
-Select * from Films;
-
-/* Test Film KO */
-
-USE ouf_tim
-
-GO 
-EXEC Film_creer
-    @Titre = 'Avenger',
-    @Complement_titre = '',
-    @Annee_de_sortie = '2013',
-    @Nationalite = 'truc',
-    @Duree = 105,
-	@cache = 0
-
-Select * from Films;
-
-/* Test Film KO */
-
-USE ouf_tim
-
-GO 
-EXEC Film_creer
-    @Titre = 'Avenger',
-    @Complement_titre = '',
-    @Annee_de_sortie = '2013',
-    @Nationalite = 'Americaine',
-    @Duree = 30,
-	@cache = 0
-
-Select * from Films;
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Procedure de creation de location */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):PATRICK POL */
-/*Intégrateur: SANDRA LADURANTI*/
-
-
-/* Test 1 */
-
-USE ouf_tim
-GO
-
-Declare @debut DATE
-SET @debut = CURRENT_TIMESTAMP+1;
-Declare @finp DATE
-SET @finp = CURRENT_TIMESTAMP+2;
-Declare @finr DATE
-SET  @finr = CURRENT_TIMESTAMP+3;
-
-EXEC Locations_creer
-    @Date_debut = @debut,
-    @Duree = 24,
-    @Date_fin_prevue = @finp,
-    @Date_fin_reelle = @finr,
-    @FK_exemplaire = 1,
-     @FK_num_abonnement = 1
-    
-
-Select * from Locations
-
-
-
-/* Test 2 */
-
-
-USE ouf_tim
-GO
-
-Declare @debut DATE
-SET @debut = CURRENT_TIMESTAMP+1;
-Declare @finp DATE
-SET @finp = CURRENT_TIMESTAMP+40;
-Declare @finr DATE
-SET  @finr = CURRENT_TIMESTAMP+3;
-
-EXEC Locations_creer
-    @Date_debut = @debut,
-    @Duree = 600,
-    @Date_fin_prevue = @finp,
-    @Date_fin_reelle = @finr,
-    @FK_exemplaire = '',
-     @FK_num_abonnement = 1
-
-
-Select * from Locations
-
-
-
-/* Test 3 */
-
-
-USE ouf_tim
-GO
-
-Declare @debut DATE
-SET @debut = CURRENT_TIMESTAMP+1;
-Declare @finp DATE
-SET @finp = CURRENT_TIMESTAMP+2;
-Declare @finr DATE
-SET  @finr = CURRENT_TIMESTAMP+3;
-
-EXEC Locations_creer
-    @Date_debut = @debut,
-    @Duree = 200,
-    @Date_fin_prevue = @finp,
-    @Date_fin_reelle = @finr,
-    @FK_exemplaire = '',
-     @FK_num_abonnement = 1
-
-Select * from Locations
-
-
-/* Test 4 */
-
-
-USE ouf_tim
-GO
-
-Declare @debut DATE
-SET @debut = CURRENT_TIMESTAMP+1;
-Declare @finp DATE
-SET @finp = CURRENT_TIMESTAMP+2;
-Declare @finr DATE
-SET  @finr = CURRENT_TIMESTAMP+3;
-
-EXEC Locations_creer
-    @Date_debut = @debut,
-    @Duree = 150,
-    @Date_fin_prevue = @finp,
-    @Date_fin_reelle = @finr,
-    @FK_exemplaire = 2,
-	   @FK_num_abonnement = 1
-
-Select * from Locations
-
-/*L2 ATIC 2013 GROUPE ouf_tim                 */
-/*BdD ouf_tim                                 */
-/*Procedure de creation de relance_decouvert */
-/*Auteur(s): LADURANTI Sandra                */
-/*testeur(s): LADURANTI Sandra               */
-/*Intégrateur: LADURANTI Sandra              */
-
-/* Relance Decouvert */
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Relance_decouvert_creer
-    @Niveau_decouvert = 1,
-    @Date_creation = @Dcrea,
-    @Date_mise_a_jour = @Dmaj,
-    @FK_numero_compte = 2
-
-Select * from Relance_decouvert
-
-/* test 2*/
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Relance_decouvert_creer
-    @Niveau_decouvert = 150,
-    @Date_creation = @Dcrea,
-    @Date_mise_a_jour = @Dmaj,
-    @FK_numero_compte = 2
-
-Select * from Relance_decouvert
-
-/* test 3 */
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Relance_decouvert_creer
-    @Niveau_decouvert = 1,
-    @Date_creation = '',
-    @Date_mise_a_jour = '',
-    @FK_numero_compte = 2
-
-Select * from Relance_decouvert
-
----------------------------------------------
-/*BdD ouf_tim                               */
-/*Procedure de creation d'un compte        */
-/*Auteur(s): LUCIEN HUA LADURANTI Sandra    */
-/*testeur(s): LADURANTI Sandra             */
-/*Intégrateur: LADURANTI Sandra            */
----------------------------------------------
-
-/* Test creation d'un compte 1*/ 
-
-USE ouf_tim
-
-GO 
 EXEC Compte_creer
-    @Numero_bancaire = '4931 0561 4513 8999',
-    @Montant = 10,
-    @Somme_operations = 15  
-
-Select * from Compte;
-
-/* Test creation d'un compte 2*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Compte_creer
-    @Numero_bancaire = 'a493 0561 4513 8991',
-    @Montant = 10,
-    @Somme_operations = 15  
-
-Select * from Compte;
-
-/* Test creation d'un compte 3*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Compte_creer
-    @Numero_bancaire = '4493 0561 4513 8991',
-    @Montant = -5,
-    @Somme_operations = 15  
-
-Select * from Compte
-
-
----------------------------------------------
-/*L2 ATIC 2013 GROUPE ouf_tim               */
-/*BdD ouf_tim                               */
-/*Procedure de creation d'un abonne        */
-/*Auteur(s): HUA Lucien LADURANTI Sandra   */
-/*testeur(s): LADURANTI Sandra             */
-/*Intégrateur: LADURANTI Sandra            */
----------------------------------------------
-
-/* Test Abonne 1*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Abonne_creer
-    @Nom = 'Dupont',
-    @Prenom = 'Marcel',
-    @Pseudo = 'MarcelD',
-    @Date_de_naissance = '1980-07-07',
-    @Sexe = 'Monsieur',
-    @Numero_de_voie = '37',
-    @Complement_de_voie = NULL,
-    @Type_de_voie ='boulevard',
-    @Libelle = 'liberte',
-    @Complement_libelle = NULL,
-    @Code_postal = '75013',
-    @Ville = 'Paris',
-    @Cedex = NULL,
-    @Pays = 'France',
-    @Numero_telephone = '0664851878',
-    @Adresse_email = 'dupont.marcel@gmail.com'
-
-Select * from Abonne
-
-/* Test Abonne 2*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Abonne_creer
-    @Nom = '*/',
-    @Prenom = 'Marcel',
-    @Pseudo = 'MarcelD',
-    @Date_de_naissance = '1980-07-07',
-    @Sexe = 'Monsieur',
-    @Numero_de_voie = '37',
-    @Complement_de_voie = NULL,
-    @Type_de_voie ='boulevard',
-    @Libelle = 'liberte',
-    @Complement_libelle = NULL,
-    @Code_postal = '75013',
-    @Ville = 'Paris',
-    @Cedex = NULL,
-    @Pays = 'France',
-    @Numero_telephone = '0664851878',
-    @Adresse_email = 'dupont.marcel@gmail.com'
-
-Select * from Abonne
-
-/* Test Abonne 3*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Abonne_creer
-    @Nom = 'Dupont',
-    @Prenom = '12',
-    @Pseudo = 'MarcelD',
-    @Date_de_naissance = '1980-07-07',
-    @Sexe = 'Monsieur',
-    @Numero_de_voie = '37',
-    @Complement_de_voie = NULL,
-    @Type_de_voie ='boulevard',
-    @Libelle = 'liberte',
-    @Complement_libelle = NULL,
-    @Code_postal = '75013',
-    @Ville = 'Paris',
-    @Cedex = NULL,
-    @Pays = 'France',
-    @Numero_telephone = '0664851878',
-    @Adresse_email = 'dupont.marcel@gmail.com'
-
-Select * from Abonne
-
-/* Test Abonne 4*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Abonne_creer
-    @Nom = 'Dupont',
-    @Prenom = 'Marcel',
-    @Pseudo = 'MarcelD',
-    @Date_de_naissance = '2050-07-07',
-    @Sexe = 'Monsieur',
-    @Numero_de_voie = '37',
-    @Complement_de_voie = NULL,
-    @Type_de_voie ='boulevard',
-    @Libelle = 'liberte',
-    @Complement_libelle = NULL,
-    @Code_postal = '75013',
-    @Ville = 'Paris',
-    @Cedex = NULL,
-    @Pays = 'France',
-    @Numero_telephone = '0664851878',
-    @Adresse_email = 'dupont.marcel@gmail.com'
-
-Select * from Abonne
-
-/* Test Abonne 5*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Abonne_creer
-    @Nom = 'Dupont',
-    @Prenom = 'Marcel',
-    @Pseudo = 'MarcelD',
-    @Date_de_naissance = '1980-07-07',
-    @Sexe = 'Monsieur',
-    @Numero_de_voie = '37',
-    @Complement_de_voie = NULL,
-    @Type_de_voie ='boulevard',
-    @Libelle = 'liberte',
-    @Complement_libelle = NULL,
-    @Code_postal = '75013',
-    @Ville = 'Paris',
-    @Cedex = NULL,
-    @Pays = 'France',
-    @Numero_telephone = 'tralala',
-    @Adresse_email = 'dupont.marcel@gmail.com'
-
-Select * from Abonne;
-
-/* Test Abonne 6*/ 
-
-USE ouf_tim
-
-GO 
-EXEC Abonne_creer
-    @Nom = 'Dupont',
-    @Prenom = 'Marcel',
-    @Pseudo = 'MarcelD',
-    @Date_de_naissance = '1980-07-07',
-    @Sexe = 'Monsieur',
-    @Numero_de_voie = '37',
-    @Complement_de_voie = NULL,
-    @Type_de_voie ='boulevard',
-    @Libelle = 'liberte',
-    @Complement_libelle = NULL,
-    @Code_postal = 'tralala',
-    @Ville = 'Paris',
-    @Cedex = NULL,
-    @Pays = 'France',
-    @Numero_telephone = '0664851878',
-    @Adresse_email = 'dupont.marcel@gmail.com'
-
-Select * from Abonne;
-
-/*L2 ATIC 2013 GROUPE ouf_tim                 */
-/*BdD ouf_tim                                 */
-/*Procedure de creation de jouer             */
-/*Auteur(s): BROCHEN Elise                   */
-/*testeur(s): BROCHEN Elise                  */
-/*Intégrateur: LADURANTI Sandra              */
-
-
-/* Test Jouer */
-
-USE ouf_tim
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Jouer_creer
-    @FK_titre_film = 'Gladiator',
-    @FK_complement_titre = '',
-    @FK_nom_acteur = 'Crowe',
-    @FK_prenom_acteur = 'Russell',
-    @FK_date_de_naissance_acteur = '1964-02-10'
-
-Select* from Jouer
-
-
-/* Test Jouer */
-/*
-a corriger par rapport au peuplement
-
-USE ouf_tim
-
-GO
-
-Declare @Dcrea DATE
-SET @Dcrea = CURRENT_TIMESTAMP+1;
-Declare @Dmaj DATE
-SET @Dmaj = CURRENT_TIMESTAMP+2;
-
-EXEC Jouer_creer
-    @FK_titre_film = 'Gladiator',
-    @FK_complement_titre = '',
-    @FK_nom_acteur = 100,
-    @FK_prenom_acteur = 'Russel',
-    @FK_date_de_naissance_acteur = '1964-02-10'
-
-Select* from Jouer;
-
-*/
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim                */
-/*BdD ouf_tim                                */
-/*test rechercher edition                    */
-/*Auteur(s): BROCHEN Elise                   */
-/*testeur(s): BROCHEN Elise                  */
-/*Intégrateur: LADURANTI Sandra              */
-
-/* Test livraison */
-
-/* a corriger avec nouveau film
-
-
-USE ouf_tim
-
-GO
-
-EXEC recherche_edition
-@Num_abonnement=1,
-@Titre='Gladiator',
-@Complement_titre='',
-@Support= 'DVD',
-@Langue_audio = 'anglais',
-@Langue_sub = 'anglais'
-*/
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*test de Reservation_immediate_creer				    */
-/*Auteur(s): BROCHEN Elise								*/
-/*testeur(s): BROCHEN Elise								*/
-/*Intégrateur: LADURANTI Sandra							*/
-
-/*test 1 ok */
-use ouf_tim
-GO
-EXEC Reservation_immediate_creer
-    @num_abonnement=1,
-    @num_edition=1
-
-Select* from Reservation_immediate;
-
-/* test 2 NOK */
-use ouf_tim
-GO
-EXEC Reservation_immediate_creer
-    @num_abonnement=2,
-    @num_edition=1
-
-Select* from Reservation_immediate;
-select * from Exemplaires;
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*Procedure de creation de Reservation_immediate_creer  */
-/*Auteur(s): LADURANTI Sandra							*/
-/*testeur(s): LADURANTI Sandra							*/
-/*Intégrateur: LADURANTI Sandra							*/
-
-use ouf_tim
-GO
-Declare @Dcrea DATETIME
-SET @Dcrea = CURRENT_TIMESTAMP;
-EXEC annulation_reservation_imm_creer
-	@HD_annulation = @Dcrea,
-	@FK_num_reservation=1,
-	@FK_num_abonnement=1
-
-Select * from annulation_reservation_imm
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*Procedure de creation de Reservation_livraison_creer  */
-/*Auteur(s): BROCHEN Elise								*/
-/*testeur(s): BROCHEN Elise								*/
-/*Intégrateur: LADURANTI Sandra							*/
-
-use ouf_tim
-GO
-EXEC Reservation_livraison_creer
-    @num_abonnement=1,
-    @num_edition=1
-
-Select* from Reservation_Livraison
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*test reservation immediate */
-/*Auteur(s): PATRICK POL MICKAEL GOUALARD*/
-/*Testeur(s):PATRICK POL MICKAEL GOUALARD*/
-/*Intégrateur: SANDRA LADURANTI*/
-
---TEST SUR LA RESERVATION IMMEDIATE
-
---TEST QUI MARCHE
-use "ouf_tim" 
-GO
-EXEC Reservation_immediate_creer
-	@num_abonnement = 1,
-	@num_edition = 1
-	
-SELECT * FROM Reservation_immediate
-
---TEST QUI MARCHE PAS, EDITION INEXISTANT
-use "ouf_tim" 
-GO
-EXEC Reservation_immediate_creer
-	@num_abonnement = 1,
-	@num_edition = 10
-	
-SELECT * FROM Reservation_immediate
-
-
---TEST QUI MARCHE PAS, ABONNEMENT INEXISTANT
-use "ouf_tim" 
-GO
-EXEC Reservation_immediate_creer
-	@num_abonnement = 3,
-	@num_edition = 1
-	
-SELECT * FROM Reservation_immediate
-SELECT * FROM Edition
-
-SELECT * FROM Abonnement
-SELECT * FROM Exemplaires
-
-USE "ouf_tim" 
-GO
-
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-
-EXEC insere_exemplaire
-	@numSerieEdition =1,
-	@nombreEx =10,
-
-	@NomE = 'GOLD',
-	@AnneeE =2013,
-	@Duree =120,
-	@limiteA =12,
-	@SupportE = 'DVD',
-	@Dinsertion = @Dinser,
-	@Tcouleur ='Couleur',
-	@Tson ='5.1',
-
-	@Date_approvisionnement =@Dappro,
-	@Taux_usure = 1,
-	@Disponibilite =1,
-	@Reserve=0,
-	@FK_numero_edition =1
-	
-SELECT * FROM Exemplaires;
-
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*test annulation reservation immediate creer */
-/*Auteur(s): MICKAEL GOUALARD*/
-/*Intégrateur: SANDRA LADURANTI*/
+    @Numero_bancaire = '4285141337347969',
+    @Montant = 500,
+    @Somme_operations = 0
+
+SELECT * FROM COMPTE WHERE Numero_bancaire = '4285141337347969'
 
 USE "ouf_tim"
-
 GO
-DECLARE @HDannul DATETIME
-SET @HDannul = CURRENT_TIMESTAMP;
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = CURRENT_TIMESTAMP+240;
+EXEC Abonnement_creer
+   @Date_creation = @inser,
+   @Date_expiration = @expi,
+   @FK_numcompte = 11,
+   @FK_type_abonnement = 'Familiale'
 
-EXEC annulation_reservation_imm_creer
-	@HD_annulation = @HDannul,	
-	@FK_num_reservation = 4,
-	@FK_num_abonnement = 1
-	
-SELECT * FROM annulation_reservation_imm
-SELECT * FROM Reservation_immediate
+SELECT * FROM Abonnement WHERE FK_numcompte = 11
+
+use "ouf_tim"
+GO
+EXEC Souscrire_creer
+   @FK_nom_abonne = 'Bochard',
+   @FK_prenom = 'Stephanie',
+   @FK_pseudo = 'Steph',
+   @FK_num_abonnement = 8
+
+SELECT * FROM Souscrire WHERE FK_nom_abonne = 'Bochard'
+
+/* L'abonné a la tête dans les nuages et tente de se réinscrire*/
 
 USE "ouf_tim"
-
 GO
-DECLARE @HDannul DATETIME
-SET @HDannul = CURRENT_TIMESTAMP;
+EXEC Abonne_creer
+    @Nom = 'Bochard',
+    @Prenom = 'Stephanie',
+    @Pseudo = 'Steph',
+    @Date_de_naissance = '1990-07-21',
+    @Sexe = 'Madame',
+    @Numero_de_voie = '25',
+    @Complement_de_voie = '',
+    @Type_de_voie = 'rue',
+    @Libelle = 'des papillons',
+    @Complement_libelle = '',
+    @Code_postal = '91800',
+    @Ville = 'Brunoy',
+    @Cedex = '',
+    @Pays = 'France',
+    @Numero_telephone = '0666666666',
+    @Adresse_email = 'stephanie.bochard@gmail.com'
 
-EXEC annulation_reservation_imm_creer
-	@HD_annulation = @HDannul,	
-	@FK_num_reservation = 100,
-	@FK_num_abonnement = 1
-	
-SELECT * FROM annulation_reservation_imm
-SELECT * FROM Reservation_immediate
+SELECT * FROM ABONNE WHERE Nom = 'Bochard'
 
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*test reservation livraison						    */
-/*Auteur(s): BROCHEN Elise	LADURANTI Sandra			*/
-/*testeur(s): BROCHEN Elise	LADURANTI Sandra			*/
-/*Intégrateur: LADURANTI Sandra							*/
+/* L'abonné a envie de louer un film */
 
-use ouf_tim
-GO
-EXEC Reservation_livraison_creer
-    @num_abonnement=1,
-    @num_edition=1
-
-Select* from Reservation_livraison;
-
-/* test 2 NOK */
-use ouf_tim
-GO
-EXEC Reservation_livraison_creer
-    @num_abonnement=2,
-    @num_edition=1
-
-Select* from Reservation_livraison;
-select * from Exemplaires;
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*test reservation livraison						    */
-/*Auteur(s): PATRICK POL								*/
-/*Intégrateur: LADURANTI Sandra							*/
-
-Use "ouf_tim" 
-GO
-
-EXEC Reservation_immediate_creer
-	@num_abonnement = 2,
-	@num_edition = 2
-
-SELECT * FROM Reservation_immediate
-
-Use "ouf_tim" 
-GO
-
-EXEC Reservation_immediate_creer
-	@num_abonnement = 3,
-	@num_edition = 1
-
-SELECT * FROM Reservation_immediate
-
---Retour du message 'Aucun exemplaire dispo'
-Use "ouf_tim" 
-GO
-
-EXEC Reservation_immediate_creer
-	@num_abonnement = 3,
-	@num_edition = 10
-
-SELECT * FROM Reservation_immediate
-
---Annulation une reservation immediate
-USE "ouf_tim" 
-GO
-DECLARE @Dannulation DATETIME
-SET @Dannulation = CURRENT_TIMESTAMP;
-EXEC annulation_reservation_imm_creer
-	@HD_annulation = @Dannulation,
-	@FK_num_reservation = 1,
-	@FK_num_abonnement = 1
-	
-SELECT * FROM annulation_reservation_imm
-
-USE "ouf_tim" 
-GO
-DECLARE @Dannulation DATETIME
-SET @Dannulation = CURRENT_TIMESTAMP;
-EXEC annulation_reservation_imm_creer
-	@HD_annulation = @Dannulation,
-	@FK_num_reservation = 4,
-	@FK_num_abonnement = 3
-	
-SELECT * FROM annulation_reservation_imm
-
-/*
 USE "ouf_tim"
 GO
-EXEC Reservation_livraison_creer
-	@num_abonnement = 1,
-	@num_editon = 7
+EXEC insere_location
+@Num_exem = 6,
+@Num_abo = 8
 
-SELECT * FROM Reservation_Livraison 
-*/	
---Test retour location--> fonctionne
+SELECT * FROM Locations WHERE FK_exemplaire = 6
+
+/* L'abonné retourne son film  en retard*/
+
 USE "ouf_tim"
 GO
-DECLARE @Dretour DATETIME
-SET @Dretour = CURRENT_TIMESTAMP;
+Declare @retour DATETIME
+SET @retour = CURRENT_TIMESTAMP;
 EXEC retour_location_creer
-	@Date_retour = @Dretour,
-	@FK_num_location = 1,
-	@FK_num_abonnement = 2
-	
-SELECT * FROM retour_location
-SELECT * FROM Abonnement
-SELECT * FROM Exemplaires 
-SELECT * FROM Edition
-SELECT * FROM Locations 
+	@Date_retour = @retour ,
+	@FK_num_location =  4,
+	@FK_num_abonnement = 8
+
+SELECT * FROM Locations WHERE FK_exemplaire = 6
+SELECT * FROM Retour_location WHERE FK_num_location = 4
 
 
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*test livraison 9									    */
-/*Auteur(s): PATRICK POL								*/
-/*Intégrateur: LADURANTI Sandra							*/
+/*L2 ATIC 2013 GROUPE ouf_tim								 */
+/*BdD ouf_tim												 */
+/* Test du TRIGGER 'declencheur_suppression_exemplaire_use'  */
+/*Auteur(s): LADURANTI SANDRA								 */
+/*Intégrateur: SANDRA LADURANTI								 */
 
--- Remplissage en exemplaire pour les editions
-
-USE "ouf_tim"
-GO
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-EXEC insere_exemplaire
-@numSerieEdition = 7,
-@nombreEx = 10,
-
-@NomE = 'Unlimited',
-@AnneeE = 2013,
-@Duree = 95,
-@limiteA =12,
-@SupportE ='Bluray',
-@Dinsertion =@Dinser,
-@Tcouleur = 'Couleur',
-@Tson = '13.9',
-
-@Date_approvisionnement = @Dappro,
-@Taux_usure = 1,
-@Disponibilite = 1,
-@Reserve = 0,
-@FK_numero_edition = 7
-
-SELECT * FROM Exemplaires
-
-USE "ouf_tim"
-GO
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-EXEC insere_exemplaire
-@numSerieEdition = 6,
-@nombreEx = 10,
-
-@NomE = 'GEEK COLLECTION',
-@AnneeE = 2006,
-@Duree = 95,
-@limiteA =12,
-@SupportE ='DVD',
-@Dinsertion =@Dinser,
-@Tcouleur = 'Couleur',
-@Tson = '13.9',
-
-@Date_approvisionnement = @Dappro,
-@Taux_usure = 1,
-@Disponibilite = 1,
-@Reserve = 0,
-@FK_numero_edition = 6
-
-SELECT * FROM Exemplaires
-
-USE "ouf_tim"
-GO
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-EXEC insere_exemplaire
-@numSerieEdition = 5,
-@nombreEx = 10,
-
-@NomE = 'Master Version',
-@AnneeE = 2013,
-@Duree = 95,
-@limiteA =12,
-@SupportE ='Bluray',
-@Dinsertion =@Dinser,
-@Tcouleur = 'Couleur',
-@Tson = '13.9',
-
-@Date_approvisionnement = @Dappro,
-@Taux_usure = 1,
-@Disponibilite = 1,
-@Reserve = 0,
-@FK_numero_edition = 5
-
-SELECT * FROM Exemplaires
-
-
-USE "ouf_tim"
-GO
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-EXEC insere_exemplaire
-@numSerieEdition = 4,
-@nombreEx = 10,
-
-@NomE = 'Fansub X-men',
-@AnneeE = 2013,
-@Duree = 95,
-@limiteA =12,
-@SupportE ='Bluray',
-@Dinsertion =@Dinser,
-@Tcouleur = 'Couleur',
-@Tson = '13.9',
-
-@Date_approvisionnement = @Dappro,
-@Taux_usure = 1,
-@Disponibilite = 1,
-@Reserve = 0,
-@FK_numero_edition = 4
-
-SELECT * FROM Exemplaires
-
-USE "ouf_tim"
-GO
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-EXEC insere_exemplaire
-@numSerieEdition = 3,
-@nombreEx = 10,
-
-@NomE = 'Emotional Edition',
-@AnneeE = 2013,
-@Duree = 95,
-@limiteA =12,
-@SupportE ='Bluray',
-@Dinsertion =@Dinser,
-@Tcouleur = 'Couleur',
-@Tson = '13.9',
-
-@Date_approvisionnement = @Dappro,
-@Taux_usure = 1,
-@Disponibilite = 1,
-@Reserve = 0,
-@FK_numero_edition = 3
-
-SELECT * FROM Exemplaires
-
-
-USE "ouf_tim"
-GO
-DECLARE @Dinser DATETIME
-SET @Dinser = CURRENT_TIMESTAMP;
-DECLARE @Dappro DATETIME
-SET @Dappro = CURRENT_TIMESTAMP;
-EXEC insere_exemplaire
-@numSerieEdition = 2,
-@nombreEx = 10,
-
-@NomE = 'Ring Collector',
-@AnneeE = 2013,
-@Duree = 95,
-@limiteA =12,
-@SupportE ='Bluray',
-@Dinsertion =@Dinser,
-@Tcouleur = 'Couleur',
-@Tson = '13.9',
-
-@Date_approvisionnement = @Dappro,
-@Taux_usure = 1,
-@Disponibilite = 1,
-@Reserve = 0,
-@FK_numero_edition = 2
-
-SELECT * FROM Exemplaires
-
--- RESERVATION LIVRAISON TEST
---Edition existante
-USE "ouf_tim"
-
-GO
-EXEC Reservation_livraison_creer
-	@num_abonnement = 2,
-	@num_edition = 7
-SELECT * FROM Reservation_Livraison
-
---Edition non existante
-USE "ouf_tim"
-
-GO
-EXEC Reservation_livraison_creer
-	@num_abonnement = 2,
-	@num_edition = 8
-SELECT * FROM Reservation_Livraison
-
---Abonnement non existant
-USE "ouf_tim"
-
-GO
-EXEC Reservation_livraison_creer
-	@num_abonnement = 10,
-	@num_edition = 7
-SELECT * FROM Reservation_Livraison
-
-
--- ANNULATION LIVRAISON
---Annulation reussi
-USE "ouf_tim"
-GO
-DECLARE @Dannulation DATETIME
-SET @Dannulation = CURRENT_TIMESTAMP;
-EXEC annulation_livraison_creer
-	@HD_annulation = @Dannulation,
-	@FK_num_reservation = 3,
-	@FK_num_abonnement = 2
-SELECT * FROM annulation_livraison 
-
---Annulation impossible
-USE "ouf_tim"
-GO
-DECLARE @Dannulation DATETIME
-SET @Dannulation = CURRENT_TIMESTAMP;
-EXEC annulation_livraison_creer
-	@HD_annulation = @Dannulation,
-	@FK_num_reservation = 5,
-	@FK_num_abonnement = 2
-SELECT * FROM annulation_livraison 
-
-
---Test pour Livraison 9
+/* Test du TRIGGER 'declencheur_suppression_exemplaire_use' après passage du taux d'usure d'un dvd à son taux max autorisé
+* pour le tester notre abonné va relouer le film plusieurs fois car le film il 
+* est trop bien */
 
 USE "ouf_tim"
 GO
 EXEC insere_location
-  @Num_exem = 10,
+@Num_exem = 6,
+@Num_abo = 8
+
+SELECT * FROM Locations WHERE FK_exemplaire = 6
+
+USE "ouf_tim"
+GO
+Declare @retour DATETIME
+SET @retour = CURRENT_TIMESTAMP;
+EXEC retour_location_creer
+	@Date_retour = @retour ,
+	@FK_num_location =  5,
+	@FK_num_abonnement = 8
+
+SELECT * FROM Locations WHERE FK_exemplaire = 6
+SELECT * FROM Retour_location WHERE FK_num_location = 5
+SELECT Taux_usure FROM Exemplaires WHERE Numero_exemplaire = 6
+
+USE "ouf_tim"
+GO
+EXEC insere_location
+@Num_exem = 6,
+@Num_abo = 8
+
+SELECT * FROM Locations WHERE FK_exemplaire = 6
+SELECT Taux_usure FROM Exemplaires WHERE Numero_exemplaire = 6
+
+USE "ouf_tim"
+GO
+Declare @retour DATETIME
+SET @retour = CURRENT_TIMESTAMP;
+EXEC retour_location_creer
+	@Date_retour = @retour ,
+	@FK_num_location =  6,
+	@FK_num_abonnement = 8
+
+SELECT * FROM Locations WHERE FK_exemplaire = 6
+SELECT * FROM Retour_location WHERE FK_num_location = 6
+SELECT Numero_exemplaire, Taux_usure, Supprimer FROM Exemplaires WHERE Numero_exemplaire = 6
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim								    */
+/*BdD ouf_tim												    */
+/* Test du TRIGGER 'declencheur_suppression_relance_decouvert'  */
+/* et 'declencheur_relance_decouvert'						    */
+/*Auteur(s): BROCHEN ELISE									    */
+/*Intégrateur: SANDRA LADURANTI								    */ 
+
+/* TEST COMPTE A 0 EUROS EFFECTUE LOCATION + RETOUR LOC --> RELANCE */
+
+--Test insere_location
+USE "ouf_tim"
+GO
+EXEC insere_location
+  @Num_exem = 1,
   @Num_abo = 3
-    
-SELECT * from Compte
+SELECT * FROM Locations WHERE FK_num_abonnement = 3
 
-USE "ouf_tim"
-GO
-EXEC insere_location
-  @Num_exem = 9,
-  @Num_abo = 2
-SELECT * FROM Locations
-
-SELECT * FROM Abonnement
-SELECT * FROM Exemplaires
-
+-- SELECT * FROM Abonnement
+-- SELECT * FROM Exemplaires
+-- SELECT * FROM Compte 
 
 --Test retour_location
 USE "ouf_tim"
@@ -1855,214 +406,195 @@ GO
 DECLARE @Dretour DATETIME
 SET @Dretour = CURRENT_TIMESTAMP;
 EXEC retour_location_creer
-	@Date_retour = @Dretour,
-	@FK_num_location = 1,
-	@FK_num_abonnement = 1
-	
-SELECT * FROM Retour_location
+    @Date_retour = @Dretour,
+    @FK_num_location = 7,
+    @FK_num_abonnement = 3
+    
+SELECT * FROM Retour_location WHERE FK_num_location = 7
 
+/* REAPPROVISIONNEMENT DU COMPTE */
 
-USE "ouf_tim"
+/*TEST RELANCE AVEC COMPTE ENCORE NEGATIF*/
+use "ouf_tim"
 GO
-EXEC insere_location
-	@num_exem=12,
-	@Num_abo = 2
-SELECT * FROM Locations
+UPDATE Compte 
+SET Montant = -1
+WHERE Numero_compte = 3
+SELECT * FROM Compte WHERE Numero_compte = 3
 
-
-USE "ouf_tim"
-GO
-DECLARE @Dretour DATETIME
-SET @Dretour = CURRENT_TIMESTAMP;
-EXEC retour_location_creer
-	@Date_retour = @Dretour,
-	@FK_num_location = 7,
-	@FK_num_abonnement = 2
-	
-SELECT * FROM Retour_location
-
-
-
-
-USE "ouf_tim"
-GO
-DECLARE @Dretour DATETIME
-SET @Dretour = CURRENT_TIMESTAMP;
-EXEC retour_location_creer
-	@Date_retour = @Dretour,
-	@FK_num_location = 2,
-	@FK_num_abonnement = 2
-	
-SELECT * FROM Retour_location
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*test livraison 9									    */
-/*Auteur(s): LADURANTI Sandra							*/
-/*Intégrateur: LADURANTI Sandra							*/
+/*TEST ANNULATION RELANCE LORSQUE COMPTE POSITIF*/
 
 use "ouf_tim"
 GO
-UPDATE Exemplaires 
-SET Taux_usure = 5
-WHERE Numero_exemplaire = 4
-SELECT * FROM Exemplaires
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim										    */
-/*test livraison 9									    */
-/*Auteur(s): PATRICK POL								*/
-/*Intégrateur: LADURANTI Sandra							*/
-
--- Reservation immediate
-USE "ouf_tim"
-GO
-EXEC Reservation_immediate_creer
- @num_abonnement = 2 ,
- @num_edition = 6 
- 
-SELECT * FROM Reservation_livraison
-
-USE "ouf_tim"
-GO
-EXEC a_maj_reservation_liv
-SELECT * FROM annulation_reservation_imm
-
-USE "ouf_tim"
-GO
-EXEC preparation_colis
-
-USE "ouf_tim"
-GO
-DECLARE @Dcreation DATETIME
-SET @Dcreation = CURRENT_TIMESTAMP;
-DECLARE @Dexpi DATETIME
-SET @Dexpi = @Dcreation + 30;
-EXEC Abonnement_creer
-  @Date_creation = @Dcreation,
-  @Date_expiration = @Dexpi,
-  @FK_numcompte = 11,
-  @FK_type_abonnement = 'Familiale'
-SELECT * FROM Abonnement
-SELECT * FROM Type_abonnement
-
-SELECT * FROM Locations
-SELECT * FROM Compte
-
-USE "ouf_tim"
-GO
-EXEC insere_location
-  @Num_exem = 17,
-  @Num_abo = 2
-   
-SELECT * FROM Locations
+UPDATE Compte 
+SET Montant = 10
+WHERE Numero_compte = 3
+SELECT * FROM Compte WHERE Numero_compte = 3
 
 
-USE "ouf_tim"
-GO
-DECLARE @Dretour DATETIME
-SET @Dretour = CURRENT_TIMESTAMP 
-EXEC retour_location_creer
-	@Date_retour = @Dretour,
-	@FK_num_location = 6,
-	@FK_num_abonnement = 2
-	
-	
-USE "ouf_tim"
-GO
-EXEC a_maj_reservation_liv
+/*L2 ATIC 2013 GROUPE ouf_tim						 */
+/*BdD ouf_tim										 */
+/*Procedure de test sur la modification d'un film    */
+/*Auteur(s): PATRICK POL							 */
+/*Intégrateur: PATRICK POL							 */
 
-USE "ouf_tim"
-GO
-EXEC a_maj_reservation_imm
-
-
---------------------------------------------------------------------
-/* Déclencheur type AFTER UPDATE                                  */
-/* Déclencheur à chaque mise à jour d'un compte (crédit ou débit) */
-/* Cf. " Trigger - Compte - After Update - MC "                   */
-/* Auteur(s) : TSVETKOV Alexandre, LADURANTI Sandra, BROCHEN Elise*/
-/* Testeur(s) : TSVETKOV Alexandre				 */ 
-/* Intégrateur(s) :  */ 
---------------------------------------------------------------------------- 
-
-IF OBJECT_ID('dbo.declencheur_retrait_exemplaire_use') IS NOT NULL
-DROP TRIGGER dbo.declencheur_retrait_exemplaire_use;
-GO
-CREATE TRIGGER declencheur_retrait_exemplaire_use
-ON dbo.Exemplaires
-AFTER UPDATE
-AS
-	DECLARE @Date_approvisionnement DATETIME;
-	DECLARE @Taux_usure int;
-	DECLARE @Disponibilite bit;
-	DECLARE @Reserve int;
-	DECLARE @FK_numero_edition int;
-	DECLARE @Exemp int;
-	
-	SET @Exemp = 1;
-/* 
-Mise à jour est une suppression suivie d'une insertion :
-- anciennes lignes d'abord copiées dans table deleted, 
-- nouvelles lignes ensuite copiées dans table inserted et dans table du déclencheur.
-Pour définir les conditions du déclencheur :
-- utiliser les tables inserted et deleted de façon appropriée, 
-- ie en fonction de l'action qui a activé le déclencheur.
-*/
-
-	SELECT @Taux_usure = Taux_usure, @Disponibilite = Disponibilite
-	FROM inserted;
-	/* pas dispo = 0, dispo = 1 */
-	IF @Taux_usure >= 5 AND @Disponibilite = 1
-	BEGIN
-		/*IF EXISTS(SELECT * FROM Exemplaires WHERE Disponibilite = 1)
-		BEGIN*/
-			DELETE FROM Exemplaires WHERE Taux_usure >= 5 AND Disponibilite = 1;
-			PRINT 'Exemplaire supprimé a cause d''usure';	
-	/*	END
-		ELSE
-		BEGIN
-			PRINT 'Il n''y a qu''un seul exemplaire de ce type';
-		END		*/
-	END			
-GO
-
-/*L2 ATIC 2013 GROUPE ouf_tim											*/
-/*BdD ouf_tim															*/
-/*TEST des TRIGGERS sur COMPTE (UPDATE/DELETE) et EXEMPLAIRE sur UPDATE */
-/*Auteur(s): TSVETKOV Alexandre											*/
-/*Intégrateur:LADURANTI Sandra											*/
+/* on insére en premier lieu un film, cependant le gestionnaire */
+/* se trompe en tappant le nom et l'année */
 
 USE ouf_tim
+GO
+DECLARE @Titre NVARCHAR(50) = 'RRRrrrrb!!!',
+		@Complement_titre NVARCHAR(50)='',
+		@Annee INT = 2001,
+		@Nationalite NVARCHAR (50)= 'Française',
+		@Duree INT = 98,
+		@liste_acteurs NVARCHAR(1000)= 'Rouve,Jean-Paul,1967-01-26,monsieur,null, JP, acteur des robin des bois,france|Depardieu,Gérard,1948-12-27,monsieur,null,gerarou,française,france',
+		@liste_realisateurs NVARCHAR(500)= 'Chabat ,Alain,1958-11-24,monsieur,null,français,france',
+		@liste_distinctions NVARCHAR(500)='',
+		@liste_genres NVARCHAR(100)='Comédie'
+		
+EXEC dbo.ajouter_film @Titre, @Complement_titre, @Annee, @Nationalite, @Duree, @liste_acteurs, @liste_realisateurs, @liste_distinctions, @liste_genres 
+   
+/* présentation des tables avant execution de la modification des elements du film */
+/* pour ne pas changer un element taper '_' pour un varchar ou 0 pour un int */
 
-/* TEST sur UPDATE d'un compte qui est DEBITé (donc relance CREE par le trigger) */
-UPDATE Compte
-SET    Montant = -99
-WHERE  Numero_bancaire = '4931056145138999'
+SELECT * FROM Films	WHERE Titre = 'RRRrrrrb!!!'
+SELECT * FROM Jouer WHERE FK_titre_film = 'RRRrrrrb!!!'
+SELECT * FROM Realiser WHERE FK_titre_film = 'RRRrrrrb!!!'
+SELECT * FROM Attribuer WHERE FK_titre_film = 'RRRrrrrb!!!'
+SELECT * FROM Edition WHERE FK_titre = 'RRRrrrrb!!!' 
 
-select * from Compte
-select * from Relance_decouvert
+/* correction de RRRrrrrb!!! en RRRrrrr!!!*/
+USE "ouf_tim"
+GO
+EXEC maj_film
+	@Ancien_titre = 'RRRrrrrb!!!',
+	@Ancien_comp_titre = '',
+	
+	@Nouveau_titre = 'RRRrrrr!!!',
+	@Nouveau_comp_titre = '_',
+	@Nouveau_annee = 2004,
+	@Nouveau_nationalite = '_',
+	@Nouveau_duree = 0
 
-/* TEST sur UPDATE d'un compte qui est REAPROVISIONNE (donc relance SUPPRIMEE par le trigger) */
-UPDATE Compte
-SET    Montant = 100
-WHERE  Numero_bancaire = '4931056145138999'
+-- Select pour voir que la modification a bien été effectuée sur
+-- Films, Jouer, Realiser, Attribuer, Edition
+SELECT * FROM Films	WHERE Titre = 'RRRrrrr!!!'
+SELECT * FROM Jouer WHERE FK_titre_film = 'RRRrrrr!!!'
+SELECT * FROM Realiser WHERE FK_titre_film = 'RRRrrrr!!!'
+SELECT * FROM Attribuer WHERE FK_titre_film = 'RRRrrrr!!!'
+SELECT * FROM Edition WHERE FK_titre = 'RRRrrrr!!!'
 
-select * from Compte
-select * from Relance_decouvert
+/*L2 ATIC 2013 GROUPE ouf_tim						 */
+/*BdD ouf_tim										 */
+/*Procedure de test sur la modification d'un abonne  */
+/*Auteur(s): PATRICK POL							 */
+/*Testeur(s):PATRICK POL							 */
+/*Intégrateur: PATRICK POL							 */
+
+-- On crée un Abonnement pour qui sera rattacher à l'abonné Patrick via la jointure souscrire
+
+USE "ouf_tim"
+GO
+Declare @inser DATETIME
+SET @inser = CURRENT_TIMESTAMP;
+Declare @expi DATETIME
+SET @expi = CURRENT_TIMESTAMP+240;
+EXEC Abonnement_creer
+   @Date_creation = @inser,
+   @Date_expiration = @expi,
+   @FK_numcompte = 11,
+   @FK_type_abonnement = 'Premium'
+
+SELECT * FROM Abonnement WHERE FK_numcompte = 11
+
+use "ouf_tim"
+GO
+EXEC Souscrire_creer
+   @FK_nom_abonne = 'Bochard',
+   @FK_prenom = 'Stephanie',
+   @FK_pseudo = 'Steph',
+   @FK_num_abonnement = 11
+
+SELECT * FROM Souscrire WHERE FK_nom_abonne = 'Bochard'
+
+/* Presentation de l'abonné avant la maj */
+SELECT * FROM Abonne WHERE Nom = 'Bochard'
+SELECT * FROM Souscrire WHERE FK_nom_abonne = 'Bochard'
+
+/* Stephanie se marie à Veres elle change donc de nom */
+/* Il y a donc modification de la clé primaire */
+/* Stephanie déménage également */
+USE "ouf_tim"
+GO
+EXEC maj_abonne
+	@Ancien_nom = 'Bochard',
+	@Ancien_prenom = 'Stephanie',
+	@Ancien_pseudo = 'Steph',
+	
+	@Nouveau_nom = 'Veres',
+	@Nouveau_prenom = 'Stephanie',
+	@Nouveau_pseudo = 'Steph',
+	@Nouveau_sexe = '_' ,
+	@Nouveau_Numero_voie  = '_',
+	@Nouveau_Complement_de_voie = '_' ,
+	@Nouveau_Type_de_voie= '_' ,
+	@Nouveau_Libelle = '_',
+	@Nouveau_Complement_libelle = '_' ,
+	@Nouveau_Code_postal= '_'  ,
+	@Nouveau_Ville = '_' ,
+	@Nouveau_Cedex = '_',
+	@Nouveau_Pays = 'USA',
+	@Nouveau_Numero_telephone = '_' ,
+	@Nouveau_Adresse_email= '_' 
+
+SELECT * FROM Abonne WHERE Nom = 'Veres'
+SELECT * FROM Abonnement WHERE Numero_abonnement = 11
+SELECT * FROM Souscrire WHERE FK_nom_abonne = 'Veres'
+
+/*L2 ATIC 2013 GROUPE ouf_tim							*/
+/*BdD ouf_tim											*/
+/*Procedure de test sur la modification d'une edition	*/
+/*Auteur(s): PATRICK POL								*/
+/*Testeur(s):PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
 
 
-/* TEST sur DELETE d'un compte*/
-DELETE FROM Compte
-WHERE Numero_compte = 4
+-- Pour ne rien modifier on saisi '_' quand c'est un VARCHAR et 0 quand c'est un int
 
-select * from Compte
+SELECT * FROM Edition WHERE Numero_edition = 1
+SELECT * FROM Exemplaires WHERE FK_numero_edition = 1
 
-/* AFFICHE TOUS LES TRIGGERS */
+USE "ouf_tim"
+GO
+EXEC maj_edition
+	@Num_edition = 1,
+	 @Nouveau_Nom = 'GOLDI',
+     @Nouveau_Annee_de_sortie = 0,
+     @Nouveau_Duree_film = 0,
+     @Nouveau_limite_age = 0,
+     @Nouveau_Support = 'DVD',
+     @Nouveau_Type_couleur = '_',
+     @Nouveau_Type_son = '_'
+     
+SELECT * FROM Edition WHERE Numero_edition = 1
+SELECT * FROM Exemplaires WHERE FK_numero_edition = 1
 
-select object_name(id), object_name(deltrig),
-object_name(instrig), object_name(updtrig)
-from sysobjects
-where xtype ='U'
-and
-(deltrig > 0 or instrig > 0 or updtrig > 0)
+/* test suppr abonné */
+
+SELECT * FROM Abonne WHERE Nom = 'Amri'
+SELECT * FROM Compte WHERE Numero_compte = 1
+SELECT * FROM Abonnement WHERE Numero_abonnement = 1
+SELECT * FROM Souscrire WHERE FK_num_abonnement = 1
+
+USE "ouf_tim" 
+GO
+EXEC Suppression_abonne 
+	@Nom_sup = 'Amri',
+	@Prenom_sup = 'Zakaria',
+	@Pseudo_sup = 'ZakariaA'
+
+SELECT * FROM Abonne WHERE Nom = 'Amri'
+SELECT * FROM Compte WHERE Numero_compte = 1
+SELECT * FROM Abonnement WHERE Numero_abonnement = 1
+SELECT * FROM Souscrire WHERE FK_num_abonnement = 1
