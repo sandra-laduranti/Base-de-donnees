@@ -37,56 +37,57 @@ GO
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Films' AND xtype = 'U')
-DROP TABLE Films ; 
-
+DROP TABLE Films ;
 
 CREATE TABLE Films(
     [Titre] [nvarchar](50) NOT NULL,
     [Complement_titre] [nvarchar](50) NOT NULL,
-    [Annee_de_sortie] [int] NOT NULL, 
+    [Annee_de_sortie] [int] NOT NULL,
     [Nationalite] [nvarchar](50) NOT NULL,
     [Duree] [int] NOT NULL,
-	[Cache] [bit] NOT NULL,
-	[supprimer] [bit] NULL
+	[Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
 
-CONSTRAINT PK_FILMS PRIMARY KEY ( Titre, Complement_titre)
+CONSTRAINT PK_FILMS PRIMARY KEY (Titre, Complement_titre)
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Genre' AND xtype = 'U')
 DROP TABLE Genre ; 
 
-
 CREATE TABLE Genre(
     [Nom] [nvarchar](50) NOT NULL,
-CONSTRAINT PK_GENRE PRIMARY KEY ( NOM)
+
+CONSTRAINT PK_GENRE PRIMARY KEY (NOM)
 );
+
+
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Appartenir' AND xtype = 'U')
 DROP TABLE Appartenir ; 
 
 CREATE TABLE Appartenir (
+	[Supprimer] [int] NOT NULL,
     [FK_titre] [nvarchar](50) NOT NULL,
     [FK_complement_titre] [nvarchar](50) NOT NULL,	/* table de jointure */
-    [FK_nom_genre] [nvarchar](50) NOT NULL
-
+    [FK_nom_genre] [nvarchar](50) NOT NULL,
 
 CONSTRAINT PK_APPARTENIR PRIMARY KEY (FK_titre, FK_complement_titre, FK_nom_genre ),
 
-   CONSTRAINT FK_APPARTENIR_FILMS
+    CONSTRAINT FK_APPARTENIR_FILMS
         FOREIGN KEY ( FK_titre, FK_complement_titre)  
-        REFERENCES Films ( titre, Complement_titre),
+        REFERENCES Films ( titre, Complement_titre)
+        ON DELETE CASCADE ON UPDATE CASCADE ,
 
-
-   CONSTRAINT FK_APPARTENIR_GENRE
+    CONSTRAINT FK_APPARTENIR_GENRE
         FOREIGN KEY ( FK_nom_genre)  
         REFERENCES Genre ( Nom),
 ) ;
 
 
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Acteur' AND xtype = 'U')
 DROP TABLE Acteur ; 
-
 
 CREATE TABLE Acteur(
     [Nom] [nvarchar](50) NOT NULL, /*check (NOM NOT LIKE '%[^A-Za-z ''-]%' AND Nom != ''),*/
@@ -97,16 +98,18 @@ CREATE TABLE Acteur(
     [Nom_de_scene] [nvarchar](50) NULL,
     [Biographie] [nvarchar](max) NULL,
     [Nationalite] [nvarchar](50) NOT NULL,
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
 
 CONSTRAINT PK_ACTEUR PRIMARY KEY ( Nom, Prenom, Date_naissance )
 );
 
 
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Jouer' AND xtype = 'U')
 DROP TABLE Jouer ; 
 
-
 CREATE TABLE Jouer(
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
     [FK_titre_film] [nvarchar](50) NOT NULL,
     [FK_complement_titre] [nvarchar](50) NOT NULL,
     [FK_nom_acteur] [nvarchar](50) NOT NULL,
@@ -115,21 +118,20 @@ CREATE TABLE Jouer(
 
 CONSTRAINT PK_JOUER PRIMARY KEY (FK_titre_film, FK_complement_titre, FK_nom_acteur, FK_prenom_acteur, FK_date_de_naissance_acteur),
 
-
-   CONSTRAINT FK_JOUER_FILM
+    CONSTRAINT FK_JOUER_FILM
         FOREIGN KEY ( FK_titre_film, FK_complement_titre)  
-        REFERENCES Films ( Titre, complement_titre),
+        REFERENCES Films ( Titre, complement_titre)
+        ON DELETE CASCADE ON UPDATE CASCADE ,
 
-
-   CONSTRAINT FK_JOUER_ACTEUR
+    CONSTRAINT FK_JOUER_ACTEUR
         FOREIGN KEY ( FK_nom_acteur, FK_prenom_acteur, FK_date_de_naissance_acteur)  
         REFERENCES Acteur ( Nom, Prenom, date_naissance), 
 );
 
 
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Realisateur' AND xtype = 'U')
 DROP TABLE Realisateur ; 
-
 
 CREATE TABLE Realisateur(
     [Nom] [nvarchar](50) NOT NULL,
@@ -138,44 +140,47 @@ CREATE TABLE Realisateur(
 	[Sexe][nvarchar](50) NOT NULL,
     [Date_deces] [date] NULL,
     [Biographie] [nvarchar](max) NULL,
-    [Nationalite] [nvarchar](50) NULL
+    [Nationalite] [nvarchar](50) NULL,
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
+
 CONSTRAINT PK_REALISATEUR PRIMARY KEY ( Nom, Prenom, Date_naissance )
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Realiser' AND xtype = 'U')
 DROP TABLE Realiser ; 
 
-
 CREATE TABLE Realiser(
+    [Supprimer] [int] NOT NULL,      /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
     [FK_titre_film] [nvarchar](50) NOT NULL,
     [FK_complement_titre] [nvarchar](50) NOT NULL,
     [FK_nom_real] [nvarchar](50) NOT NULL,
     [FK_prenom_real] [nvarchar](50) NOT NULL,
     [FK_date_naissance] [date] NOT NULL,
 
-
 CONSTRAINT PK_REALISER PRIMARY KEY (FK_titre_film, FK_complement_titre, FK_nom_real, FK_prenom_real, FK_date_naissance ),
 
-
-   CONSTRAINT FK_REALISER_FILMS
+    CONSTRAINT FK_REALISER_FILMS
         FOREIGN KEY ( FK_titre_film, FK_complement_titre)  
-        REFERENCES Films ( Titre, Complement_titre),
+        REFERENCES Films ( Titre, Complement_titre)
+        ON DELETE CASCADE ON UPDATE CASCADE ,
 
-
-   CONSTRAINT FK_REALISER_REALISATEUR
+    CONSTRAINT FK_REALISER_REALISATEUR
         FOREIGN KEY ( FK_nom_real, FK_prenom_real, FK_date_naissance)  
         REFERENCES Realisateur ( Nom, Prenom, Date_naissance),
 );
 
 
-IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Distinctions' AND xtype = 'U') DROP TABLE Distinctions ; 
 
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Distinctions' AND xtype = 'U') 
+DROP TABLE Distinctions ; 
 
 CREATE TABLE Distinctions(
     [Nom] [nvarchar](50) NOT NULL,
     [Lieu] [nvarchar](50) NOT NULL,
-    [Annee] [int] NOT NULL
+    [Annee] [int] NOT NULL,
+
 CONSTRAINT PK_DISTINCTIONS PRIMARY KEY ( Nom, Lieu, Annee )
 );
 
@@ -183,28 +188,26 @@ CONSTRAINT PK_DISTINCTIONS PRIMARY KEY ( Nom, Lieu, Annee )
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Attribuer' AND xtype = 'U')
 DROP TABLE Attribuer ; 
 
-
 CREATE TABLE Attribuer(
+	[Supprimer] [int] NOT NULL,
     [FK_titre_film] [nvarchar](50) NOT NULL,
     [FK_complement_titre] [nvarchar](50) NOT NULL,
     [FK_nom_distinction] [nvarchar](50) NOT NULL,
     [FK_lieu_distinction] [nvarchar](50) NOT NULL,
-    [FK_annee_distinction] [int] NOT NULL
-
+    [FK_annee_distinction] [int] NOT NULL,
+   -- [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime */
 
 CONSTRAINT PK_ATTRIBUER PRIMARY KEY (FK_titre_film, FK_complement_titre, FK_nom_distinction, FK_lieu_distinction, FK_annee_distinction ),
 
-
-   CONSTRAINT FK_ATTRIBUER_FILMS
+    CONSTRAINT FK_ATTRIBUER_FILMS
         FOREIGN KEY ( FK_titre_film, FK_complement_titre)  
-        REFERENCES Films ( Titre, Complement_titre),
+        REFERENCES Films ( Titre, Complement_titre)
+        ON DELETE CASCADE ON UPDATE CASCADE ,
 
-
-   CONSTRAINT FK_ATTRIBUER_DISTINCTIONS
+    CONSTRAINT FK_ATTRIBUER_DISTINCTIONS
         FOREIGN KEY ( FK_nom_distinction, FK_lieu_distinction, FK_annee_distinction)  
         REFERENCES Distinctions ( Nom, Lieu, Annee),
 );
-
 
 
 
@@ -217,11 +220,11 @@ CREATE TABLE Compte(
     [Numero_bancaire] [nvarchar](50) NOT NULL,
     [Montant] [money] NOT NULL,
     [Somme_operations] [money] NOT NULL,
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
     
 CONSTRAINT PK_COMPTE PRIMARY KEY ( Numero_compte)
-
-
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Relance_decouvert' AND xtype = 'U')
@@ -233,17 +236,15 @@ CREATE TABLE Relance_decouvert(
     [Niveau_decouvert] [int] NOT NULL,
     [Date_creation] [datetime] NOT NULL,
     [Date_mise_a_jour] [datetime] NOT NULL,
-    [FK_numero_compte] [int] NOT NULL
+    [FK_numero_compte] [int] NOT NULL,
 
 
 CONSTRAINT PK_RELANCE_DECOUVERT PRIMARY KEY ( Numero_decouvert),
 
-
    CONSTRAINT FK_RELANCE_DECOUVERT_COMPTE
         FOREIGN KEY ( FK_numero_compte)  
         REFERENCES Compte (Numero_compte ),
- );
-
+);
 
 
 
@@ -268,10 +269,12 @@ CREATE TABLE Abonne (
     [Pays] [nvarchar](50) NOT NULL,
     [Numero_telephone] [nvarchar](50) NULL,
     [Adresse_email] [nvarchar](50) NOT NULL,
-
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
 
     CONSTRAINT PK_ABONNE PRIMARY KEY ( Nom, Prenom, Pseudo )
 );
+
+
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Type_abonnement' AND xtype = 'U')
 DROP TABLE Type_abonnement ; 
@@ -283,10 +286,12 @@ CREATE TABLE Type_abonnement(
 	[Prix_location][money] NOT NULL,
 	[Exemplaires_simultanes][int] NOT NULL,
 	[Prix_retard][money] NOT NULL,
-	[Duree_engagement][int] NOT NULL
+	[Duree_engagement][int] NOT NULL,
 
-CONSTRAINT PK_TYPE_ABONNEMENT PRIMARY KEY ( Nom),
-   );
+CONSTRAINT PK_TYPE_ABONNEMENT PRIMARY KEY (Nom),
+);
+
+
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Abonnement' AND xtype = 'U')
 DROP TABLE Abonnement ; 
@@ -294,10 +299,11 @@ DROP TABLE Abonnement ;
 
 CREATE TABLE Abonnement(
     [Numero_abonnement] [int] IDENTITY(1,1) NOT NULL,
-	[Date_creation][datetime] NOT NULL,
-    [Date_expiration][datetime] NOT NULL,
+	[Date_creation][datetime2] NOT NULL,
+    [Date_expiration][datetime2] NOT NULL,
     [FK_numcompte][int] NOT NULL,
-	[FK_type_abonnement][nvarchar](50) NOT NULL
+	[FK_type_abonnement][nvarchar](50) NOT NULL,
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
 
 
 CONSTRAINT PK_ABONNEMENT PRIMARY KEY ( Numero_abonnement),
@@ -308,10 +314,9 @@ CONSTRAINT PK_ABONNEMENT PRIMARY KEY ( Numero_abonnement),
         REFERENCES Compte ( Numero_compte),
 
   CONSTRAINT FK_ABONNEMENT_TYPE_ABONNEMENT
-        FOREIGN KEY ( FK_type_abonnement )  
-        REFERENCES Type_abonnement ( Nom),
+        FOREIGN KEY (FK_type_abonnement)  
+        REFERENCES Type_abonnement (Nom),
    );
-
 
 
 
@@ -320,53 +325,51 @@ DROP TABLE Souscrire ;
 
 
 CREATE TABLE Souscrire(
+	[Supprimer] [int] NOT NULL,
     [FK_nom_abonne] [nvarchar](50) NOT NULL,
     [FK_prenom] [nvarchar](50) NOT NULL,
     [FK_pseudo] [nvarchar](50) NOT NULL,
-    [FK_num_abonnement][int] NOT NULL
-
+    [FK_num_abonnement][int] NOT NULL,
+   -- [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
 
 CONSTRAINT PK_SOUSCRIRE PRIMARY KEY (FK_nom_abonne, FK_prenom, FK_pseudo, FK_num_abonnement ),
 
-
    CONSTRAINT FK_ABONNE_SOUSCRIRE
-        FOREIGN KEY ( FK_nom_abonne, FK_prenom, FK_pseudo)  
-        REFERENCES Abonne ( Nom, Prenom, Pseudo),
-
+        FOREIGN KEY (FK_nom_abonne, FK_prenom, FK_pseudo)  
+        REFERENCES Abonne (Nom, Prenom, Pseudo)
+        ON DELETE CASCADE ON UPDATE CASCADE,
 
    CONSTRAINT FK_SOUSCRIRE_COMPTE 
-        FOREIGN KEY ( FK_num_abonnement)  
-        REFERENCES Abonnement ( Numero_abonnement),
+        FOREIGN KEY (FK_num_abonnement)  
+        REFERENCES Abonnement (Numero_abonnement),
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Langue_audio' AND xtype = 'U')
 DROP TABLE Langue_audio ; 
 
-
 CREATE TABLE Langue_audio(
     [Nom] [nvarchar](50) NOT NULL,
 
-
-CONSTRAINT PK_LANGUE_AUDIO PRIMARY KEY ( Nom )
+CONSTRAINT PK_LANGUE_AUDIO PRIMARY KEY (Nom )
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Langue_sous_titre' AND xtype = 'U')
 DROP TABLE Langue_sous_titre ; 
 
-
 CREATE TABLE Langue_sous_titre(
     [Nom] [nvarchar](50) NOT NULL,
 
-
-CONSTRAINT PK_LANGUE_SOUS_TITRE PRIMARY KEY ( Nom)
+CONSTRAINT PK_LANGUE_SOUS_TITRE PRIMARY KEY (Nom)
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Edition' AND xtype = 'U')
 DROP TABLE Edition ; 
-
 
 CREATE TABLE Edition(
     [Numero_edition] [int] IDENTITY(1,1) NOT NULL,
@@ -378,51 +381,50 @@ CREATE TABLE Edition(
     [Date_insertion] [datetime] NOT NULL,
     [Type_couleur] [nvarchar](50) NOT NULL,
     [Type_son] [nvarchar](50) NOT NULL,
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
     [FK_titre][nvarchar](50) NOT NULL,
-    [FK_complement_titre][nvarchar](50) NOT NULL
+    [FK_complement_titre][nvarchar](50) NOT NULL,
 
-
-CONSTRAINT PK_EDITION PRIMARY KEY ( Numero_edition),
-
+CONSTRAINT PK_EDITION PRIMARY KEY (Numero_edition),
 
    CONSTRAINT FK_EDITION_FILMS
-        FOREIGN KEY ( FK_titre, FK_complement_titre)  
+        FOREIGN KEY (FK_titre, FK_complement_titre)  
         REFERENCES  Films (Titre, Complement_titre)
+        ON DELETE CASCADE ON UPDATE CASCADE ,
     );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Rattacher' AND xtype = 'U')
 DROP TABLE Rattacher; 
 
-
 CREATE TABLE Rattacher(
+	[Supprimer] [int] NOT NULL,
     [FK_langue] [nvarchar](50) NOT NULL,
-    [FK_edition][int] NOT NULL
-
+    [FK_edition][int] NOT NULL,
 
 CONSTRAINT PK_RATTACHER PRIMARY KEY (FK_langue, FK_edition ),
 
    CONSTRAINT FK_RATTACHER_EDITION
-        FOREIGN KEY ( FK_edition)  
-        REFERENCES Edition ( Numero_edition),
+        FOREIGN KEY (FK_edition)  
+        REFERENCES Edition (Numero_edition),
 
  CONSTRAINT FK_RATTACHER_LANGUE_AUDIO
-        FOREIGN KEY ( FK_langue)  
+        FOREIGN KEY (FK_langue)  
         REFERENCES Langue_Audio (Nom),
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Afficher' AND xtype = 'U')
 DROP TABLE Afficher ; 
 
-
 CREATE TABLE Afficher(
+	[Supprimer] [int] NOT NULL,
     [FK_langue] [nvarchar](50) NOT NULL,
-    [FK_edition][int] NOT NULL
-
+    [FK_edition][int] NOT NULL,
 
 CONSTRAINT PK_AFFICHER PRIMARY KEY ( FK_langue, FK_edition),
-
 
    CONSTRAINT FK_AFFICHER_EDITION
         FOREIGN KEY ( FK_edition)  
@@ -434,9 +436,9 @@ CONSTRAINT PK_AFFICHER PRIMARY KEY ( FK_langue, FK_edition),
     );
 
 
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Exemplaires' AND xtype = 'U')
 DROP TABLE Exemplaires ; 
-
 
 CREATE TABLE Exemplaires(
     [Numero_exemplaire] [int] IDENTITY(1,1) NOT NULL,
@@ -444,20 +446,21 @@ CREATE TABLE Exemplaires(
     [Taux_usure] [int] NOT NULL,
     [Disponibilite] [bit] NOT NULL,
     [Reserve] [int] NOT NULL,
-    [FK_numero_edition][int] NOT NULL
+    [Supprimer] [int] NOT NULL,     /*0 = NULL, 1 = Cache en attente suppression, 2 = Supprime*/
+    [FK_numero_edition][int] NOT NULL,
 
 CONSTRAINT PK_EXEMPLAIRES PRIMARY KEY ( Numero_exemplaire),
-
 
    CONSTRAINT FK_EXEMPLAIRES_EDITION 
         FOREIGN KEY ( FK_numero_edition )  
         REFERENCES Edition (Numero_edition),
-   );
+);
 
-   /* reservation et récupération par la personne */
-   IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_immediate' AND xtype = 'U')
+
+
+/* reservation et récupération par la personne */
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_immediate' AND xtype = 'U')
 DROP TABLE Reservation_immediate ;  
- 
  
 CREATE TABLE Reservation_immediate(
 	[Numero_reservation] [int] IDENTITY(1,1) NOT NULL,
@@ -465,26 +468,24 @@ CREATE TABLE Reservation_immediate(
 	[HD_butoir] [DATETIME] NOT NULL,
 	[Etat] [NVARCHAR] (50) NOT NULL,
 	[FK_num_abonnement] [int] NOT NULL ,
-    [FK_num_exemplaire][int]NULL
- 
+    [FK_num_exemplaire][int]NULL,
  
 CONSTRAINT PK_RESERVATION PRIMARY KEY (Numero_reservation),
  
- 
-   CONSTRAINT FK_RESERVATION_ABONNEMENT
+    CONSTRAINT FK_RESERVATION_ABONNEMENT
     	FOREIGN KEY ( FK_num_abonnement)   
     	REFERENCES  Abonnement (Numero_abonnement),
 
-		 CONSTRAINT FK_RESERVATION_ABONNEMENT_EXEMPLAIRE
+    CONSTRAINT FK_RESERVATION_ABONNEMENT_EXEMPLAIRE
     	FOREIGN KEY ( FK_num_exemplaire)   
     	REFERENCES  Exemplaires (Numero_exemplaire),
 
 	);
 
 
-/* on considere une HD livraison sous entendue dans les règles de gestions à 17h du jour 
-* de reservation */
-	IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_Livraison' AND xtype = 'U')
+
+/* on considere une HD livraison sous entendue dans les règles de gestions à 17h du jour de reservation */
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Reservation_Livraison' AND xtype = 'U')
 DROP TABLE Reservation_Livraison ; 
 
 CREATE TABLE Reservation_Livraison (
@@ -493,10 +494,9 @@ CREATE TABLE Reservation_Livraison (
 	[HD_retour] [DATETIME] NOT NULL,
 	[Etat] [NVARCHAR] (50) NOT NULL,
 	[FK_num_abonnement] [int] NOT NULL ,
-  	[FK_num_exemplaire][int]NOT NULL
+  	[FK_num_exemplaire][int]NOT NULL,
  
 CONSTRAINT PK_RESERVATION_LIVRAISON PRIMARY KEY (Numero_reservation),
- 
  
    CONSTRAINT FK_RESERVATION_LIVRAISON_ABONNEMENT
     	FOREIGN KEY (FK_num_abonnement)   
@@ -508,126 +508,132 @@ CONSTRAINT PK_RESERVATION_LIVRAISON PRIMARY KEY (Numero_reservation),
 );
 
 
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name='annulation_reservation_imm' and xtype='U')
 DROP TABLE annulation_reservation_imm;
+
 CREATE TABLE annulation_reservation_imm(
 	Numero_annulation INT IDENTITY(1,1) NOT NULL,
 	HD_annulation DATETIME NOT NULL,
 	FK_num_reservation INT NOT NULL,
-	FK_num_abonnement INT NOT NULL
+	FK_num_abonnement INT NOT NULL,
 	
 CONSTRAINT PK_annulation_reservation_imm PRIMARY KEY(Numero_annulation),
 
-CONSTRAINT FK_Annulation_reservation_imm_reservation
-FOREIGN KEY(FK_num_reservation)
-REFERENCES Reservation_immediate (Numero_reservation),
+    CONSTRAINT FK_Annulation_reservation_imm_reservation
+        FOREIGN KEY(FK_num_reservation)
+        REFERENCES Reservation_immediate (Numero_reservation),
 
-CONSTRAINT FK_Annulation_reservation_imm_abonnement
-FOREIGN KEY(FK_num_abonnement)
-REFERENCES Abonnement (Numero_abonnement)
-
+    CONSTRAINT FK_Annulation_reservation_imm_abonnement
+        FOREIGN KEY(FK_num_abonnement)
+        REFERENCES Abonnement (Numero_abonnement)
 );
+
+
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name='annulation_livraison' and xtype='U')
 DROP TABLE annulation_livraison;
+
 CREATE TABLE annulation_livraison(
 	Numero_annulation INT IDENTITY(1,1) NOT NULL,
 	HD_annulation DATETIME NOT NULL,
 	FK_num_abonnement INT NOT NULL,
-	FK_num_reservation INT NOT NULL
+	FK_num_reservation INT NOT NULL,
 	
 CONSTRAINT PK_annulation_livraison PRIMARY KEY(Numero_annulation),
 
-CONSTRAINT FK_annulation_livraison_reservation_livraison
-FOREIGN KEY(FK_num_reservation)
-REFERENCES Reservation_livraison (Numero_reservation),
+    CONSTRAINT FK_annulation_livraison_reservation_livraison
+        FOREIGN KEY(FK_num_reservation)
+        REFERENCES Reservation_livraison (Numero_reservation),
 
-CONSTRAINT FK_annulation_livraison_abonnement
-FOREIGN KEY(FK_num_abonnement)
-REFERENCES Abonnement (Numero_abonnement),
+    CONSTRAINT FK_annulation_livraison_abonnement
+        FOREIGN KEY(FK_num_abonnement)
+        REFERENCES Abonnement (Numero_abonnement),
 
 );
+
 
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Locations' AND xtype = 'U')
 DROP TABLE Locations ; 
 
-
 CREATE TABLE Locations(
     [Numero_location] [int] IDENTITY(1,1) NOT NULL,
-    [Date_debut] [datetime] NOT NULL,
+    [Date_debut] [datetime2] NOT NULL,
     [Duree] [int] NOT NULL,
-    [Date_fin_prevue] [datetime] NOT NULL,
-    [Date_fin_reelle] [datetime] NULL,
+    [Date_fin_prevue] [datetime2] NOT NULL,
+    [Date_fin_reelle] [datetime2] NULL,
     [FK_exemplaire][int] NOT NULL,
-    [FK_num_abonnement][int] NOT NULL
-
+    [FK_num_abonnement][int] NOT NULL,
 
 CONSTRAINT PK_LOCATIONS PRIMARY KEY ( Numero_location),
-
 
    CONSTRAINT LOCATIONS_ABONNEMENT 
         FOREIGN KEY ( FK_num_abonnement )  
         REFERENCES Abonnement (Numero_abonnement ),
-
 
    CONSTRAINT LOCATIONS_EXEMPLAIRE
         FOREIGN KEY ( FK_exemplaire )  
         REFERENCES Exemplaires (Numero_exemplaire ),
 );
 
+
+
 IF EXISTS (SELECT 1  FROM sysobjects WHERE name='Retour_location' AND xtype = 'U')
 DROP TABLE Retour_location;
+
 CREATE TABLE Retour_location(
 	Numero_retour_loc INT IDENTITY(1,1) NOT NULL,
 	Date_retour DATETIME,
-	FK_num_location INT NOT NULL
+	FK_num_location INT NOT NULL,
 	
 CONSTRAINT PK_Retour_location PRIMARY KEY(Numero_retour_loc),
 
-CONSTRAINT FK_Retour_location_locations
-FOREIGN KEY (FK_num_location)
-REFERENCES Locations (Numero_location),
+    CONSTRAINT FK_Retour_location_locations
+        FOREIGN KEY (FK_num_location)
+        REFERENCES Locations (Numero_location),
 
 );
+
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Relance_retards' AND xtype = 'U')
 DROP TABLE Relance_retards ; 
 
-
 CREATE TABLE Relance_retards(
-    [Numero_retard] [int] IDENTITY(0,1) NOT NULL,
+    [Numero_retard] [int] IDENTITY(1,1) NOT NULL,
     [Niveau_de_retard] [int] NOT NULL,
-    [Date_creation] [datetime] NULL,
+    [Date_creation] [datetime] NOT NULL,
     [Date_mise_a_jour] [datetime] NULL,
-   [FK_num_location][int] NOT NULL
-
+    [Etat] [NVARCHAR] (50) NOT NULL, /* En cours, Supprime*/
+    [FK_num_location][int] NOT NULL,
 
 CONSTRAINT PK_RELANCE_RETARD PRIMARY KEY ( Numero_retard),
 
-
-   CONSTRAINT RELANCE_RETARDS_LOCATION 
+    CONSTRAINT RELANCE_RETARDS_LOCATION 
         FOREIGN KEY (FK_num_location)  
         REFERENCES Locations (Numero_location),
 );
 
+
+
 IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Colis_livraison' AND xtype = 'U')
 DROP TABLE Colis_livraison;
+
 CREATE TABLE Colis_livraison(
 	Numero_colis INT IDENTITY(1,1) NOT NULL,
 	HD_creation_colis DATETIME NOT NULL,
 	HD_retour_colis DATETIME NOT NULL,
 	FK_num_reservation INT NOT NULL,
 	FK_num_exemplaire INT NOT NULL,
-	FK_num_abonnement INT NOT NULL
+	FK_num_abonnement INT NOT NULL,
 	
 CONSTRAINT PK_colis_livraison PRIMARY KEY(Numero_colis),
 	
-CONSTRAINT FK_colis_livraison_reservation_livraison
-FOREIGN KEY (FK_num_reservation)
-REFERENCES Reservation_livraison (Numero_reservation),
+    CONSTRAINT FK_colis_livraison_reservation_livraison
+        FOREIGN KEY (FK_num_reservation)
+        REFERENCES Reservation_livraison (Numero_reservation),
 
-CONSTRAINT FK_colis_livraison_abonnement
-FOREIGN KEY (FK_num_abonnement)
-REFERENCES Abonnement (Numero_abonnement),
+    CONSTRAINT FK_colis_livraison_abonnement
+        FOREIGN KEY (FK_num_abonnement)
+        REFERENCES Abonnement (Numero_abonnement),
 );
