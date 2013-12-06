@@ -637,3 +637,32 @@ CONSTRAINT PK_colis_livraison PRIMARY KEY(Numero_colis),
         FOREIGN KEY (FK_num_abonnement)
         REFERENCES Abonnement (Numero_abonnement),
 );
+
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name = 'Ancien_abonne' AND xtype = 'U')
+DROP TABLE Ancien_abonne ;
+
+CREATE TABLE Ancien_abonne(
+    Nom NVARCHAR (50) NOT NULL,
+    Prenom NVARCHAR (50) NOT NULL,
+    Pseudo NVARCHAR (50) NOT NULL,
+    Date_de_naissance date NOT NULL,
+	Sexe nvarchar(50) NOT NULL,
+    Numero_de_voie nvarchar(50) NOT NULL,
+    Complement_de_voie nvarchar(50) NULL,
+    Type_de_voie nvarchar(50) NOT NULL,
+    Libelle nvarchar(50) NOT NULL,
+    Complement_libelle nvarchar(50) NULL,
+    Code_postal nvarchar(50) NOT NULL,
+    Ville nvarchar(50) NOT NULL,
+    Cedex nvarchar(50) NULL,
+    Pays nvarchar(50) NOT NULL,
+    Numero_telephone nvarchar(50) NULL,
+    Adresse_email nvarchar(50) NOT NULL,
+    Date_suppression DATETIME NOT NULL,
+    Raison NVARCHAR (100) NOT NULL,
+    Commentaire NVARCHAR (max) NULL,
+       
+
+CONSTRAINT PK_Ancien_abonne PRIMARY KEY (Nom, Prenom, Pseudo),
+);
