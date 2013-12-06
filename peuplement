@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------- 
 /* L2 ATIC 2013 – Groupe < ouf_tim > */ 
 /* BdD < ouf_tim > */ 
@@ -183,7 +182,7 @@ values ('Pol', 'Patrick', 'PatrickP', '1992-01-13', 'Monsieur', '84',null, 'boul
 insert into ABONNE
 values ('Roman', 'Alexander', 'ARC', '1991-02-05', 'Monsieur', '157', null, 'rue', 'du lapin', null, '78000', 'Versailles',null, 'France', '0645856525', 'roman.alexander@gmail.com',0);
 insert into ABONNE
-values ('Serin', 'Damien', 'DamienS', '1991-11-12', 'Monsieur', '102', null, 'rue', 'du renouveau', null, '75019','Paris', null, 'France', '0623142536', 'serin.damien@gmail.com',0);
+values ('Serin', 'Damien', 'Daminoumiaou', '1991-11-12', 'Monsieur', '102', null, 'rue', 'du renouveau', null, '75019','Paris', null, 'France', '0623142536', 'serin.damien@gmail.com',0);
 insert into ABONNE
 values ('Sivanathan', 'Sinthujan', 'SinthujanS', '1992-05-11', 'Monsieur', '80', null, 'rue', 'de lafievre', null, '75020','Paris', null, 'France', '0666415278', 'sivanathan.sinthujan@gmail.com',0);
 insert into ABONNE
@@ -192,11 +191,11 @@ values ('Tsvetkov', 'Alexandre', 'AlexandreT', '1992-06-04', 'Monsieur', '45', n
 
 --TYPE ABONNEMENT
 insert into TYPE_ABONNEMENT
-values ('Familiale', 60, 2, 5, 1,72);
+values ('Familiale', 60, 2, 5, 1,30);
 insert into TYPE_ABONNEMENT
-values ('Premium', 20, 150, 2, 1,72);
+values ('Premium', 120, 4, 2, 1,30);
 insert into TYPE_ABONNEMENT
-values ('Scolaire', 80, 3, 8, 2,72);
+values ('Scolaire', 80, 3, 8, 2,30);
 
 -- ABONNEMENT
 
@@ -219,8 +218,6 @@ insert into SOUSCRIRE
 values (0,'Baskaramoorthy', 'Anusan','AnusanB',2);
 insert into SOUSCRIRE
 values (0,'Brochen', 'Elise','EliseB',3);
-insert into SOUSCRIRE
-values (0,'Danglet', 'Eric', 'EricD',3);
 
 
 insert into LANGUE_AUDIO
@@ -268,7 +265,7 @@ values ('Finnois');
 -- Edition
 
 insert into Edition
-values ('GOLD', 2004, 120, 12, 'DVD', '2007-12-12', 'Couleur', '5.1', 0,'Star Wars', 'La Revanche Des Sites Web')
+values ('GOLD', 2004, 120, 12, 'VHS', '2007-12-12', 'Couleur', '5.1', 0,'Star Wars', 'La Revanche Des Sites Web')
 insert into Edition
 values ('Collector',2013,120,10,'Bluray','2013-12-01','Couleur','5.1', 0,'The Hobbit', 'La désolation de Smaug')
 
