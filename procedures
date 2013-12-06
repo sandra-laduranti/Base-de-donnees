@@ -135,6 +135,8 @@ CREATE PROCEDURE dbo.Compte_creer
 AS
 
 BEGIN
+DECLARE @num_compte INT
+
     IF @Numero_bancaire NOT LIKE '%[0-9]%'
     BEGIN
         PRINT('Numero bancaire non valide');
@@ -153,30 +155,24 @@ BEGIN
         RETURN 0;
     END
 
-    IF NOT EXISTS (SELECT * FROM Compte WHERE Numero_bancaire=@Numero_bancaire)
-    BEGIN
-        INSERT INTO Compte 
-        (
-            Numero_bancaire,
-            Montant,
-            Somme_operations,
-            Supprimer    
-        )
 
-        VALUES
-        (
-            @Numero_bancaire,
-            @Montant,
-            @Somme_operations,
-            0
-        )
-    PRINT 'Nouveau compte ajouté'
-    END
-
-    ELSE
-    BEGIN
-    PRINT 'Ce compte existe déjà';
-    END
+	INSERT INTO Compte 
+	(
+		Numero_bancaire,
+		Montant,
+		Somme_operations,
+		Supprimer    
+	)
+	VALUES
+	(
+		@Numero_bancaire,
+		@Montant,
+		@Somme_operations,
+		0
+	)
+	SET @num_compte = @@IDENTITY
+	PRINT 'Nouveau compte ajouté'
+	RETURN @num_compte;
 
 END
 GO
@@ -295,13 +291,13 @@ BEGIN
 END
 GO
 
---------------------------------------------------
-/* BdD : < Ouf'tim >                            */
-/* Procédure de création d'un film          */
-/* Auteur : GOUALARD Mickael                    */
+------------------------------------------
+/* BdD : < Ouf'tim >                    */
+/* Procédure de création d'un film      */
+/* Auteur : GOUALARD Mickael            */
 /*testeur(s): GOUALARD Mickael          */
 /*Intégrateur: LADURANTI Sandra         */
---------------------------------------------------
+------------------------------------------
 
 IF OBJECT_ID ('film_creer', 'P') IS NOT NULL
     DROP PROCEDURE  film_creer;
@@ -351,7 +347,7 @@ BEGIN
 
 
 
-IF NOT EXISTS (SELECT * FROM Films WHERE Titre=@Titre)
+IF NOT EXISTS (SELECT * FROM Films WHERE Titre=@Titre AND Complement_titre=@Complement_titre)
  BEGIN
     INSERT INTO Films
         (
@@ -777,8 +773,10 @@ begin
 	SET @Date_crea_retard = CURRENT_TIMESTAMP
 	SET @MAJ_retard = NULL
 	
-	
-	EXEC Relance_retard_creer 1,@Date_crea_retard, @MAJ_retard, 'En cours', @Numero_location
+	IF NOT EXISTS (SELECT FK_num_location FROM Relance_retards WHERE FK_num_location = @Numero_location)
+	BEGIN			
+		EXEC Relance_retard_creer 1,@Date_crea_retard, @MAJ_retard, 'En cours', @Numero_location
+	END
  
  PRINT 'ATTENTION VOUS ETES EN RETARD SUR VOTRE LOCATION'
  FETCH NEXT FROM cur_relance_retard INTO @Numero_location;
@@ -1064,6 +1062,11 @@ BEGIN
         RETURN 0;
     END
 
+	IF EXISTS (SELECT * FROM Ancien_abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo AND Raison = 'Radiation')
+	BEGIN
+		PRINT 'cet abonné a été radié et ne peut se réinscrire'
+		RETURN 0;
+	END
 
 IF NOT EXISTS (SELECT * FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
 BEGIN
@@ -1142,6 +1145,7 @@ CREATE PROCEDURE dbo.Abonnement_creer
 AS
 
 BEGIN 
+DECLARE @num_abo INT
 
 IF @Date_expiration < @Date_creation
     BEGIN 
@@ -1160,9 +1164,13 @@ IF NOT EXISTS (SELECT * FROM Type_abonnement WHERE Type_Abonnement.Nom=@FK_type_
 			PRINT('Le type d`abonnement n`existe pas!');
 			RETURN 0;
 			END
+			
+IF EXISTS (SELECT FK_numcompte FROM Abonnement WHERE FK_numcompte = @FK_numcompte)
+	BEGIN
+		PRINT ('Ce compte est déjà utilisé')
+		RETURN;
+	END
     
-
-
 
     INSERT INTO Abonnement
         (
@@ -1173,7 +1181,6 @@ IF NOT EXISTS (SELECT * FROM Type_abonnement WHERE Type_Abonnement.Nom=@FK_type_
    Supprimer
         
         )       
-
         VALUES 
         (
    @Date_creation,
@@ -1182,8 +1189,9 @@ IF NOT EXISTS (SELECT * FROM Type_abonnement WHERE Type_Abonnement.Nom=@FK_type_
    @FK_type_abonnement ,
    0 
         )
-
+	SET @num_abo = @@IDENTITY
    PRINT 'Un nouvel Abonnement a été ajouté'
+   RETURN @num_abo;
 END 
 GO
 
@@ -1215,8 +1223,6 @@ AS
 
 BEGIN 
 
-
-
     IF @FK_date_de_naissance_acteur > GETDATE() OR @FK_date_de_naissance_acteur < '1895/01/01'
     BEGIN 
         PRINT 'La FK de la date de naissance de l''acteur n''est pas valide';
@@ -1247,9 +1253,7 @@ BEGIN
         @FK_nom_acteur,
         @FK_prenom_acteur,
         @FK_date_de_naissance_acteur
-
         )
-
 
         PRINT 'Un nouveau type Jouer a été ajouté'
     END
@@ -2136,12 +2140,13 @@ GO
 
 
 
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Charindex - Insertion Edition */
-/*Auteur(s): PATRICK POL ELISE BROCHEN*/
-/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
-/*Intégrateur: SANDRA LADURANTI*/
+/*L2 ATIC 2013 GROUPE ouf_tim                                               */
+/*BdD ouf_tim                                                               */
+/*Charindex - Insertion Edition                                             */
+/*Auteur(s): PATRICK POL ELISE BROCHEN                                      */
+/*Correcteur(s): GOUALARD Mickael                                           */
+/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD  */
+/*Intégrateur: SANDRA LADURANTI                                             */
 
 
 /*Charindex - Insertion Edition */
@@ -2161,13 +2166,20 @@ CREATE procedure [dbo].[a_insertion_edition]
 @Tcouleur NVARCHAR (50),
 @Tson NVARCHAR (50),
 @liste_Langue_audio NVARCHAR (1000),
-@liste_Langue_sous_titre NVARCHAR (1000)
-/* Exemplaire aussi normalement */
+@liste_Langue_sous_titre NVARCHAR (1000),
+/* Exemplaire aussi normalement maintenant on les a EASY*/
+@nombreEx INT
 
 AS
 
 BEGIN 
-
+    
+    /* Tester si @nombreEx dans domaine */
+    IF @nombreEx NOT LIKE '%[0-9]%'
+    BEGIN 
+        PRINT 'Le nombre d''exemplaire n''est pas valide';
+        RETURN 0;
+    END
     /*
     DEBUT: Preparation des chaines d'arguments
     */
@@ -2226,51 +2238,50 @@ BEGIN
     DEBUT: Preparation des chaines d'arguments
     */
 
-/* Catalogue - On vérifie l'existance du film*/
+    /* Catalogue - On vérifie l'existance du film*/
 
-IF EXISTS (select * FROM Films
- where
-   Films.Titre=@FK_titre
-   and Films.Complement_titre=@FK_complement_titre
-    )
-
-BEGIN
-print cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR)+'existe déja';
-END
-
-ELSE
-BEGIN
-print 'Insere d''abord ce film'+cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR);
-RETURN;
-END
-
-/*Edition --> On vérifie l'existence des éléments */
-
-IF EXISTS (select * from Edition
-  where
-    Edition.Nom=@Nom AND
-    Edition.Annee_de_sortie=@Annee_de_sortie AND
-    Edition.limite_age=@limite_age AND
-    Edition.Support=@Support AND
-    Edition.Date_insertion=@Dinsertion AND
-    Edition.Type_couleur=@Tcouleur AND
-    Edition.Type_son=@Tson
-    )
-BEGIN
-     print cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as NVARCHAR)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as NVARCHAR)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
-     RETURN;
-END
-
-ELSE
-BEGIN
-    print cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as NVARCHAR)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as NVARCHAR)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'à insérer';
-	EXEC Edition_creer @Nom, @Annee_de_sortie, @Duree_film, @limite_age, @Support, @Dinsertion, @Tcouleur, @Tson, @FK_titre, @FK_complement_titre;
-END
-
-/* Langue Audio */
+    IF EXISTS (select * FROM Films
+        where
+            Films.Titre=@FK_titre
+        and Films.Complement_titre=@FK_complement_titre
+        )
 
     BEGIN
-        while @LAindex <> LEN(@liste_Langue_audio) AND @LAvide=1
+        print cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR)+'existe déja';
+    END
+
+    ELSE
+    BEGIN
+        PRINT 'Insere d''abord ce film'+cast(@FK_titre as NVARCHAR)+','+cast(@FK_complement_titre as NVARCHAR);
+        RETURN;
+    END
+
+    /*Edition --> On vérifie l'existence des éléments */
+
+    IF EXISTS (SELECT * FROM Edition
+        WHERE
+        Nom=@Nom AND
+        Annee_de_sortie=@Annee_de_sortie AND
+        limite_age=@limite_age AND
+        Support=@Support AND
+        Date_insertion=@Dinsertion AND
+        Type_couleur=@Tcouleur AND
+        Type_son=@Tson
+    )
+    BEGIN
+        PRINT cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as NVARCHAR)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as NVARCHAR)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
+        RETURN;
+    END
+
+    ELSE
+    BEGIN
+        PRINT cast(@Nom as NVARCHAR)+','+cast(@Annee_de_sortie as NVARCHAR)+','+cast(@limite_age as NVARCHAR)+','+cast(@Support as NVARCHAR)+','+cast(@Dinsertion as NVARCHAR)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'à insérer';
+        EXEC Edition_creer @Nom, @Annee_de_sortie, @Duree_film, @limite_age, @Support, @Dinsertion, @Tcouleur, @Tson, @FK_titre, @FK_complement_titre;
+    END
+
+    BEGIN
+        /* Langue Audio */
+        WHILE @LAindex <> LEN(@liste_Langue_audio) AND @LAvide=1
         BEGIN
             DECLARE @Nom_Langue_Audio NVARCHAR(50)
 
@@ -2298,13 +2309,13 @@ END
 
             INSERT INTO dbo.Rattacher
             (
-				Supprimer,
+                Supprimer,
                 FK_langue,
                 FK_edition
             )
             VALUES
             (
-				0,
+                0,
                 @Nom_Langue_Audio,
                 @LANumero_edition    
             )
@@ -2312,9 +2323,9 @@ END
     
 
 
-/*Langue Sous-titre */
+        /*Langue Sous-titre */
 
-        while @LSindex <> LEN(@liste_Langue_sous_titre) AND @LSvide=1
+        WHILE @LSindex <> LEN(@liste_Langue_sous_titre) AND @LSvide=1
         BEGIN
             DECLARE @Nom_Langue_sous_titre NVARCHAR(50)
 
@@ -2342,203 +2353,220 @@ END
 
             INSERT INTO dbo.Afficher
             (
-				Supprimer,
+                Supprimer,
                 FK_langue,
                 FK_edition
             )
             VALUES
             (
-				0,
+                0,
                 @Nom_Langue_sous_titre,
                 @LSNumero_edition
             )
         END
+        /* Exemplaire */
+
+        DECLARE @Numero_edition INT;
+        SET @Numero_edition = @LANumero_edition;
+        DECLARE @counter INT;
+        SET @counter = 1;
+
+        WHILE @counter <= @nombreEx
+        BEGIN
+            EXEC insere_exemplaire @Numero_edition
+            SET @counter = @counter +1;
+        END
+        PRINT cast(@nombreEx AS NVARCHAR) + ' Exemplaire(s) ont ete ajoute a cette edition';
     END
 END
 GO
 
-
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Charindex - Insertion Exemplaire */
-/*Auteur(s): PATRICK POL*/
-/*Correcteur: BROCHEN Elise */
-/*Testeur(s): ELISE BROCHEN */
-/*Intégrateur: SANDRA LADURANTI*/
+/*L2 ATIC 2013 GROUPE ouf_tim                   */
+/*BdD ouf_tim                                   */
+/*Charindex - Insertion Exemplaire              */
+/*Auteur(s): PATRICK POL                        */
+/*Correcteur: BROCHEN Elise GOUALARD Mickael    */
+/*Testeur(s): ELISE BROCHEN                     */
+/*Intégrateur: SANDRA LADURANTI                 */
 
 IF OBJECT_ID ('dbo.insere_exemplaire', 'P') IS NOT NULL
 DROP PROCEDURE dbo.insere_exemplaire ; 
 GO
 CREATE procedure [dbo].[insere_exemplaire]
+@num_edition int
 
-@numSerieEdition int,
-@nombreEx int,
+AS
 
-@NomE NVARCHAR (50),
-@AnneeE INT,
-@Duree INT,
-@limiteA INT,
-@SupportE NVARCHAR (50),
-@Dinsertion DATETIME,
-@Tcouleur NVARCHAR (50),
-@Tson NVARCHAR (50),
-
-@Date_approvisionnement DATETIME,
-@Taux_usure INT,
-@Disponibilite BIT,
-@Reserve INT,
-@Supprimer INT,
-@FK_numero_edition INT
-as
-
-begin
-
-/* Tester si @numSerieEdition dans domaine */
-/* Tester si @numSerieEdition correspond a edition existante */
-IF  @numSerieEdition NOT LIKE '%[0-9]%'
+BEGIN
+    DECLARE @Dappro DATETIME
+    SET @Dappro = CURRENT_TIMESTAMP
+    /* Tester si @numEdition dans domaine */
+    /* Tester si @numEdition correspond a edition existante */
+    IF  @num_edition NOT LIKE '%[0-9]%'
     BEGIN 
         PRINT 'Le numero d''edition est pas valide';
-    RETURN 0;
-        END 
+        RETURN 0;
+    END 
 
-IF EXISTS (select * from Edition
-  where
-    Edition.Nom=@NomE AND
-    Edition.Annee_de_sortie=@AnneeE AND
-    Edition.Duree_film=@Duree AND
-    Edition.limite_age=@limiteA AND
-    Edition.Support=@SupportE AND
-    Edition.Date_insertion=@Dinsertion AND
-    Edition.Type_couleur=@Tcouleur AND
-    Edition.Type_son=@Tson
-    )
-begin
-     print  cast(@NomE as NVARCHAR)+','+cast(@AnneeE as NVARCHAR)+','+cast(@Duree as INT)+','+cast(@limiteA as INT)+','+cast(@SupportE as NVARCHAR)+','+cast(@Dinsertion as DATETIME)+','+cast(@Tcouleur as NVARCHAR)+','+cast(@Tson as NVARCHAR)+'existe déjà';
-return 0;
-end
-   
-/* Tester si @nombreEx dans domaine */
-
-IF  @nombreEx NOT LIKE '%[0-9]%'
-    BEGIN 
-        PRINT 'Le nombre d''exemplaire n''est pas valide';
-    RETURN 0;
-END 
-
-declare @counter int;
-set @counter = 1;
-
-while @counter <= @nombreEx
-    begin
-        insert into EXEMPLAIRES
+    IF NOT EXISTS (SELECT * FROM Edition WHERE Numero_edition = @num_edition)
+    BEGIN
+        PRINT 'L''edition n''existe pas, l''ajout de l''exemplaire est impossible';
+        RETURN 0;
+    END
+    INSERT INTO EXEMPLAIRES
         (
-            Date_approvisionnement ,
-            Taux_usure ,
-            Disponibilite ,
-			Reserve ,
-			Supprimer,
+            Date_approvisionnement,
+            Taux_usure,
+            Disponibilite,
+            Reserve,
+            Supprimer,
             FK_numero_edition
         ) 
-        values
+    Values
         (
-            @Date_approvisionnement ,
-            @Taux_usure ,
-            @Disponibilite ,
-			@Reserve ,
-			0,
-            @FK_numero_edition
+            @Dappro ,
+            1,
+            1,
+            0,
+            0,
+            @num_edition
         )
-        set @counter = @counter +1;
-          END
 END
 GO
 
-/*L2 ATIC 2013 GROUPE ouf_tim */
-/*BdD ouf_tim */
-/*Charindex - Insertion abonne */
-/*Auteur(s): PATRICK POL*/
-/*Testeur(s):  PATRICK POL SANDRA LADURANTI ELISE BROCHEN MICKAEL GOUALARD*/
-/*Intégrateur: SANDRA LADURANTI*/
+/*L2 ATIC 2013 GROUPE ouf_tim				 */
+/*BdD ouf_tim								 */
+/*Rattacher un abonné à un compte			 */
+/*Auteur(s): ELISE BROCHEN LADURANTI SANDRA	 */
+/*Testeur(s):  ELISE BROCHEN SANDRA LADURANTI*/
+/*Intégrateur: SANDRA LADURANTI				 */
 
-
-/* CORRECTION CHARINDEX */
-
-IF OBJECT_ID ('dbo.a_insertion_Abonne', 'P') IS NOT NULL
-DROP PROCEDURE dbo.a_insertion_Abonne ; 
+IF OBJECT_ID ('dbo.rattacher_abonne', 'P') IS NOT NULL
+DROP PROCEDURE dbo.rattacher_abonne ; 
 GO
-CREATE procedure [dbo].[a_insertion_Abonne]
+CREATE procedure [dbo].[rattacher_abonne]
 
+    /*Abonné*/
     @Nom NVARCHAR (50),
     @Prenom NVARCHAR (50),
     @Pseudo NVARCHAR (50),
-    @Date_naissance DATE,
-    @Sexe NVARCHAR (50),
-    @Numero_de_voie NVARCHAR (50),
-    @Complement_de_voie NVARCHAR (50),
-    @Type_de_voie NVARCHAR (50),
-    @Libelle NVARCHAR (50),
-    @Complement_libelle NVARCHAR (50),
-    @Code_postal NVARCHAR (50),
-    @Ville NVARCHAR (50),
-    @Cedex NVARCHAR (50),
-    @Pays NVARCHAR (50),
-    @Numero_telephone NVARCHAR (50),
-    @Adresse_email NVARCHAR (50),
-    
+   
     /* Type_abonnement */
+    @Type_abonnement NVARCHAR(50),  
     
-    @Type_abonnement NVARCHAR(50)  
+    /* Compte */
+    @num_compte NVARCHAR(50),
+    
+    /*facultatif, au cas où il n'y a pas d'abonnement correspondant*/
+    @numeroAbonnement INT /* 0 pour l'utilisateur si il n'a pas d'abonnement */   
+AS
 
-as
-
-begin
-
-    declare @tmp int
-    declare @index int
-    declare @fin int
-    declare @er INT
-    declare @num_compte INT
-    declare @Date_crea DATETIME
-
-/* test type_abonnement */
-IF NOT EXISTS (
-    SELECT *
-    FROM Type_abonnement WHERE  Type_abonnement.Nom=@Type_abonnement )
+BEGIN 
+    DECLARE @idCompte INT,
+			@last_id_abo INT,
+            @DateCre DATETIME,
+            @DateFin DATETIME
+    SET @DateCre = CURRENT_TIMESTAMP
+    SET  @DateFin = CURRENT_TIMESTAMP+350
+    
+/* test existance de l'abonné */
+    IF NOT EXISTS (SELECT * FROM Abonne WHERE Nom=@Nom AND Prenom = @Prenom AND Pseudo = @Pseudo )
     BEGIN
-        PRINT'Le type d`abonnement n`existe pas';
+        PRINT 'L`abonné n`existe pas';
         RETURN 0;
-END
- 
-ELSE /* le type_abonnnemnt exist déjà */
-    BEGIN
-        /* ABONNEE */
-        print '-- ABONNEE --'
-        exec @er = Abonne_creer @Nom, @Prenom, @Date_naissance;
-        IF @er= 1 /* Abonne déjà au catalogue */
-            BEGIN
-                print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+'existe déjà';
-                return 0;
-            END
-
-        ELSE /* Abonnee absent du catalogue */
-            BEGIN
-            print cast(@Nom as NVARCHAR)+', '+cast(@Prenom as NVARCHAR)+',  Abonnee absent du catalogue, à insérer';
-                
-                /* creation de compte*/
-                exec  compte_creer @er , 0  ;
-                set @num_compte=@@IDENTITY 
-                
-                /* creation de l''abonnement */
-                set @Date_crea = getdate()
-                declare @Dfin DATE
-                set @Dfin= CURRENT_TIMESTAMP+30
-
-                exec @er = abonnement_creer Date_crea,Dfin,@num_compte,@Type_abonnement ;
-            /**/
-            END
     END
-  END
-  GO
+    /* test type_abonnement */
+    IF NOT EXISTS (SELECT * FROM Type_abonnement WHERE  Type_abonnement.Nom=@Type_abonnement )
+    BEGIN
+        PRINT 'Le type d''abonnement n`existe pas';
+        RETURN 0;
+    END
+
+		IF (@numeroAbonnement = 0)
+		 BEGIN	
+			 PRINT'On ajoute un nouveau compte';
+			 EXEC @idCompte = dbo.Compte_creer
+						@num_compte,
+						0,
+						0
+		 END
+
+    IF @numeroAbonnement=0
+    BEGIN
+        PRINT 'On crée un nouvel abonnement'
+		EXEC @last_id_abo = Abonnement_creer
+						   @DateCre,
+						   @DateFin,
+						   @idCompte,
+						   @Type_abonnement 
+						   PRINT @last_id_abo
+		EXEC Souscrire_creer
+			@Nom,
+			@Prenom ,
+			@Pseudo,
+			@last_id_abo
+        RETURN;
+    END
+
+    IF EXISTS (SELECT FK_Type_abonnement FROM Abonnement WHERE @numeroAbonnement= Numero_abonnement)
+    BEGIN 
+        IF EXISTS (SELECT Nom FROM Type_abonnement WHERE @Type_abonnement= 'Familiale')
+        BEGIN
+        EXEC dbo.Souscrire_creer
+            @Nom,
+            @Prenom ,
+            @Pseudo,
+            @numeroAbonnement
+			PRINT 'Vous avez bien été rajouté  à l''abonnement Familiale numero '+cast(@numeroAbonnement AS NVARCHAR)
+        END
+        ELSE
+        BEGIN 
+            PRINT 'Votre abonnement n''est pas de type Familiale'
+            RETURN;
+        END
+    END
+
+    ELSE 
+    BEGIN
+        PRINT 'Votre numero d''abonnement n''existe pas'
+        RETURN;
+    END
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim									 */
+/*BdD ouf_tim													 */
+/*Réapprovisionner Compte										 */
+/*Auteur(s): ELISE BROCHEN SANDRA LADURANTI						 */
+/*Testeur(s):  ELISE BROCHEN SANDRA LADURANTI ALEXANDRE TSVETKOV */
+/*Intégrateur: SANDRA LADURANTI									 */
+
+
+IF OBJECT_ID ('dbo.appro_compte', 'P') IS NOT NULL
+DROP PROCEDURE dbo.appro_compte ; 
+GO
+CREATE PROCEDURE [dbo].[appro_compte]
+    @num_bancaire NVARCHAR(50),
+    @montant INT
+
+AS
+BEGIN
+    /* test compte */
+    IF NOT EXISTS (SELECT * FROM Compte WHERE Numero_bancaire=@num_bancaire )
+    BEGIN
+        PRINT'Le compte n''existe pas'
+        RETURN;
+    END
+
+
+	DECLARE @total INT
+	SET @total = (SELECT Montant FROM Compte WHERE Numero_bancaire = @num_bancaire) + @montant
+	PRINT cast((@total - @montant) AS NVARCHAR)+' = montant avant réapprovisionnement';
+
+ UPDATE dbo.Compte SET Montant= @total WHERE Numero_bancaire = @num_bancaire ;
+        PRINT 'compte réapprovisionné de '+cast(@montant AS NVARCHAR)+' euros';
+END
+GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim */
 /*BdD ouf_tim */
@@ -2609,7 +2637,80 @@ CREATE procedure [dbo].[insere_location]
 AS
 
 BEGIN
-    DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128 ), @NbSimul INT, @Date_fin DATETIME
+        DECLARE @ex_reser_edition INT;
+        DECLARE @ex_loc_edition INT; 
+        DECLARE @num_exemplaire_reser INT; 
+        
+        DECLARE curseur_location CURSOR LOCAL FOR 
+        SELECT FK_num_exemplaire FROM Reservation_immediate WHERE FK_num_abonnement = @Num_abo
+        
+		OPEN curseur_location
+            FETCH NEXT FROM curseur_location 
+            INTO @num_exemplaire_reser;
+            
+            IF @@FETCH_STATUS <> 0
+            BEGIN 
+            PRINT 'Il n''y a pas de réservation en cours pour cet abonné'
+            END
+            
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+                SELECT @ex_reser_edition = FK_numero_edition FROM Exemplaires WHERE @num_exemplaire_reser = Numero_exemplaire
+                SELECT @ex_loc_edition =  FK_numero_edition FROM Exemplaires WHERE @Num_exem = Numero_exemplaire
+                
+                IF @ex_reser_edition = @ex_loc_edition
+                BEGIN
+                    PRINT 'Une reservation est déja en cours sur cette édition'
+                    RETURN;
+                END
+                
+                FETCH NEXT FROM curseur_location 
+                INTO @num_exemplaire_reser;
+            END
+        CLOSE curseur_location;
+        DEALLOCATE curseur_location;
+	
+		/* debut check loc */
+		DECLARE @num_edition INT;
+			
+		SELECT @num_edition = FK_numero_edition FROM Exemplaires WHERE @Num_exem = Numero_exemplaire	
+			
+		DECLARE @ex_loc_edition2 INT; 
+        DECLARE @num_exemplaire_loc INT; 
+        
+        DECLARE curseur_location_2 CURSOR LOCAL FOR 
+        SELECT FK_exemplaire FROM Locations WHERE FK_num_abonnement = @Num_abo
+        
+        OPEN curseur_location_2
+            FETCH NEXT FROM curseur_location_2 
+            INTO @num_exemplaire_loc;
+            
+            IF @@FETCH_STATUS <> 0
+            BEGIN 
+            PRINT 'Il n''y a pas de location en cours pour cet abonné'
+
+            END
+            
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+                SELECT @ex_loc_edition =  FK_numero_edition FROM Exemplaires WHERE @num_exemplaire_loc = Numero_exemplaire
+                
+                IF @num_edition = @ex_loc_edition
+                BEGIN
+                    PRINT 'Une location est déja en cours sur cette édition'
+                    RETURN;
+                END
+                
+                FETCH NEXT FROM curseur_location_2
+                INTO @num_exemplaire_loc;
+            END
+        CLOSE curseur_location_2;
+        DEALLOCATE curseur_location_2;
+			
+		/* fin check loc */
+	
+	
+    DECLARE @Date_deb DATETIME, @Duree INT, @Error INT, @TaboNom NVARCHAR (128), @NbSimul INT, @Date_fin DATETIME, @Num_compte INT, @Solde Money
 
     IF @Num_exem NOT LIKE (Select Numero_exemplaire FROM Exemplaires WHERE Numero_exemplaire = @Num_exem)
     BEGIN
@@ -2622,6 +2723,15 @@ BEGIN
         PRINT 'Num abonnement invalide'
         RETURN;
     END
+    
+    SET @Num_compte = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @Num_abo)
+    SET @Solde = (SELECT Montant FROM Compte WHERE @Num_compte = Numero_compte )
+    
+    IF @Solde < 0
+    BEGIN
+		PRINT 'Vous ne pouvez plus louer ou reserver tant que votre compte ne sera pas rechargé'
+		RETURN;
+	END
 
     
     SET @Date_deb= CURRENT_TIMESTAMP
@@ -2644,6 +2754,7 @@ BEGIN
     BEGIN
         PRINT 'Exemplaires non dispo'
         RETURN;
+
     END
 
     SET @NbSimul = (SELECT Exemplaires_simultanes FROM dbo.Type_abonnement WHERE Type_abonnement.Nom = @TaboNom)
@@ -2676,8 +2787,8 @@ BEGIN
             @Num_abo
             )
 
-            UPDATE dbo.Exemplaires SET Disponibilite= 0 WHERE Exemplaires.FK_numero_edition = @Num_exem ;
-        PRINT 'Nouvel location ajoutée'
+            UPDATE dbo.Exemplaires SET Disponibilite= 0 WHERE Numero_exemplaire = @Num_exem ;
+        PRINT 'Nouvelle location ajoutée'
 
     END
 
@@ -2749,6 +2860,7 @@ GO
 /*Procedure avec curseur pour trouver une edition */
 /*Auteur(s): LADURANTI Sandra BROCHEN Elise       */
 /*Testeur(s): LADURANTI Sandra BROCHEN Elise	  */
+/*Correcteur : PATRICK POL						  */
 /*Intégrateur: LADURANTI Sandra					  */
 
 if object_id('[dbo].[C_trouver_edition]') is not null
@@ -2787,14 +2899,14 @@ AS
 	 declare @NULL int, @NLLU nvarchar(50), @NLULU datetime
 
         declare crs2 cursor local for
-        select *
+        select Numero_edition, FK_titre, FK_complement_titre
         from [dbo].[Edition] ed
         where ed.FK_titre = @c_titre and ed.FK_complement_titre = @c_complement_titre and ed.Support = @c_support 
 
             OPEN crs2
         
         FETCH Next from crs2
-        INTO @fetch_edition,@NLLU,@NULL,@NULL,@NULL,@Support,@NLULU,@NLLU,@NLLU,@Titre, @Complement_titre /*@langue, @langue_sub,*/
+        INTO @fetch_edition,@Titre, @Complement_titre /*@langue, @langue_sub,*/
         print 'fetch initial' ;
                 IF @@FETCH_STATUS = - 1
                 BEGIN
@@ -2817,7 +2929,7 @@ AS
             end
         
             FETCH Next from crs2
-             INTO @fetch_edition,@NLLU,@NULL,@NULL,@NULL,@Support,@NLULU,@NLLU,@NLLU,@Titre, @Complement_titre 
+             INTO @fetch_edition,@Titre, @Complement_titre 
         END
         
         close crs2
@@ -2959,6 +3071,37 @@ DECLARE @nom_abonnement NVARCHAR (50),
 set @nb_locations_sim = NULL
 set @nom_abonnement = NULL
 
+        DECLARE @ex_loc_edition INT; 
+        DECLARE @num_exemplaire_loc INT; 
+        
+        DECLARE curseur_reservation CURSOR LOCAL FOR 
+        SELECT FK_exemplaire FROM Locations WHERE FK_num_abonnement = @num_abonnement
+        
+        OPEN curseur_reservation
+            FETCH NEXT FROM curseur_reservation 
+            INTO @num_exemplaire_loc;
+            
+            IF @@FETCH_STATUS <> 0
+            BEGIN 
+            PRINT 'Il n''y a pas de location en cours pour cet abonné'
+
+            END
+            
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+                SELECT @ex_loc_edition =  FK_numero_edition FROM Exemplaires WHERE @num_exemplaire_loc = Numero_exemplaire
+                
+                IF @num_edition = @ex_loc_edition
+                BEGIN
+                    PRINT 'Une location est déja en cours sur cette édition'
+                    RETURN;
+                END
+                
+                FETCH NEXT FROM curseur_reservation 
+                INTO @num_exemplaire_loc;
+            END
+        CLOSE curseur_reservation; 
+
 IF @num_abonnement NOT LIKE (SELECT Numero_abonnement FROM Abonnement WHERE Numero_abonnement=@num_abonnement)
 	BEGIN
 		PRINT 'Le numero d''abonnement n''existe pas'
@@ -2988,6 +3131,7 @@ IF (select count (*) FROM Locations WHERE FK_num_abonnement = @num_abonnement) >
     PRINT 'Aucun exemplaire de dispo'
     return;
   end
+
 
 
   SET @HD_creation = CURRENT_TIMESTAMP
@@ -3198,7 +3342,7 @@ GO
 /*Procedure de location reservation immédiate   */
 /*Auteur(s): PATRICK POL						*/
 /*Testeur(s): PATRICK POL						*/
-/*Correcteur: PATRICK POL						*/
+/*Correcteur: GOUALARD MICKAEL					*/
 /*Intégrateur: PATRICK POL						*/
 
 USE "ouf_tim" 
@@ -3271,7 +3415,7 @@ BEGIN
 				@FK_num_abonnement
 			) 
 		END
-	
+        UPDATE dbo.Exemplaires SET Disponibilite= 0 WHERE Numero_exemplaire = @FK_num_exemplaire ;
 		PRINT 'Votre location a bien été prise en compte'
 		RETURN 1;
 	
@@ -3555,7 +3699,7 @@ GO
 /*Procedure unitaire retour location				    */
 /*Auteur(s): PATRICK POL								*/
 /*testeur(s): BROCHEN Elise								*/
-/*Correcteur : Patrick POL								*/
+/*Correcteur : Patrick POL GOUALARD Mickael				*/
 /*Intégrateur: LADURANTI Sandra							*/
 
 IF OBJECT_ID('dbo.retour_location_creer', 'P') IS NOT NULL
@@ -3572,7 +3716,7 @@ BEGIN
 	DECLARE @Date_finR DATETIME
 	
 	
-	IF @FK_num_location NOT LIKE (SELECT Numero_location FROM Locations WHERE Numero_location=@FK_num_location)
+	IF NOT EXISTS (SELECT Numero_location FROM Locations WHERE Numero_location=@FK_num_location)
 	BEGIN
 		PRINT 'Numero de location inexistant'
 		RETURN;
@@ -3617,12 +3761,11 @@ BEGIN
 	
 	SET @Disponibilite = (SELECT Disponibilite FROM Exemplaires WHERE Numero_exemplaire =@Exemplaire_id1);
 	
-	IF (SELECT Supprimer FROM Exemplaires WHERE Numero_exemplaire = @Exemplaire_id1) = 0
-		BEGIN
-		UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id1;
-		END
+	
+    UPDATE dbo.Exemplaires SET Disponibilite = 1 WHERE Numero_exemplaire=@Exemplaire_id1;
+	UPDATE dbo.Exemplaires SET Reserve = 0 WHERE Numero_exemplaire=@Exemplaire_id1;
 
---On augment le niveau d'usure de l'exemplaire de 1
+--On augmente le niveau d'usure de l'exemplaire de 1
 
 	DECLARE @Exemplaire_id2 BIGINT;
 	DECLARE @Usure INT;
@@ -3675,13 +3818,14 @@ BEGIN
 	    BEGIN
 			SET @New_Solde = @Solde - @Prix_location - @Prix_retard
 			UPDATE dbo.Compte SET Montant = @New_Solde WHERE Numero_compte = @Compte_id;
-			PRINT 'Vous avez été en retard, il vous allez donc payer en plus : '+cast(@Prix_retard as VARCHAR)
+			PRINT 'Vous avez été en retard, vous allez donc payer en plus : '+cast(@Prix_retard as VARCHAR)
 			PRINT 'Voici le nouveau solde de votre compte : '+cast(@New_Solde as VARCHAR)
 		END
 		
 -- MISE A JOUR SUR LA RELANCE RETARD
 	UPDATE Relance_retards SET Niveau_de_retard = 0 WHERE @FK_num_location = FK_num_location;
-	UPDATE Relance_retards SET Etat = 'Supprimer' WHERE @FK_num_location = FK_num_location;  
+	UPDATE Relance_retards SET Etat = 'Supprimer' WHERE @FK_num_location = FK_num_location;
+	DELETE FROM Relance_retards WHERE @FK_num_location = FK_num_location;   
 
 	PRINT 'Votre retour a été pris en compte'
 	RETURN 1;	 
@@ -3735,12 +3879,30 @@ begin
  
 	while(@@FETCH_STATUS = 0)
 	BEGIN
+		DECLARE @num_location INT
+		DECLARE @num_abo INT
+		DECLARE @nom NVARCHAR (50)
+		DECLARE @prenom NVARCHAR (50)
+		DECLARE @pseudo NVARCHAR (50)
  
 		
 		SET @Niveau_retard = (SELECT Niveau_de_retard FROM Relance_retards WHERE Numero_retard =@Numero_relance)
 		SET @Date_crea_retard = CURRENT_TIMESTAMP
 		SET @MAJ_retard = DATEADD(SECOND, 10,@Date_crea_retard)
 		SET @Niveau_retard = @Niveau_retard + 1
+		
+		SET @num_location = (SELECT FK_num_location FROM Relance_retards WHERE Numero_retard = @Numero_relance )
+		SET @num_abo = (SELECT FK_num_abonnement FROM Locations WHERE Numero_location = @num_location )
+		
+		SET @nom = (SELECT TOP 1 FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement = @num_abo)
+		SET @prenom = (SELECT FK_prenom FROM Souscrire WHERE FK_num_abonnement = @num_abo AND @nom = FK_nom_abonne )
+		SET @pseudo = (SELECT FK_pseudo FROM Souscrire WHERE FK_num_abonnement = @num_abo AND @nom = FK_nom_abonne AND @prenom = FK_prenom )
+		
+		
+		IF @Niveau_retard = 5
+		BEGIN
+			UPDATE Abonne SET Supprimer = 2 WHERE @nom = Nom AND Prenom = @prenom AND Pseudo = @pseudo 
+		END
 	
 		UPDATE Relance_retards SET Niveau_de_retard = @Niveau_retard WHERE Numero_retard =@Numero_relance;
 		UPDATE Relance_retards SET Date_mise_a_jour = @MAJ_retard WHERE Numero_retard =@Numero_relance;
@@ -3988,15 +4150,9 @@ AS
 			BEGIN
 					UPDATE Exemplaires SET  Disponibilite = 0, Supprimer = 2
 					WHERE Numero_exemplaire = @Num_exemplaire
-					PRINT 'L''exemplaire'+cast(@Num_exemplaire as VARCHAR)+'a été supprimé pour usure'
-			END
-			
-    ELSE
-			BEGIN
-			PRINT 'Exemplaire non usé'
+					PRINT 'L''exemplaire '+cast(@Num_exemplaire as VARCHAR)+' a été supprimé car il est trop usé'
 			END
 	END
-	
 GO
 
 --------------------------------------------------------------------
@@ -4032,8 +4188,9 @@ AS
 			INSERT INTO Relance_decouvert
 			(Niveau_decouvert ,Date_creation,Date_mise_a_jour,FK_numero_compte) 
 			VALUES( 1, @dateCourante, @dateCourante, @Num_Compte);
-			PRINT 'Nouvelle relance crée sur le compte :';
-			PRINT @Num_Compte;
+			PRINT 'Nouvelle relance crée sur le compte : '+cast(@Num_Compte as VARCHAR);
+			PRINT 'Vous devez réapprovisionner votre compte d''une somme minimum de : '+cast(@solde as VARCHAR)
+
 		END		
 		ELSE
 		BEGIN
@@ -4631,11 +4788,261 @@ FETCH NEXT FROM cur_maj_film;
 END
 GO
 
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure de maj d'un realisateur					    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s):	PATRICK POL								*/
+/*Correcteur : PATRICK POL								*/
+/*Intégrateur:	PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('maj_realisateur', 'P') IS NOT NULL
+DROP PROCEDURE maj_realisateur;
+GO
+CREATE PROCEDURE maj_realisateur(
+	@Ancien_nom NVARCHAR(50),
+	@Ancien_prenom NVARCHAR(50),
+	@Ancien_DN NVARCHAR(50),
+	
+	@Nouveau_nom NVARCHAR(50),
+	@Nouveau_prenom NVARCHAR (50),
+	@Nouveau_DN nvarchar(50),
+	@Nouveau_Sexe NVARCHAR (50),
+	@Nouveau_Date_deces nvarchar(50),
+	@Nouveau_Biographie NVARCHAR(max),
+	@Nouveau_Nationalite NVARCHAR(50)
+	
+)
+AS
+BEGIN
+
+	DECLARE @Nom NVARCHAR (50)
+	DECLARE @Prenom NVARCHAR (50)
+	DECLARE @DN DATE
+	DECLARE @Sexe NVARCHAR (50)
+	DECLARE @Date_deces DATE
+	DECLARE @Biographie NVARCHAR(max)
+	DECLARE @Nationalite NVARCHAR(50)
+	
+	SET @Nouveau_Date_deces = CAST(@Nouveau_Date_deces as VARCHAR)
+	SET @Nouveau_DN = CAST(@Nouveau_DN as VARCHAR)
+	
+	PRINT '---- Saisir ''_'' pour ne rien modifie---'
+	
+	IF NOT EXISTS (SELECT * FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+		BEGIN
+			PRINT 'Le réalisateur saisie n''appartient pas à notre base de donnée'
+			RETURN;
+		END
+	
+	IF @Nouveau_nom = '_'
+	BEGIN
+		SET @Nom = (SELECT Nom FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Nom=@Nouveau_nom
+	END
+	
+	IF @Nouveau_prenom = '_'
+	BEGIN
+		SET @Prenom = (SELECT Prenom FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Prenom = @Nouveau_prenom
+	END
+	
+	IF @Nouveau_DN = '_'
+	BEGIN
+		SET @DN = (SELECT Date_naissance FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @DN = @Nouveau_DN
+	END
+	
+	IF @Nouveau_Sexe = '_'
+	BEGIN
+		SET @Sexe = (SELECT Sexe FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Sexe = @Nouveau_Sexe
+	END
+	
+	IF @Nouveau_Date_deces = '_'
+	BEGIN
+		SET @Date_deces = (SELECT Date_deces FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Date_deces = @Nouveau_Date_deces
+	END
+	
+	IF @Nouveau_Biographie = '_'
+	BEGIN	
+		SET @Biographie = (SELECT Biographie FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Biographie = @Nouveau_Biographie
+	END
+	
+	IF @Nouveau_Nationalite = '_'
+	BEGIN
+		SET @Nationalite = (SELECT Nationalite FROM Realisateur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Nationalite = @Nouveau_Nationalite
+	END
+	
+	
+	UPDATE Realisateur SET Nom=@Nom, Prenom=@Prenom, Date_naissance = @DN, Sexe=@Sexe,Date_deces =@Date_deces ,Biographie =@Biographie, Nationalite =@Nationalite, Supprimer = 0
+	WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN
+	
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure de maj d'un acteur					   	    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s):	PATRICK POL								*/
+/*Correcteur : PATRICK POL								*/
+/*Intégrateur:	PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('maj_acteur', 'P') IS NOT NULL
+DROP PROCEDURE maj_acteur;
+GO
+CREATE PROCEDURE maj_acteur(
+	@Ancien_nom NVARCHAR(50),
+	@Ancien_prenom NVARCHAR(50),
+	@Ancien_DN NVARCHAR(50),
+	
+	@Nouveau_nom NVARCHAR(50),
+	@Nouveau_prenom NVARCHAR (50),
+	@Nouveau_DN nvarchar(50),
+	@Nouveau_Sexe NVARCHAR (50),
+	@Nouveau_Date_deces nvarchar(50),
+	@Nouveau_Nom_de_scene NVARCHAR(50),
+	@Nouveau_Biographie NVARCHAR(max),
+	@Nouveau_Nationalite NVARCHAR(50)
+	
+)
+AS
+BEGIN
+
+	DECLARE @Nom NVARCHAR (50)
+	DECLARE @Prenom NVARCHAR (50)
+	DECLARE @DN DATE
+	DECLARE @Sexe NVARCHAR (50)
+	DECLARE @Date_deces DATE
+	DECLARE @Nom_de_scene NVARCHAR(50)
+	DECLARE @Biographie NVARCHAR(max)
+	DECLARE @Nationalite NVARCHAR(50)
+
+	SET @Nouveau_Date_deces = CAST(@Nouveau_Date_deces as VARCHAR)
+	SET @Nouveau_DN = CAST(@Nouveau_DN as VARCHAR)
+	
+	PRINT '---- Saisir ''_'' pour ne rien modifie---'
+	
+	IF NOT EXISTS (SELECT * FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+		BEGIN
+			PRINT 'L''acteur saisie n''appartient pas à notre base de donnée'
+			RETURN;
+		END
+	
+	IF @Nouveau_nom = '_'
+	BEGIN
+		SET @Nom = (SELECT Nom FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Nom=@Nouveau_nom
+	END
+	
+	IF @Nouveau_prenom = '_'
+	BEGIN
+		SET @Prenom = (SELECT Prenom FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Prenom = @Nouveau_prenom
+	END
+	
+	IF @Nouveau_DN = '_'
+	BEGIN
+		SET @DN = (SELECT Date_naissance FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @DN = @Nouveau_DN
+	END
+	
+	IF @Nouveau_Sexe = '_'
+	BEGIN
+		SET @Sexe = (SELECT Sexe FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Sexe = @Nouveau_Sexe
+	END
+	
+	IF @Nouveau_Date_deces = '_'
+	BEGIN
+		SET @Date_deces = (SELECT Date_deces FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+		IF @Date_deces = '1900-01-01'
+		SET @Date_deces = NULL
+	END
+	ELSE
+	BEGIN
+		SET @Date_deces = @Nouveau_Date_deces
+	END
+	
+	IF @Nouveau_Nom_de_scene = '_'
+	BEGIN
+		SET @Nom_de_scene = (SELECT Nom_de_scene FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Nom_de_scene = @Nouveau_Nom_de_scene
+	END
+	
+	IF @Nouveau_Biographie = '_'
+	BEGIN	
+		SET @Biographie = (SELECT Biographie FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Biographie = @Nouveau_Biographie
+	END
+	
+	IF @Nouveau_Nationalite = '_'
+	BEGIN
+		SET @Nationalite = (SELECT Nationalite FROM Acteur WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN)
+	END
+	ELSE
+	BEGIN
+		SET @Nationalite = @Nouveau_Nationalite
+	END
+	
+	
+	UPDATE Acteur SET Nom=@Nom, Prenom=@Prenom, Date_naissance = @DN, Sexe=@Sexe,Date_deces =@Date_deces ,Nom_de_scene= @Nom_de_scene, Biographie =@Biographie, Nationalite =@Nationalite, Supprimer = 0
+	WHERE Nom=@Ancien_nom AND Prenom = @Ancien_prenom AND Date_naissance = @Ancien_DN
+	
+END
+GO
+
+
 /*L2 ATIC 2013 GROUPE ouf_tim                   */
 /*BdD ouf_tim                                   */
 /*Procedure suppression exemplaire              */
 /*Auteur(s): GOUALARD MICKAEL                   */
-/*Testeur(s):                                   */
+/*Testeur(s): GOUALARD MICKAEL                  */
 /*Correcteur:                                   */
 /*Intégrateur: PATRICK POL		                */ 
 USE "ouf_tim"
@@ -4683,9 +5090,9 @@ GO
 
 /*L2 ATIC 2013 GROUPE ouf_tim                   */
 /*BdD ouf_tim                                   */
-/*Procedure suppression exemplaire              */
+/*Procedure suppression edition                 */
 /*Auteur(s): GOUALARD MICKAEL                   */
-/*Testeur(s):                                   */
+/*Testeur(s): GOUALARD MICKAEL                  */
 /*Correcteur:                                   */
 /*Intégrateur: PATRICK POL		                */ 
 
@@ -4710,7 +5117,7 @@ BEGIN
 
     IF (SELECT Supprimer FROM Edition WHERE Numero_edition = @Numero_edition) = 2
     BEGIN
-        PRINT 'Cet exemplaire a deja ete supprimer';
+        PRINT 'Cet edition a deja ete supprimer';
         RETURN 2;   /*L'edition est deja suppr*/
     END
 
@@ -4722,33 +5129,25 @@ BEGIN
     DECLARE curseur_supprimer_exemplaire CURSOR FOR
         SELECT Numero_exemplaire FROM Exemplaires WHERE FK_numero_edition = @Numero_edition AND Supprimer <> 2
      
-    OPEN curseur_supprimer_exemplaire
-     
-    FETCH NEXT FROM curseur_supprimer_exemplaire INTO @Numero_exemplaire;
-    
-    IF @@FETCH_STATUS <> 0 
-    BEGIN    
-        PRINT 'Tous les exemplaires de cette edition sont deja supprime';
-    END
-    
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        EXEC @Tmp = dbo.supprimer_exemplaire @Numero_exemplaire;
-        SET @Cpt = @Cpt + @Tmp;
+        OPEN curseur_supprimer_exemplaire
+         
         FETCH NEXT FROM curseur_supprimer_exemplaire INTO @Numero_exemplaire;
-    END
-     
-    CLOSE curseur_supprimer_exemplaire
-    DEALLOCATE curseur_supprimer_exemplaire
+        
+        IF @@FETCH_STATUS <> 0 
+        BEGIN    
+            PRINT 'Tous les exemplaires de cette edition sont deja supprime';
+        END
+        
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            EXEC @Tmp = dbo.supprimer_exemplaire @Numero_exemplaire;
+            SET @Cpt = @Cpt + @Tmp;
+            FETCH NEXT FROM curseur_supprimer_exemplaire INTO @Numero_exemplaire;
+        END
+         
+        CLOSE curseur_supprimer_exemplaire
+        DEALLOCATE curseur_supprimer_exemplaire
 
-    IF @Cpt > 0
-    BEGIN
-        UPDATE Edition SET Supprimer = 1 WHERE Numero_edition = @Numero_edition
-        PRINT 'L''edition ne peut pas etre supprimer';
-        RETURN 1;
-    END
-
-    UPDATE Edition SET Supprimer = 2 WHERE Numero_edition = @Numero_edition
 
     --Suppression des tables de jointure rattacher
     DECLARE @FK_edition INT
@@ -4756,18 +5155,18 @@ BEGIN
     DECLARE curseur_supprimer_rattacher CURSOR FOR
         SELECT FK_edition FROM Rattacher WHERE FK_edition = @Numero_edition AND Supprimer = 0
      
-    OPEN curseur_supprimer_rattacher
-     
-    FETCH NEXT FROM curseur_supprimer_rattacher INTO @FK_edition;
-     
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        UPDATE Rattacher SET Supprimer = 2 WHERE FK_edition = @FK_edition
+        OPEN curseur_supprimer_rattacher
+         
         FETCH NEXT FROM curseur_supprimer_rattacher INTO @FK_edition;
-    END
-     
-    CLOSE curseur_supprimer_rattacher
-    DEALLOCATE curseur_supprimer_rattacher
+         
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            UPDATE Rattacher SET Supprimer = 2 WHERE FK_edition = @FK_edition
+            FETCH NEXT FROM curseur_supprimer_rattacher INTO @FK_edition;
+        END
+         
+        CLOSE curseur_supprimer_rattacher
+        DEALLOCATE curseur_supprimer_rattacher
 
     --Suppression des tables de jointure afficher
 
@@ -4776,17 +5175,25 @@ BEGIN
      
     OPEN curseur_supprimer_afficher
      
-    FETCH NEXT FROM curseur_supprimer_afficher INTO @FK_edition;
-     
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        UPDATE Afficher SET Supprimer = 2 WHERE FK_edition = @FK_edition
         FETCH NEXT FROM curseur_supprimer_afficher INTO @FK_edition;
-    END
-     
-    CLOSE curseur_supprimer_afficher
-    DEALLOCATE curseur_supprimer_afficher
+         
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            UPDATE Afficher SET Supprimer = 2 WHERE FK_edition = @FK_edition
+            FETCH NEXT FROM curseur_supprimer_afficher INTO @FK_edition;
+        END
+         
+        CLOSE curseur_supprimer_afficher
+        DEALLOCATE curseur_supprimer_afficher
 
+
+    IF @Cpt > 0
+    BEGIN
+        UPDATE Edition SET Supprimer = 1 WHERE Numero_edition = @Numero_edition
+        PRINT 'L''edition ne peut pas etre supprimer pour le moment car il reste des exmplaires en reservation ou en location';
+        RETURN 1;
+    END
+    UPDATE Edition SET Supprimer = 2 WHERE Numero_edition = @Numero_edition    
     PRINT 'L''edition a ete supprimer'
     RETURN 0;
 
@@ -4797,7 +5204,7 @@ GO
 /*BdD ouf_tim                                   */
 /*Procedure suppression film                    */
 /*Auteur(s): GOUALARD MICKAEL                   */
-/*Testeur(s):                                   */
+/*Testeur(s): GOUALARD MICKAEL                  */
 /*Correcteur:                                   */
 /*Intégrateur: GOUALARD MICKAEL                 */
 
@@ -4844,30 +5251,24 @@ BEGIN
         SELECT Numero_edition FROM Edition WHERE FK_titre = @Titre AND FK_complement_titre = @Complement_titre AND Supprimer <> 2
      
     OPEN curseur_supprimer_edition
-     
-    FETCH NEXT FROM curseur_supprimer_edition INTO @Numero_edition;
-    
-    IF @@FETCH_STATUS <> 0 
-    BEGIN    
-        PRINT 'Tous les editions de ce film sont deja supprime';
-    END
-     
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        EXEC @Tmp = dbo.supprimer_edition @Numero_edition;
-        SET @Cpt = @Cpt + @Tmp;
+         
         FETCH NEXT FROM curseur_supprimer_edition INTO @Numero_edition;
-    END
-     
+        
+        IF @@FETCH_STATUS <> 0 
+        BEGIN    
+            PRINT 'Tous les editions de ce film sont deja supprime';
+        END
+         
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            EXEC @Tmp = dbo.supprimer_edition @Numero_edition;
+            SET @Cpt = @Cpt + @Tmp;
+            FETCH NEXT FROM curseur_supprimer_edition INTO @Numero_edition;
+        END
+         
     CLOSE curseur_supprimer_edition
     DEALLOCATE curseur_supprimer_edition
 
-    IF @Cpt > 0
-    BEGIN
-        UPDATE Films SET Supprimer = 1 WHERE Titre = @Titre AND Complement_titre = @Complement_titre
-        PRINT 'L''edition ne peut pas etre supprimer';
-        RETURN 1;
-    END
 
     DECLARE @Nom NVARCHAR (50), 
             @Prenom NVARCHAR (50), 
@@ -4878,24 +5279,24 @@ BEGIN
      
     OPEN curseur_supprimer_acteur
      
-    FETCH NEXT FROM curseur_supprimer_acteur INTO @Nom, @Prenom, @Date_naissance;
-    
-    IF @@FETCH_STATUS <> 0 
-    BEGIN    
-        PRINT 'Tous les acteurs relie uniquement a ce film sont deja supprime';
-        RETURN 0;
-    END
-     
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        IF (SELECT COUNT (*) FROM Jouer WHERE FK_nom_acteur = @Nom AND  FK_prenom_acteur = @Prenom AND FK_date_de_naissance_acteur = @Date_naissance) = 1
-        BEGIN
-            UPDATE Acteur SET Supprimer = 2 WHERE Nom = @Nom AND Prenom = @Prenom AND Date_naissance = @Date_naissance
-            PRINT 'Un acteur a ete supprime';
-        END
-        UPDATE Jouer SET Supprimer = 2 WHERE FK_titre_film = @Titre AND FK_complement_titre = @Complement_titre AND FK_nom_acteur = @Nom AND FK_prenom_acteur = @Prenom AND FK_date_de_naissance_acteur = @Date_naissance
         FETCH NEXT FROM curseur_supprimer_acteur INTO @Nom, @Prenom, @Date_naissance;
-    END
+        
+        IF @@FETCH_STATUS <> 0 
+        BEGIN    
+            PRINT 'Tous les acteurs relie uniquement a ce film sont deja supprime';
+            RETURN 0;
+        END
+         
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            IF (SELECT COUNT (*) FROM Jouer WHERE FK_nom_acteur = @Nom AND  FK_prenom_acteur = @Prenom AND FK_date_de_naissance_acteur = @Date_naissance AND Supprimer = 0) = 1
+            BEGIN
+                UPDATE Acteur SET Supprimer = 2 WHERE Nom = @Nom AND Prenom = @Prenom AND Date_naissance = @Date_naissance
+                PRINT 'Un acteur a ete supprime';
+            END
+            UPDATE Jouer SET Supprimer = 2 WHERE FK_titre_film = @Titre AND FK_complement_titre = @Complement_titre AND FK_nom_acteur = @Nom AND FK_prenom_acteur = @Prenom AND FK_date_de_naissance_acteur = @Date_naissance
+            FETCH NEXT FROM curseur_supprimer_acteur INTO @Nom, @Prenom, @Date_naissance;
+        END
      
     CLOSE curseur_supprimer_acteur
     DEALLOCATE curseur_supprimer_acteur
@@ -4904,13 +5305,20 @@ BEGIN
     SELECT @Prenom = FK_prenom_real FROM Realiser WHERE FK_titre_film = @Titre AND FK_complement_titre = @Complement_titre
     SELECT @Date_naissance = FK_date_naissance FROM Realiser WHERE FK_titre_film = @Titre AND FK_complement_titre = @Complement_titre
 
-    IF (SELECT COUNT (*) FROM Realiser WHERE FK_nom_real = @Nom AND FK_prenom_real = @Prenom AND FK_date_naissance = @Date_naissance) = 1
+    IF (SELECT COUNT (*) FROM Realiser WHERE FK_nom_real = @Nom AND FK_prenom_real = @Prenom AND FK_date_naissance = @Date_naissance AND Supprimer = 0) = 1
     BEGIN
-        UPDATE Realisateur SET Supprimer = 1 WHERE Nom = @Nom AND Prenom = @Prenom AND Date_naissance = @Date_naissance
+        UPDATE Realisateur SET Supprimer = 2 WHERE Nom = @Nom AND Prenom = @Prenom AND Date_naissance = @Date_naissance
         PRINT 'Le realisateur de ce film a ete supprime';
     END
 
     UPDATE Realiser SET Supprimer = 2 WHERE FK_titre_film = @Titre AND FK_complement_titre = @Complement_titre AND FK_nom_real = @Nom AND FK_prenom_real = @Prenom AND FK_date_naissance = @Date_naissance
+
+    IF @Cpt > 0
+    BEGIN
+        UPDATE Films SET Supprimer = 1 WHERE Titre = @Titre AND Complement_titre = @Complement_titre
+        PRINT 'Le film ne peut pas etre supprimer';
+        RETURN 1;
+    END
 
     UPDATE Films SET Supprimer = 2 WHERE Titre = @Titre AND Complement_titre = @Complement_titre
     PRINT 'Le film a ete supprimer';
@@ -4919,7 +5327,6 @@ BEGIN
 END
 GO
 
---IL MANQUE TRIGGER SUR RETOUR_LOC QUI EXEC dbo.supprimer_film POUR LE FILM SI L'EXEMPLAIRE QUI VIENT D'ETRE RETOURNER EST EN SUPPRIMER = 1
 
 
 
@@ -4930,25 +5337,54 @@ IF OBJECT_ID('dbo.declencheur_supprimer_film', 'TR') IS NOT NULL
 GO
 
 CREATE TRIGGER dbo.declencheur_supprimer_film
-ON Locations AFTER UPDATE 
+ON Exemplaires
+AFTER UPDATE
 AS
 BEGIN
-    DECLARE @Num_exemplaire INT,
-            @Titre NVARCHAR (50),
-            @Complement_titre NVARCHAR (50),
-            @Num_edition INT
-
-    SELECT @Num_exemplaire = FK_exemplaire FROM inserted
-
-    IF (SELECT Supprimer FROM Exemplaires WHERE Numero_exemplaire = @Num_exemplaire) = 1
+    IF (UPDATE (Disponibilite) and (SELECT Disponibilite FROM inserted) = 1)
     BEGIN
-        SELECT @Num_edition = FK_numero_edition FROM Exemplaires WHERE Numero_exemplaire = @Num_exemplaire;
-        SELECT @Titre = FK_titre FROM Edition WHERE Numero_edition = @Num_edition;
-        SELECT @Complement_titre = FK_complement_titre FROM Edition WHERE Numero_edition = @Num_edition;
-        EXEC dbo.supprimer_film @Titre, @Complement_titre;
+		DECLARE @Num_exemplaire INT,
+				@Titre NVARCHAR (50),
+				@Complement_titre NVARCHAR (50),
+				@Num_edition INT
+
+		SELECT @Num_exemplaire = Numero_exemplaire FROM inserted
+
+		IF (SELECT Supprimer FROM Exemplaires WHERE Numero_exemplaire = @Num_exemplaire) = 1
+		BEGIN
+			SELECT @Num_edition = FK_numero_edition FROM Exemplaires WHERE Numero_exemplaire = @Num_exemplaire;
+			SELECT @Titre = FK_titre FROM Edition WHERE Numero_edition = @Num_edition;
+			SELECT @Complement_titre = FK_complement_titre FROM Edition WHERE Numero_edition = @Num_edition;
+			PRINT 'L''exemplaire revenu en stock appartient a un film qui doit etre supprimer : suppression de l''exemplaire';
+			UPDATE dbo.Exemplaires SET Supprimer = 2 WHERE Numero_exemplaire = @Num_exemplaire;
+			UPDATE dbo.Exemplaires SET Disponibilite = 0 WHERE Numero_exemplaire = @Num_exemplaire;
+			IF NOT EXISTS (SELECT TOP 1 * FROM Exemplaires WHERE FK_numero_edition = @Num_edition AND Supprimer <> 2)
+			BEGIN
+				PRINT 'L''edition de l''exemplaire revenu en stock peut etre supprimer : suppression de l''edition'; 
+				UPDATE dbo.Edition SET Supprimer = 2 WHERE Numero_edition = @Num_edition;
+				IF NOT EXISTS (SELECT TOP 1 * FROM Edition WHERE FK_titre = @Titre AND FK_complement_titre = @Complement_titre AND Supprimer <> 2)
+				BEGIN
+					PRINT 'Le film de l''edition supprime ne possede plus d''edition non-supprime : suppression du film';
+					UPDATE Films SET Supprimer = 2 WHERE Titre = @Titre AND Complement_titre = @Complement_titre;
+				END
+				ELSE
+				BEGIN
+					PRINT 'Le film possede encore des editions non-supprime : suppression du film impossible';
+				END
+			END
+			ELSE
+			BEGIN
+				PRINT 'L''edition de l''exemplaire revenu en stock possede encore des exemplaires non-supprime : suppression de l''edition impossible';
+			END
+		END
+		ELSE
+		BEGIN
+			PRINT 'L''exemplaire revenu ne doit pas etre supprimer';
+		END
     END
 END
 GO
+
 
 
 /*L2 ATIC 2013 GROUPE ouf_tim						    */
@@ -4959,10 +5395,10 @@ GO
 /*Intégrateur: LADURANTI Sandra							*/
 
 USE "ouf_tim"
-IF OBJECT_ID ('Suppression_abonne_resa_imm', 'P') IS NOT NULL
-DROP PROCEDURE Suppression_abonne_resa_imm;
+IF OBJECT_ID ('Recuperation_abonne_resa_imm', 'P') IS NOT NULL
+DROP PROCEDURE Recuperation_abonne_resa_imm;
 GO
-CREATE PROCEDURE Suppression_abonne_resa_imm(
+CREATE PROCEDURE Recuperation_abonne_resa_imm(
 	@Num_abo INT
 )
 
@@ -4970,9 +5406,11 @@ AS
 BEGIN
 
 	DECLARE @num_resa INT
+	DECLARE @Nb_resa_imm INT
+	SET @Nb_resa_imm = 0
 
 	DECLARE cur_num_resa_imm CURSOR LOCAL FOR
-	SELECT TOP 1 Numero_reservation FROM Reservation_immediate  WHERE FK_num_abonnement = @Num_abo AND Etat='En cours'
+	SELECT Numero_reservation FROM Reservation_immediate  WHERE FK_num_abonnement = @Num_abo AND Etat='En cours'
 
 	OPEN cur_num_resa_imm ;
 		FETCH NEXT FROM cur_num_resa_imm  INTO @num_resa;
@@ -4985,15 +5423,30 @@ BEGIN
 		ELSE
 		WHILE (@@FETCH_STATUS = 0)
 		BEGIN
+		DECLARE @HD_creation DATETIME
+		DECLARE @HD_fin DATETIME
 		
+		SET @HD_creation = (SELECT HD_creation FROM Reservation_immediate WHERE FK_num_abonnement = @Num_abo)
+		SET @HD_fin = (SELECT HD_butoir FROM Reservation_immediate WHERE FK_num_abonnement = @Num_abo )	
+		PRINT '---------------------------------------------------------------------'			
 		PRINT 'Votre réservation immediate numéro :'+cast(@num_resa as VARCHAR)+' est toujours en cours'
-		RETURN 1;
+		PRINT 'Crée le : '+cast(@HD_creation as VARCHAR)
+		PRINT 'Fin prévue pour le :'+cast(@HD_fin as VARCHAR)
+		PRINT '---------------------------------------------------------------------'
+		SET @Nb_resa_imm = @Nb_resa_imm + 1
 		
 		FETCH NEXT FROM cur_num_resa_imm INTO @num_resa; 
 		END
  
  CLOSE cur_num_resa_imm;
  DEALLOCATE cur_num_resa_imm;
+ 
+ IF @Nb_resa_imm > 0
+ BEGIN
+	PRINT 'Vous avez au total '+cast(@Nb_resa_imm as VARCHAR)+ 'réservations immédiates en cours'
+	
+	RETURN 1;
+ END
 		
 		
 END
@@ -5007,10 +5460,10 @@ GO
 /*Intégrateur: LADURANTI Sandra							*/
 
 USE "ouf_tim"
-IF OBJECT_ID ('Suppression_abonne_resa_liv', 'P') IS NOT NULL
-DROP PROCEDURE Suppression_abonne_resa_liv;
+IF OBJECT_ID ('Recuperation_abonne_resa_liv', 'P') IS NOT NULL
+DROP PROCEDURE Recuperation_abonne_resa_liv;
 GO
-CREATE PROCEDURE Suppression_abonne_resa_liv(
+CREATE PROCEDURE Recuperation_abonne_resa_liv(
 	@Num_abo INT
 )
 
@@ -5018,9 +5471,11 @@ AS
 BEGIN
 
 	DECLARE @num_resa INT
+	DECLARE @Nb_resa_liv INT
+	SET @Nb_resa_liv = 0
 
 	DECLARE cur_num_resa_liv CURSOR LOCAL FOR
-	SELECT TOP 1 Numero_reservation FROM Reservation_livraison  WHERE FK_num_abonnement = @Num_abo
+	SELECT Numero_reservation FROM Reservation_livraison  WHERE FK_num_abonnement = @Num_abo
 
 	OPEN cur_num_resa_liv ;
 		FETCH NEXT FROM cur_num_resa_liv  INTO @num_resa;
@@ -5033,17 +5488,30 @@ BEGIN
 		ELSE
 		WHILE (@@FETCH_STATUS = 0)
 		BEGIN
+		DECLARE @HD_creation DATETIME
+		DECLARE @HD_retour DATETIME
 		
-		PRINT 'Votre réservation livraison numéro :'+cast(@num_resa as VARCHAR)+' est toujours en cours'
-		RETURN 1;
+		SET @HD_creation = (SELECT HD_creation FROM Reservation_livraison WHERE FK_num_abonnement = @Num_abo)
+		SET @HD_retour = (SELECT HD_retour FROM Reservation_livraison WHERE FK_num_abonnement = @Num_abo )	
+		PRINT '---------------------------------------------------------------------'			
+		PRINT 'Votre réservation immediate numéro :'+cast(@num_resa as VARCHAR)+' est toujours en cours'
+		PRINT 'Crée le : '+cast(@HD_creation as VARCHAR)
+		PRINT 'Fin prévue pour le :'+cast(@HD_retour as VARCHAR)
+		PRINT '---------------------------------------------------------------------'
 		
 		FETCH NEXT FROM cur_num_resa_liv INTO @num_resa; 
 		END
  
  CLOSE cur_num_resa_liv;
  DEALLOCATE cur_num_resa_liv;
-		
-		
+
+IF @Nb_resa_liv > 0
+BEGIN
+	PRINT 'Vous avez au total '+cast(@Nb_resa_liv as VARCHAR)+ 'réservations livraisons en cours'
+	
+	RETURN 1;
+END
+ 	
 END
 GO
 
@@ -5056,10 +5524,10 @@ GO
 /*Intégrateur: LADURANTI Sandra							*/
 
 USE "ouf_tim"
-IF OBJECT_ID ('Suppression_abonne_location', 'P') IS NOT NULL
-DROP PROCEDURE Suppression_abonne_location;
+IF OBJECT_ID ('Recuperation_abonne_location', 'P') IS NOT NULL
+DROP PROCEDURE Recuperation_abonne_location;
 GO
-CREATE PROCEDURE Suppression_abonne_location(
+CREATE PROCEDURE Recuperation_abonne_location(
 	@Num_abo INT
 )
 
@@ -5067,9 +5535,11 @@ AS
 BEGIN
 
 	DECLARE @num_location INT
+	DECLARE @Nb_location INT
+	SET @Nb_location = 0
 
 	DECLARE cur_location CURSOR LOCAL FOR
-	SELECT TOP 1 Numero_location FROM Locations  WHERE FK_num_abonnement = @Num_abo AND Date_fin_reelle is NULL
+	SELECT Numero_location FROM Locations  WHERE FK_num_abonnement = @Num_abo AND Date_fin_reelle is NULL
 
 	OPEN cur_location ;
 		FETCH NEXT FROM cur_location INTO @num_location;
@@ -5082,27 +5552,59 @@ BEGIN
 		ELSE
 		WHILE (@@FETCH_STATUS = 0)
 		BEGIN
+		-- Variable pour la relance retard
+		DECLARE @num_retard INT
+		DECLARE @Niv_retard INT
+		DECLARE @HD_crea DATETIME
+		
+		-- Varibale pour la location
+		DECLARE @Date_debut DATETIME
+		DECLARE @Date_fin_prevue DATETIME
+		
+		SET @Date_debut = (SELECT Date_debut FROM Locations WHERE Numero_location = @num_location)
+		SET @Date_fin_prevue = (SELECT Date_fin_prevue FROM Locations WHERE Numero_location = @num_location)
+		
+		
+		
+		SET @num_retard = (SELECT Numero_retard FROM Relance_retards WHERE @num_location = FK_num_location )
+		SET @Niv_retard = (SELECT Niveau_de_retard FROM Relance_retards WHERE @num_retard = Numero_retard )
+		SET @HD_crea = (SELECT Date_creation FROM Relance_retards WHERE @num_retard = Numero_retard )
+		
 		
 		
 		IF EXISTS(SELECT FK_num_location FROM Relance_retards WHERE FK_num_location = @num_location AND Etat = 'En cours')
 			BEGIN
 				PRINT 'Votre location numéro :'+cast(@num_location as VARCHAR)+' est toujours en cours'
 				PRINT 'De plus vous avez un retard sur la location'
-				RETURN 1;
+				PRINT ' --- Relance retard numero :'+cast(@num_retard as VARCHAR)+ ' ----'
+				PRINT ' Niveau de retard : '+cast(@Niv_retard as VARCHAR)
+				PRINT ' Crée le :'+cast(@HD_crea as VARCHAR)
+				PRINT 'Vous devez retourner cette location'
+				PRINT ''
+				
 			END
 		ELSE
 			BEGIN
 				PRINT 'Votre location numéro :'+cast(@num_location as VARCHAR)+' est toujours en cours'
-				PRINT 'Vous devez d''abord rendre la location'
-				RETURN 1;
+				PRINT 'Crée le : '+cast(@Date_debut as VARCHAR)
+				PRINT 'A retourner avant le : '+cast(@Date_fin_prevue as VARCHAR)
+				PRINT ''
+				
+				
 			END
+		SET @Nb_location = @Nb_location + 1	
 		
 		FETCH NEXT FROM cur_location INTO @num_location; 
 		END
  
  CLOSE cur_location;
  DEALLOCATE cur_location;
-		
+
+IF @Nb_location > 0
+BEGIN
+	PRINT 'Vous avez actuellement '+cast(@Nb_location as VARCHAR)+' locations en cours'
+	RETURN 1;
+END		
 		
 END
 GO
@@ -5115,124 +5617,49 @@ GO
 /*Intégrateur: LADURANTI Sandra							*/
 
 USE "ouf_tim"
-IF OBJECT_ID ('Suppression_abonne_compte', 'P') IS NOT NULL
-DROP PROCEDURE Suppression_abonne_compte;
+IF OBJECT_ID ('Recuperation_abonne_compte', 'P') IS NOT NULL
+DROP PROCEDURE Recuperation_abonne_compte;
 GO
-CREATE PROCEDURE Suppression_abonne_compte(
+CREATE PROCEDURE Recuperation_abonne_compte(
 	@Num_abo INT
 )
 
 AS
 BEGIN
-
+	
 	DECLARE @num_compte INT
 
-	DECLARE cur_compte CURSOR LOCAL FOR
-	SELECT FK_numcompte FROM Abonnement  WHERE Numero_abonnement = @num_abo
-
-	OPEN cur_compte ;
-		FETCH NEXT FROM cur_compte INTO @num_compte;
-		IF @@FETCH_STATUS =-1
+		
+	DECLARE @Solde MONEY
+	DECLARE @Num_relance_d INT
+	DECLARE @Niveau_retard INT
+	DECLARE @HD_crea DATETIME
+	
+	SET @num_compte = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @Num_abo )
+			
+	SET @Num_relance_d = (SELECT Numero_decouvert FROM Relance_decouvert WHERE FK_numero_compte =@num_compte )
+	SET @Niveau_retard = (SELECT Niveau_decouvert FROM Relance_decouvert WHERE @Num_relance_d = Numero_decouvert )
+	SET @HD_crea = (SELECT Date_creation FROM Relance_decouvert WHERE @Num_relance_d = Numero_decouvert )
+	SET @Solde = (SELECT Montant FROM Compte WHERE Numero_compte = @num_compte)
+			
+	IF EXISTS (SELECT FK_numero_compte FROM Relance_decouvert WHERE FK_numero_compte = @num_compte )
 		BEGIN
-			PRINT 'Aucun compte en cours'
-			RETURN 0;
+			PRINT ' Vous avez une relance de découverte sur votre compte n° :  '+cast(@num_compte as VARCHAR)
+			PRINT ' Numero retard : '+cast(@Num_relance_d as VARCHAR)
+			PRINT ' Niveau découvert : '+cast(@Niveau_retard as VARCHAR)
+			PRINT ' Crée le : '+cast(@HD_crea as VARCHAR)
+			PRINT ' Le Solde de votre compte numéro :'+cast(@num_compte as VARCHAR)+' est de : '+cast(@Solde as VARCHAR)+' euros'
+			RETURN 1;
 		END
-	
 		ELSE
-		WHILE (@@FETCH_STATUS = 0)
-		BEGIN
-		
-			DECLARE @Solde MONEY
-	
-			SET @Solde = (SELECT Montant FROM Compte WHERE Numero_compte = @num_compte)
-	
-			IF EXISTS (SELECT FK_numero_compte FROM Relance_decouvert WHERE FK_numero_compte =@num_compte )
-			BEGIN
-				PRINT 'Vous nous devez encore '+cast(@Solde as VARCHAR)+ 'euros'
-				RETURN 1;
-			END
-			ELSE
-			BEGIN
-				PRINT 'Nous allons vous rembourser '+cast(@Solde as VARCHAR)+ 'euros'
-			END
+		BEGIN 							
+			PRINT 'Le Solde de votre compte numéro :'+cast(@num_compte as VARCHAR)+' est de : '+cast(@Solde as VARCHAR)+' euros'
+		END
 			
-			FETCH NEXT FROM cur_compte INTO @num_compte;
-			END
-			
- 
- CLOSE cur_compte;
- DEALLOCATE cur_compte;
-		
+			 		
 		
 END
 GO
-
-/*L2 ATIC 2013 GROUPE ouf_tim						    */
-/*BdD ouf_tim suppression abonne  -> Souscrire		    */
-/*Auteur(s): PATRICK POL								*/
-/*testeur(s): PATRICK POL								*/
-/*Correcteur : 	PATRICK POL								*/
-/*Intégrateur: LADURANTI Sandra							*/
-
-USE "ouf_tim"
-IF OBJECT_ID ('Suppression_abonne_souscription', 'P') IS NOT NULL
-DROP PROCEDURE Suppression_abonne_souscription;
-GO
-CREATE PROCEDURE Suppression_abonne_souscription(
-	@Num_abo INT
-)
-
-AS
-BEGIN
-
-	DECLARE @num_souscription INT
-
-	DECLARE cur_souscrire CURSOR LOCAL FOR
-	SELECT FK_num_abonnement FROM Souscrire  WHERE FK_num_abonnement = @num_abo
-
-	OPEN cur_souscrire ;
-		FETCH NEXT FROM cur_souscrire;
-		IF @@FETCH_STATUS =-1
-		BEGIN
-			PRINT 'Aucun souscription supprimer'
-			RETURN 0;
-		END
-	
-		ELSE
-		WHILE (@@FETCH_STATUS = 0)
-		BEGIN
-		
-		DECLARE @var_resa_imm INT
-			DECLARE @var_resa_liv INT
-			DECLARE @var_location INT
-			DECLARE @var_compte INT
-
-			
-			EXEC @var_resa_imm = Suppression_abonne_resa_imm @num_abo;			
-			EXEC @var_resa_liv = Suppression_abonne_resa_liv @num_abo;			
-			EXEC @var_location = Suppression_abonne_location @num_abo;
-			EXEC @var_compte = Suppression_abonne_compte @num_abo;
-			
-			
-			
-			IF @var_resa_imm = 0 AND @var_resa_liv = 0 AND @var_location = 0 AND @var_compte = 0
-			BEGIN
-				
-				UPDATE Souscrire SET Supprimer = 2 WHERE FK_num_abonnement = @num_abo;
-			END
-		
-			
-			
-			FETCH NEXT FROM cur_souscrire;
-			END
-			
- 
-			CLOSE cur_souscrire;
-			DEALLOCATE cur_souscrire;
-				
-END
-GO
-
 
 /*L2 ATIC 2013 GROUPE ouf_tim						    */
 /*BdD ouf_tim suppression abonne					    */
@@ -5254,58 +5681,979 @@ CREATE PROCEDURE Suppression_abonne(
 AS
 BEGIN
 
-DECLARE @num_abo INT
+	DECLARE @num_abo INT
+	DECLARE @etat_sup INT
+	DECLARE @Total_des_comptes MONEY
+	SET @Total_des_comptes = 0
+	DECLARE @verif INT
+	SET @verif = 0
 
-IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Abonne WHERE Nom=@Nom_sup AND Prenom=@Prenom_sup AND Pseudo = @Pseudo_sup)
+
+	IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Abonne WHERE Nom=@Nom_sup AND Prenom=@Prenom_sup AND Pseudo = @Pseudo_sup)
+		BEGIN
+			PRINT 'Abonne non existant dans la base'
+			RETURN;
+		END
+	
+	SET @etat_sup = (SELECT Supprimer FROM Abonne WHERE Nom=@Nom_sup AND Prenom=@Prenom_sup AND Pseudo = @Pseudo_sup)
+
+	IF @etat_sup = 2
 	BEGIN
-		PRINT 'Abonne non existant dans la base'
+		PRINT 'L''abonne a déjà été supprimer'
 		RETURN;
 	END
 
-DECLARE cur_num_abonnement CURSOR LOCAL FOR
-SELECT TOP 1 FK_num_abonnement FROM Souscrire  WHERE FK_nom_abonne=@Nom_sup AND FK_prenom = @Prenom_sup AND FK_pseudo = @Pseudo_sup
+	DECLARE cur_num_abonnement CURSOR LOCAL FOR
+	SELECT FK_num_abonnement FROM Souscrire  WHERE FK_nom_abonne=@Nom_sup AND FK_prenom = @Prenom_sup AND FK_pseudo = @Pseudo_sup AND Supprimer = 0
 
-OPEN cur_num_abonnement;
-FETCH NEXT FROM cur_num_abonnement INTO @num_abo;
-	IF @@FETCH_STATUS =-1
-	BEGIN
-		PRINT 'Aucune suppression a effectué'
-		RETURN 0;
-	END
+	OPEN cur_num_abonnement;
+	FETCH NEXT FROM cur_num_abonnement INTO @num_abo;
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Aucune suppression a effectué'
+			RETURN 0;
+		END
 	
-	ELSE
-	WHILE (@@FETCH_STATUS = 0)
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
 		BEGIN
 		
 			PRINT '----- Avec votre abonnement numero : '+cast(@num_abo as VARCHAR)+'-----'
 	
 			DECLARE @var_souscrire INT
 			DECLARE @Num_compte INT
+			DECLARE @solde MONEY
 			
+			DECLARE @etat_resa_imm INT
+			DECLARE @etat_resa_liv INT
+			DECLARE @etat_loc INT
+			DECLARE @etat_compte INT
 			
-			EXEC @var_souscrire = Suppression_abonne_souscription @num_abo;
+			EXEC @etat_resa_imm = Recuperation_abonne_resa_imm @num_abo
+			EXEC @etat_resa_liv = Recuperation_abonne_resa_liv @num_abo
+			EXEC @etat_loc = Recuperation_abonne_location @num_abo
+			EXEC @etat_compte = Recuperation_abonne_compte @num_abo
 			
-			IF @var_souscrire = 0
+			SET @Num_compte = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @num_abo) 
+			
+			SET @Total_des_comptes = (SELECT SUM(Montant) FROM Souscrire INNER JOIN Abonnement ON FK_num_abonnement =Numero_abonnement 
+			INNER JOIN Compte ON FK_numcompte = Numero_compte  WHERE FK_nom_abonne= @Nom_sup AND FK_prenom = @Prenom_sup AND FK_pseudo = @Pseudo_sup)
+			
+			IF @etat_resa_imm = 0 AND @etat_resa_liv = 0 AND @etat_loc =0 AND @etat_compte = 0 AND @Total_des_comptes >= 0
 			BEGIN
-				SET @Num_compte = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @num_abo) 
-				PRINT 'L''abonne '+cast(@Nom_sup as VARCHAR)+' '+cast(@Prenom_sup as VARCHAR)+' '+cast(@Pseudo_sup as VARCHAR)+' va être supprimer'
-				UPDATE Abonne SET Supprimer = 2 WHERE Nom=@Nom_sup AND Prenom=@Prenom_sup AND Pseudo = @Pseudo_sup
-				UPDATE Abonnement SET Supprimer = 2 WHERE Numero_abonnement = @num_abo
-				UPDATE Compte SET Supprimer = 2 WHERE @Num_compte  = Numero_compte 
+				PRINT 'Vous avez aucun problème au niveau de votre abonnement numero : '+cast(@num_abo as VARCHAR)
+				UPDATE Abonnement SET Supprimer = 2 WHERE Numero_abonnement = @num_abo 
+				UPDATE Compte SET Supprimer = 2 WHERE @Num_compte = Numero_compte
+				UPDATE Souscrire SET Supprimer = 2 WHERE FK_num_abonnement = @num_abo
 			END
 			ELSE
 			BEGIN
-				PRINT 'l''abonne ne peut pas être supprimé actuellement'
+				IF @etat_resa_imm = 1
+				BEGIN
+					PRINT 'Vous avez des réservations immédiates en cours'
+					PRINT 'Vous devez annuler vos réservations immédiates en cours'
+					SET @verif = 1
+					
+				END
+				IF @etat_resa_liv = 1
+				BEGIN
+					PRINT 'Vous avez des réservations livraisons en cours'
+					PRINT 'Vous devez dans un premier nous retourner les exemplaires en cours'
+					SET @verif = 1
+					
+				END
+				IF @etat_loc = 1
+				BEGIN
+					PRINT 'Vous avez des locations en cours'
+					PRINT 'Vous devez d''abord rendre les locations en cours'
+					SET @verif = 1
+					
+				END
+				IF @etat_compte = 1 AND @Total_des_comptes < 0
+				BEGIN
+					SET @Total_des_comptes = -@Total_des_comptes 
+					PRINT 'Votre compte est dans le rouge'
+					PRINT 'Vous nous devez: '+cast(@Total_des_comptes as VARCHAR)+' euros'
+					SET @verif = 1
+					
+				END	
 			END
-			
-
-
-			FETCH NEXT FROM cur_num_abonnement INTO @num_abo; 
+							
+				FETCH NEXT FROM cur_num_abonnement INTO @num_abo; 
 			END
  
 	CLOSE cur_num_abonnement;
 	DEALLOCATE cur_num_abonnement;
+	
+	IF @Total_des_comptes >=0 and @verif = 0
+	BEGIN
+		PRINT 'Nous allons rembourser à '+cast(@Nom_sup as VARCHAR)+' '+ cast(@Prenom_sup as VARCHAR)+', '+cast(@Total_des_comptes as VARCHAR)+' euros'
+		UPDATE Abonne SET Supprimer = 2 WHERE Nom=@Nom_sup AND Prenom =@Prenom_sup AND Pseudo = @Pseudo_sup 
+		PRINT 'L''abonne '+cast(@Prenom_sup as VARCHAR)+' '+cast(@Nom_sup as VARCHAR)+' va etre supprimer'
+	END
+	ELSE
+	BEGIN
+		PRINT 'L''abonne ne peux être supprimer pour le moment'
+	END
+	
+END
 		
-END		
 
 GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure maj relance decouverte					    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s):	PATRICK POL								*/
+/*Correcteur : PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim" 
+IF OBJECT_ID ('maj_relance_decouverte', 'P') IS NOT NULL
+DROP PROCEDURE maj_relance_decouverte;
+GO
+CREATE PROCEDURE maj_relance_decouverte
+AS
+BEGIN
+
+DECLARE @Num_decouverte INT
+DECLARE @Date_mise_a_jour DATETIME
+DECLARE @Num_compte INT
+DECLARE @Niveau_decouverte INT
+
+DECLARE cur_relance_decouverte CURSOR LOCAL FOR
+SELECT Numero_decouvert FROM Relance_decouvert
+WHERE Niveau_decouvert < 6
+
+OPEN cur_relance_decouverte;
+FETCH NEXT FROM cur_relance_decouverte INTO @Num_decouverte;
+	IF @@FETCH_STATUS =-1
+	BEGIN
+		PRINT 'AUCUNE RELANCE DECOUVERTE EN COURS'
+		RETURN 0;
+	END
+	ELSE
+ 
+ 
+	while(@@FETCH_STATUS = 0)
+	BEGIN
+		DECLARE @ex_maj DATETIME
+		DECLARE @nom NVARCHAR (50)
+		DECLARE @prenom NVARCHAR (50)
+		DECLARE @pseudo NVARCHAR (50)
+		DECLARE @num_abo NVARCHAR (50)
+		
+		SET @ex_maj = (SELECT Date_mise_a_jour FROM Relance_decouvert WHERE Numero_decouvert = @Num_decouverte)
+	
+		SET @Niveau_decouverte = (SELECT Niveau_decouvert FROM Relance_decouvert WHERE Numero_decouvert = @Num_decouverte)
+		SET @Date_mise_a_jour = CURRENT_TIMESTAMP
+		SET @Num_compte = (SELECT FK_numero_compte FROM Relance_decouvert WHERE Numero_decouvert = @Num_decouverte )
+		SET @Niveau_decouverte = @Niveau_decouverte + 1
+		
+		SET @num_abo = (SELECT TOP 1 Numero_abonnement FROM Abonnement WHERE FK_numcompte = @Num_compte)
+		SET @nom = (SELECT TOP 1 FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement = @num_abo)
+		SET @prenom = (SELECT TOP 1 FK_prenom FROM Souscrire WHERE FK_num_abonnement = @num_abo AND FK_nom_abonne = @nom)
+		SET @pseudo = (SELECT TOP 1 FK_pseudo FROM Souscrire WHERE FK_num_abonnement = @num_abo AND FK_nom_abonne = @nom AND FK_prenom = @prenom)
+		
+		PRINT @nom 
+		PRINT @prenom
+		PRINT @pseudo
+
+		
+		SET @ex_maj = DATEADD(SECOND, 10, @ex_maj)
+		IF @ex_maj < @Date_mise_a_jour 
+		BEGIN
+			PRINT 'Le compte numero : '+cast(@Num_compte as VARCHAR)+ ' a été relancé, son niveau de relance est : '+cast(@Niveau_decouverte as VARCHAR)
+			UPDATE Relance_decouvert SET Niveau_decouvert = @Niveau_decouverte WHERE Numero_decouvert = @Num_decouverte 
+			UPDATE Relance_decouvert SET Date_mise_a_jour = @Date_mise_a_jour WHERE Numero_decouvert = @Num_decouverte
+			IF @Niveau_decouverte = 5
+			BEGIN
+				UPDATE Abonne SET Supprimer = 2 WHERE Nom=@nom AND Prenom = @prenom AND Pseudo = @pseudo
+			END
+		END
+				
+		
+		ELSE
+		BEGIN
+			PRINT 'Le compte numero : '+cast(@Num_compte as VARCHAR)+ ' a déjà été relancé, son niveau reste la même'
+		END
+	
+		FETCH NEXT FROM cur_relance_decouverte INTO @Num_decouverte;
+	
+	END
+	
+	CLOSE cur_relance_decouverte;
+	DEALLOCATE cur_relance_decouverte;
+	
+END
+GO
+
+
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure pour savoir si un abonnement est bientot expiré   */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s):	PATRICK POL								*/
+/*Correcteur : PATRICK POL								*/
+/*Intégrateur:											*/
+
+USE "ouf_tim" 
+IF OBJECT_ID ('etat_abonnement', 'P') IS NOT NULL
+DROP PROCEDURE etat_abonnement;
+GO
+CREATE PROCEDURE etat_abonnement
+
+AS
+BEGIN
+
+DECLARE @num_abo INT
+
+DECLARE cur_abonnement CURSOR LOCAL FOR
+SELECT Numero_abonnement FROM Abonnement WHERE Supprimer = 0
+
+OPEN cur_abonnement;
+FETCH NEXT FROM cur_abonnement INTO @num_abo;
+	IF @@FETCH_STATUS =-1
+	BEGIN
+		PRINT 'AUCUN ABONNEMENT PROCHE DE L''EXPIRATION'
+		RETURN 0;
+	END
+	ELSE
+ 
+ 
+	while(@@FETCH_STATUS = 0)
+	BEGIN
+	
+	DECLARE @Date_expi DATETIME
+	DECLARE @Type_abo NVARCHAR (50)
+	DECLARE @Num_compte INT
+	DECLARE @Date_rappel DATETIME
+	DECLARE @Nom NVARCHAR (50)
+	DECLARE @Prenom NVARCHAR (50)
+	
+	SET @Date_expi = (SELECT Date_expiration FROM Abonnement WHERE Numero_abonnement = @num_abo )
+	SET @Type_abo = (SELECT FK_type_abonnement FROM Abonnement WHERE Numero_abonnement = @num_abo)
+	SET @Num_compte = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @num_abo )
+	SET @Date_rappel = DATEADD(DAY, 3, CURRENT_TIMESTAMP)
+	SET @Nom = (SELECT TOP 1 FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement = @num_abo)
+	SET @Prenom = (SELECT TOP 1 FK_prenom FROM Souscrire WHERE FK_num_abonnement = @num_abo)
+	
+	IF @Date_rappel > @Date_expi
+	BEGIN
+		PRINT '--------- ATTENTION ---------'
+		PRINT cast(@Nom as VARCHAR)+' '+cast(@Prenom as VARCHAR)
+		PRINT 'Votre abonnement numéro : '+cast(@num_abo as VARCHAR)+' lié au compte numéro: '+cast(@Num_compte as VARCHAR)+' de type : '+cast(@Type_abo as VARCHAR)+' arrive à la date limite'  
+		PRINT 'Veuillez renouvellez l''abonnement' 
+		PRINT 'Merci'
+	END
+	
+	FETCH NEXT FROM cur_abonnement INTO @num_abo;
+	
+	END
+	
+	CLOSE cur_abonnement;
+	DEALLOCATE cur_abonnement;
+	
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure Renouveller abonnement					    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s):	PATRICK POL								*/
+/*Correcteur : PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID('Renouvelle_abonnement','P') IS NOT NULL
+DROP PROCEDURE Renouvelle_abonnement;
+GO
+CREATE PROCEDURE Renouvelle_abonnement(
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Pseudo NVARCHAR (50),
+	
+	@Num_abo INT
+	
+)
+
+AS
+BEGIN
+
+	DECLARE @Duree INT
+	DECLARE @Date_expi DATETIME
+	DECLARE @Type_abo NVARCHAR (50)
+	DECLARE @Num_compte INT
+	DECLARE @Solde MONEY
+	DECLARE @Prix MONEY
+	
+	IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Abonne WHERE Nom=@Nom AND Prenom=@Prenom AND Pseudo=@Pseudo)
+	BEGIN
+		PRINT 'L''abonne n''existe pas'
+		RETURN;
+	END
+	
+	IF NOT EXISTS(SELECT Numero_abonnement FROM Abonnement WHERE Numero_abonnement = @Num_abo)
+	BEGIN	
+		PRINT 'Le numero d''abonnement n''existe pas'
+		RETURN;
+	END
+	
+	IF NOT EXISTS (SELECT * FROM Souscrire WHERE FK_nom_abonne =@Nom AND FK_prenom = @Prenom AND FK_pseudo = @Pseudo AND FK_num_abonnement = @Num_abo)
+	BEGIN
+		PRINT 'La souscription ne correspond pas entre l''abonne et l''abonnement'
+		RETURN;
+	END
+	
+	SET @Date_expi = (SELECT Date_expiration FROM Abonnement WHERE Numero_abonnement = @Num_abo )
+	SET @Type_abo = (SELECT FK_type_abonnement FROM Abonnement WHERE Numero_abonnement = @Num_abo)
+	SET @Duree = (SELECT Duree_engagement FROM Type_abonnement WHERE Nom = @Type_abo)
+	
+	SET @Date_expi = DATEADD(DAY, @Duree, @Date_expi)
+	SET @Num_compte = (SELECT FK_numcompte FROM Abonnement WHERE Numero_abonnement = @Num_abo)
+	SET @Solde = (SELECT Montant FROM Compte WHERE Numero_compte = @Num_compte )
+	SET @Prix = (SELECT Prix FROM Type_abonnement WHERE Nom = @Type_abo)
+	
+	SET @Solde = @Solde - @Prix
+	
+	UPDATE Abonnement SET Date_expiration = @Date_expi WHERE Numero_abonnement = @Num_abo
+	UPDATE Compte SET Montant = @Solde WHERE Numero_compte = @Num_compte 
+	
+	
+END
+
+GO
+
+
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*BdD ouf_tim										    */
+/*Procedure pour connaitre la situation d'un abonne     */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s):	PATRICK POL								*/
+/*Correcteur : PATRICK POL								*/
+/*Intégrateur:	PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID('Situation_abonne', 'P') IS NOT NULL
+DROP PROCEDURE Situation_abonne;
+GO
+CREATE PROCEDURE Situation_abonne(
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Pseudo NVARCHAR (50)
+	
+)
+
+AS
+BEGIN
+
+	IF NOT EXISTS (SELECT * FROM Abonne WHERE Nom=@Nom AND Prenom =@Prenom AND Pseudo = @Pseudo )
+	BEGIN
+		PRINT 'Vous n''existez pas dans notre base de donnée'
+		RETURN;
+	END
+
+	DECLARE @num_abo INT
+	PRINT '---- Voici la liste des situations de vos comptes ---- '
+	
+	DECLARE cur_sit_abo CURSOR LOCAL FOR
+	SELECT FK_num_abonnement FROM Souscrire WHERE FK_nom_abonne = @Nom AND FK_prenom = @Prenom AND FK_pseudo = @Pseudo
+	
+	OPEN cur_sit_abo;
+	FETCH NEXT FROM cur_sit_abo INTO @num_abo;
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Vous n''avez effectué aucune activité'
+			RETURN 0;
+		END
+	
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+			
+			PRINT ''
+		
+			PRINT ' ---------- Abonnement numero '+cast(@num_abo as VARCHAR)+' ----------'
+			PRINT ''
+			PRINT ' ----- Vos réservations immédiates ----- '
+			EXEC Recuperation_abonne_resa_imm @num_abo
+			PRINT ''
+			PRINT ' ----- Vos réservations livraisons ----- '
+			EXEC Recuperation_abonne_resa_liv @num_abo
+			PRINT ''
+			PRINT ' ------------ Vos locations ------------ '
+			EXEC Recuperation_abonne_location @num_abo
+			PRINT ''
+			PRINT ' ------ Situation de votre compte ------ '
+			EXEC Recuperation_abonne_compte @num_abo
+			PRINT ''
+			
+		
+			FETCH NEXT FROM cur_sit_abo INTO @num_abo; 
+		END
+ 
+	CLOSE cur_sit_abo;
+	DEALLOCATE cur_sit_abo;
+	
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond de nettoyage d'abonne reservation  imm  */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): PATRICK POL								*/
+/*Correcteur : 	PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('Nettoyage_abonne_resa_imm', 'P') IS NOT NULL
+DROP PROCEDURE Nettoyage_abonne_resa_imm;
+GO
+CREATE PROCEDURE Nettoyage_abonne_resa_imm
+	@Num_abo INT
+
+AS
+BEGIN
+
+DECLARE @Num_reservation INT
+
+DECLARE cur_nettoyage_abo_resa_imm CURSOR LOCAL FOR
+SELECT Numero_reservation FROM Reservation_immediate WHERE FK_num_abonnement = @Num_reservation
+OPEN cur_nettoyage_abo_resa_imm ;
+
+FETCH NEXT FROM cur_nettoyage_abo_resa_imm INTO @Num_reservation
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Aucun exemplaire correspondant au numero de réservation immédiate'
+			RETURN 0;
+		END
+	
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+			DECLARE @num_exemplaire INT
+			SET @num_exemplaire = (SELECT FK_num_exemplaire FROM Reservation_immediate  WHERE Numero_reservation = @Num_reservation )
+			
+			DELETE FROM Exemplaires WHERE Numero_exemplaire = @num_exemplaire
+			DELETE FROM Reservation_immediate WHERE Numero_reservation = @Num_reservation 
+			
+		
+		FETCH NEXT FROM cur_nettoyage_abo_resa_imm INTO @Num_reservation
+		END
+		
+	CLOSE cur_nettoyage_abo_resa_imm;
+	DEALLOCATE cur_nettoyage_abo_resa_imm;
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond de nettoyage d'abonne reservation  liv  */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): PATRICK POL								*/
+/*Correcteur : 	PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('Nettoyage_abonne_resa_liv', 'P') IS NOT NULL
+DROP PROCEDURE Nettoyage_abonne_resa_liv;
+GO
+CREATE PROCEDURE Nettoyage_abonne_resa_liv
+	@Num_abo INT
+
+AS
+BEGIN
+
+DECLARE @Num_reservation INT
+
+DECLARE cur_nettoyage_abo_resa_liv CURSOR LOCAL FOR
+SELECT Numero_reservation FROM Reservation_livraison WHERE FK_num_abonnement = @Num_reservation
+OPEN cur_nettoyage_abo_resa_liv ;
+
+FETCH NEXT FROM cur_nettoyage_abo_resa_liv INTO @Num_reservation
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Aucun exemplaire correspondant au numero de réservation immédiate'
+			RETURN 0;
+		END
+	
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+			DECLARE @num_exemplaire INT
+			SET @num_exemplaire = (SELECT FK_num_exemplaire FROM Reservation_livraison  WHERE Numero_reservation = @Num_reservation )
+			
+			DELETE FROM Exemplaires WHERE Numero_exemplaire = @num_exemplaire
+			DELETE FROM Reservation_livraison WHERE Numero_reservation = @Num_reservation 
+			
+		
+		FETCH NEXT FROM cur_nettoyage_abo_resa_liv INTO @Num_reservation
+		END
+		
+	CLOSE cur_nettoyage_abo_resa_liv;
+	DEALLOCATE cur_nettoyage_abo_resa_liv;
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond de nettoyage d'abonne location		    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): PATRICK POL								*/
+/*Correcteur : 	PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('Nettoyage_abonne_location', 'P') IS NOT NULL
+DROP PROCEDURE Nettoyage_abonne_location;
+GO
+CREATE PROCEDURE Nettoyage_abonne_location
+	@Num_abo INT
+
+AS
+BEGIN
+
+DECLARE @Num_location INT
+
+DECLARE cur_nettoyage_abo_loc CURSOR LOCAL FOR
+SELECT Numero_location FROM Locations WHERE FK_num_abonnement = @Num_abo
+OPEN cur_nettoyage_abo_loc ;
+
+FETCH NEXT FROM cur_nettoyage_abo_loc INTO @Num_location
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Aucune suppression a effectué'
+			RETURN 0;
+		END
+	
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+			DECLARE @num_exemplaire INT
+			DECLARE @Niveau_de_retard INT
+			
+			DECLARE @Nom NVARCHAR (50)
+			DECLARE @Prenom NVARCHAR (50)
+			DECLARE @Pseudo NVARCHAR (50)
+			
+			DECLARE @DN DATE
+			DECLARE @Sexe NVARCHAR (50)
+			DECLARE @Numero_voie NVARCHAR (50)
+			DECLARE @Complement_de_voie NVARCHAR (50)
+			DECLARE @Type_de_voie NVARCHAR (50)
+			DECLARE @Libelle NVARCHAR (50)
+			DECLARE @Complement_libelle NVARCHAR (50)
+			DECLARE @Ville NVARCHAR (50)
+			DECLARE @Code_postal NVARCHAR (50)
+			DECLARE @Cedex NVARCHAR (50)
+			DECLARE @Pays NVARCHAR (50)
+			DECLARE @Numero_telephone NVARCHAR (50)
+			DECLARE @Adresse_email NVARCHAR (50)
+			DECLARE @Niveau_decouvert INT
+			
+			
+			SET @Nom = (SELECT TOP 1 FK_nom_abonne FROM Souscrire WHERE FK_num_abonnement = @Num_abo )
+			SET @Prenom = (SELECT FK_prenom FROM Souscrire WHERE FK_num_abonnement = @Num_abo AND @Nom = FK_nom_abonne )
+			SET @Pseudo = (SELECT FK_pseudo FROM Souscrire WHERE FK_num_abonnement = @Num_abo AND @Nom = FK_nom_abonne AND FK_prenom = @Prenom )
+			SET @DN = (SELECT Date_de_naissance FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Sexe = (SELECT Sexe FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Numero_voie = (SELECT Numero_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Complement_de_voie = (SELECT Complement_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@pseudo)
+			SET @Type_de_voie = (SELECT Type_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Libelle = (SELECT Libelle FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Complement_libelle = (SELECT Complement_libelle FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Code_postal = (SELECT Code_postal FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Ville = (SELECT Ville FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Cedex = (SELECT Cedex FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Pays = (SELECT Pays FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Numero_telephone = (SELECT Numero_telephone FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Adresse_email = (SELECT Adresse_email FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			
+			
+			SET @num_exemplaire = (SELECT FK_exemplaire FROM Locations WHERE Numero_location = @Num_location )
+			SET @Niveau_de_retard = (SELECT Niveau_de_retard FROM Relance_retards WHERE FK_num_location  = @Num_location )
+			
+			PRINT 'LE NIVEAU EST DE : '+cast(@Niveau_de_retard as VARCHAR)
+		
+			IF EXISTS (SELECT FK_num_location FROM Relance_retards WHERE FK_num_location = @Num_location)
+			BEGIN
+				PRINT 'Suppression des relances retards sur la location : '+cast(@Num_location as VARCHAR)
+				DELETE FROM Relance_retards WHERE @Num_location = FK_num_location;
+				
+			END
+		
+			IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Ancien_abonne WHERE Nom = @Nom AND Prenom = @Prenom AND Pseudo = @Pseudo ) AND @Niveau_de_retard >= 5
+				BEGIN
+					INSERT INTO Ancien_abonne (Nom, Prenom, Pseudo, Date_de_naissance, Sexe, Numero_de_voie, Complement_de_voie, Type_de_voie, Libelle, Complement_libelle, Code_postal, Ville, Cedex, Pays, Numero_telephone, Adresse_email, Date_suppression, Raison, Commentaire)  
+					VALUES (@Nom, @Prenom, @Pseudo, @DN,@Sexe, @Numero_voie, @Complement_de_voie , @Type_de_voie , @Libelle , @Complement_libelle , @Code_postal , @Ville, @Cedex, @Pays, @Numero_telephone, @Adresse_email , CURRENT_TIMESTAMP, 'Radiation', 'Location numero : ' + CAST(@Num_location as VARCHAR)+'avec avec retard de niveau 5')
+				END
+			
+			
+			DELETE FROM Retour_location WHERE FK_num_location =  @Num_location;
+		
+			DELETE FROM Locations WHERE Numero_location = @Num_location;
+		
+		FETCH NEXT FROM cur_nettoyage_abo_loc INTO @Num_location
+		END
+		
+	CLOSE cur_nettoyage_abo_loc;
+	DEALLOCATE cur_nettoyage_abo_loc;
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond de nettoyage d'abonne abonnement	    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): PATRICK POL								*/
+/*Correcteur : 	PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('Nettoyage_abonne_abonnement', 'P') IS NOT NULL
+DROP PROCEDURE Nettoyage_abonne_abonnement;
+GO
+CREATE PROCEDURE Nettoyage_abonne_abonnement(
+	@Nom NVARCHAR (50),
+	@Prenom NVARCHAR (50),
+	@Pseudo NVARCHAR (50)
+)
+
+AS
+BEGIN
+	DECLARE @num_abo INT
+	DECLARE @Total MONEY
+	
+	SET @Total = (SELECT SUM(Montant) FROM Souscrire INNER JOIN Abonnement ON FK_num_abonnement =Numero_abonnement 
+	INNER JOIN Compte ON FK_numcompte = Numero_compte  WHERE FK_nom_abonne= @Nom AND FK_prenom = @Prenom AND FK_pseudo = @Pseudo)
+
+	DECLARE cur_num_N_abonnement CURSOR LOCAL FOR
+	SELECT FK_num_abonnement FROM Souscrire  WHERE FK_nom_abonne=@Nom AND FK_prenom = @Prenom AND FK_pseudo = @Pseudo
+
+		OPEN cur_num_N_abonnement;
+		FETCH NEXT FROM cur_num_N_abonnement INTO @num_abo;
+			IF @@FETCH_STATUS =-1
+			BEGIN
+				PRINT 'Aucune suppression a effectué'
+				RETURN 0;
+			END
+	
+			ELSE
+			WHILE (@@FETCH_STATUS = 0)
+			BEGIN
+			
+			DECLARE @Num_compte INT	
+			DECLARE @Num_exemplaire_Resa_imm INT
+			DECLARE @Num_exemplaire_Resa_liv INT
+									
+			DECLARE @DN DATE
+			DECLARE @Sexe NVARCHAR (50)
+			DECLARE @Numero_voie NVARCHAR (50)
+			DECLARE @Complement_de_voie NVARCHAR (50)
+			DECLARE @Type_de_voie NVARCHAR (50)
+			DECLARE @Libelle NVARCHAR (50)
+			DECLARE @Complement_libelle NVARCHAR (50)
+			DECLARE @Ville NVARCHAR (50)
+			DECLARE @Code_postal NVARCHAR (50)
+			DECLARE @Cedex NVARCHAR (50)
+			DECLARE @Pays NVARCHAR (50)
+			DECLARE @Numero_telephone NVARCHAR (50)
+			DECLARE @Adresse_email NVARCHAR (50)
+			DECLARE @Niveau_decouvert INT
+			
+			DECLARE @Solde MONEY
+			DECLARE @Total_final MONEY
+					
+			SET @Num_compte = (SELECT FK_numcompte FROM Abonnement WHERE @Num_abo = Numero_abonnement)
+		
+			SET @DN = (SELECT Date_de_naissance FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Sexe = (SELECT Sexe FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Numero_voie = (SELECT Numero_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Complement_de_voie = (SELECT Complement_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@pseudo)
+			SET @Type_de_voie = (SELECT Type_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Libelle = (SELECT Libelle FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Complement_libelle = (SELECT Complement_libelle FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Code_postal = (SELECT Code_postal FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Ville = (SELECT Ville FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Cedex = (SELECT Cedex FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Pays = (SELECT Pays FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Numero_telephone = (SELECT Numero_telephone FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			SET @Adresse_email = (SELECT Adresse_email FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+			
+			SET @Solde = (SELECT Montant FROM Compte WHERE @Num_compte=Numero_compte)
+			
+			SET @Total_final = @Total - @Solde
+		
+			PRINT 'Suppression des annulations réservations livraisons'
+			DELETE FROM annulation_livraison WHERE FK_num_abonnement = @Num_abo;
+			
+			PRINT 'Suppression des annulations réservations immédiates'
+			DELETE FROM annulation_reservation_imm WHERE FK_num_abonnement = @Num_abo;
+					
+			PRINT 'Suppression des réservations immédiates'
+			EXEC Nettoyage_abonne_resa_imm @Num_abo;
+			
+			PRINT 'Suppression des réservations livraisons'
+			EXEC Nettoyage_abonne_resa_liv @Num_abo;
+		
+			PRINT 'Suppression des locations'
+			EXEC Nettoyage_abonne_location @Num_abo
+		
+			PRINT 'Suppression de la souscription entre : '+cast(@nom as VARCHAR)+' '+cast(@Prenom as VARCHAR)+' et l''abonnement '+cast(@num_abo as VARCHAR)
+			DELETE FROM Souscrire WHERE FK_num_abonnement = @Num_abo
+		
+			PRINT 'Suppression de l''abonnement numero : '+cast(@Num_abo as VARCHAR)
+			DELETE FROM Abonnement WHERE Numero_abonnement = @Num_abo;
+			
+			SET @Niveau_decouvert = (SELECT Niveau_decouvert FROM Relance_decouvert WHERE FK_numero_compte = @Num_compte)
+			
+			IF EXISTS (SELECT FK_numero_compte FROM Relance_decouvert WHERE FK_numero_compte = @Num_compte )
+			BEGIN
+				DELETE FROM Relance_decouvert WHERE FK_numero_compte = @Num_compte;				
+			END
+			
+			
+			IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Ancien_abonne WHERE Nom = @Nom AND Prenom = @Prenom AND Pseudo = @Pseudo ) AND @Niveau_decouvert >= 5 AND @Total_final>0
+				BEGIN
+					INSERT INTO Ancien_abonne (Nom, Prenom, Pseudo, Date_de_naissance, Sexe, Numero_de_voie, Complement_de_voie, Type_de_voie, Libelle, Complement_libelle, Code_postal, Ville, Cedex, Pays, Numero_telephone, Adresse_email, Date_suppression, Raison, Commentaire)  
+					VALUES (@Nom, @Prenom, @Pseudo, @DN,@Sexe, @Numero_voie, @Complement_de_voie , @Type_de_voie , @Libelle , @Complement_libelle , @Code_postal , @Ville, @Cedex, @Pays, @Numero_telephone, @Adresse_email , CURRENT_TIMESTAMP, 'Radiation', 'Niveau de decouvert maximum atteint sur le compte '+CAST(@Num_compte as VARCHAR)+', et remboursement de '+CAST(@Total_final as VARCHAR)+' euros')
+				END
+			
+			IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Ancien_abonne WHERE Nom = @Nom AND Prenom = @Prenom AND Pseudo = @Pseudo ) AND @Niveau_decouvert >= 5 AND @Total_final<0
+				BEGIN
+					INSERT INTO Ancien_abonne (Nom, Prenom, Pseudo, Date_de_naissance, Sexe, Numero_de_voie, Complement_de_voie, Type_de_voie, Libelle, Complement_libelle, Code_postal, Ville, Cedex, Pays, Numero_telephone, Adresse_email, Date_suppression, Raison, Commentaire)  
+					VALUES (@Nom, @Prenom, @Pseudo, @DN,@Sexe, @Numero_voie, @Complement_de_voie , @Type_de_voie , @Libelle , @Complement_libelle , @Code_postal , @Ville, @Cedex, @Pays, @Numero_telephone, @Adresse_email , CURRENT_TIMESTAMP, 'Radiation', 'Niveau de decouvert maximum atteint sur le compte '+CAST(@Num_compte as VARCHAR)+', et il nous doit '+cast(@Total_final as VARCHAR)+' euros')
+				END
+	
+			PRINT 'Suppression du compte numero : '+cast(@Num_compte as VARCHAR)
+			DELETE FROM Compte WHERE Numero_compte = @Num_compte;
+			
+			FETCH NEXT FROM cur_num_N_abonnement INTO @num_abo;
+			END
+			CLOSE cur_num_N_abonnement;
+			DEALLOCATE cur_num_N_abonnement;
+		
+END
+GO
+
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond de nettoyage d'abonne				    */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): PATRICK POL								*/
+/*Correcteur : 	PATRICK POL								*/
+/*Intégrateur: PATRICK POL								*/
+
+USE "ouf_tim"
+IF OBJECT_ID ('Nettoyage_abonne', 'P') IS NOT NULL
+DROP PROCEDURE Nettoyage_abonne;
+GO
+CREATE PROCEDURE Nettoyage_abonne
+
+AS
+BEGIN
+
+DECLARE @nom NVARCHAR (50), @prenom NVARCHAR(50), @pseudo NVARCHAR(50)
+
+DECLARE cur_nettoyage_abo CURSOR LOCAL FOR
+SELECT Nom, Prenom, Pseudo FROM Abonne WHERE Supprimer = 2
+OPEN cur_nettoyage_abo;
+
+FETCH NEXT FROM cur_nettoyage_abo INTO @nom, @prenom, @pseudo;
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Aucune nettoyage a effectué'
+			RETURN 0;
+		END
+	
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+		
+		
+		DECLARE @DN DATE
+		DECLARE @Sexe NVARCHAR (50)
+		DECLARE @Numero_voie NVARCHAR (50)
+		DECLARE @Complement_de_voie NVARCHAR (50)
+		DECLARE @Type_de_voie NVARCHAR (50)
+		DECLARE @Libelle NVARCHAR (50)
+		DECLARE @Complement_libelle NVARCHAR (50)
+		DECLARE @Ville NVARCHAR (50)
+		DECLARE @Code_postal NVARCHAR (50)
+		DECLARE @Cedex NVARCHAR (50)
+		DECLARE @Pays NVARCHAR (50)
+		DECLARE @Numero_telephone NVARCHAR (50)
+		DECLARE @Adresse_email NVARCHAR (50)
+		DECLARE @Niveau_decouvert INT
+		
+		
+		
+		SET @DN = (SELECT Date_de_naissance FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Sexe = (SELECT Sexe FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Numero_voie = (SELECT Numero_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Complement_de_voie = (SELECT Complement_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@pseudo)
+		SET @Type_de_voie = (SELECT Type_de_voie FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Libelle = (SELECT Libelle FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Complement_libelle = (SELECT Complement_libelle FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Code_postal = (SELECT Code_postal FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Ville = (SELECT Ville FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Cedex = (SELECT Cedex FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Pays = (SELECT Pays FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Numero_telephone = (SELECT Numero_telephone FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+		SET @Adresse_email = (SELECT Adresse_email FROM Abonne WHERE Prenom = @Prenom AND Nom=@nom AND Pseudo=@Pseudo)
+	
+		EXEC Nettoyage_abonne_abonnement @nom, @prenom, @pseudo
+		
+		IF NOT EXISTS (SELECT Nom, Prenom, Pseudo FROM Ancien_abonne WHERE Nom = @Nom AND Prenom = @Prenom AND Pseudo = @Pseudo )
+		BEGIN
+			INSERT INTO Ancien_abonne (Nom, Prenom, Pseudo, Date_de_naissance, Sexe, Numero_de_voie, Complement_de_voie, Type_de_voie, Libelle, Complement_libelle, Code_postal, Ville, Cedex, Pays, Numero_telephone, Adresse_email, Date_suppression, Raison)  
+			VALUES (@Nom, @Prenom, @Pseudo, @DN,@Sexe, @Numero_voie, @Complement_de_voie , @Type_de_voie , @Libelle , @Complement_libelle , @Code_postal , @Ville, @Cedex, @Pays, @Numero_telephone, @Adresse_email , CURRENT_TIMESTAMP, 'Volontaire')
+		END
+		
+		
+		PRINT 'Suppression de l''abonne '+cast(@nom as VARCHAR)+' '+cast(@prenom as VARCHAR)
+		DELETE FROM Abonne WHERE Nom=@nom AND Prenom = @prenom AND Pseudo = @pseudo
+		
+		FETCH NEXT FROM cur_nettoyage_abo INTO @nom, @prenom, @pseudo;
+		END
+		
+		
+		CLOSE cur_nettoyage_abo;
+		DEALLOCATE cur_nettoyage_abo;
+		
+END
+GO
+		
+		
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond de Suppression d'abonne sans abonnement */
+/*Auteur(s): PATRICK POL								*/
+/*testeur(s): PATRICK POL								*/
+/*Intégrateur: LADURANTI SANDRA							*/
+
+
+USE "ouf_tim" 
+IF OBJECT_ID ('Suppression_abonne_sans_abo', 'P') IS NOT NULL
+DROP PROCEDURE Suppression_abonne_sans_abo;
+GO
+CREATE PROCEDURE Suppression_abonne_sans_abo
+AS
+BEGIN
+
+DECLARE @Nom VARCHAR (50)
+DECLARE @Prenom VARCHAR (50)
+DECLARE @Pseudo VARCHAR (50)
+
+DECLARE cur_sup_abonne_ss_abo CURSOR LOCAL FOR
+SELECT Nom, Prenom, Pseudo FROM Abonne WHERE Supprimer = 0
+
+OPEN cur_sup_abonne_ss_abo;
+FETCH NEXT FROM cur_sup_abonne_ss_abo INTO @Nom, @Prenom, @Pseudo;
+		IF @@FETCH_STATUS =-1
+		BEGIN
+			PRINT 'Aucune suppression d''abonne a faire'
+			RETURN 0;
+		END
+	
+		ELSE
+		WHILE (@@FETCH_STATUS = 0)
+		BEGIN
+
+			
+		IF NOT EXISTS (SELECT FK_nom_abonne, FK_prenom, FK_pseudo FROM Souscrire WHERE FK_nom_abonne =@Nom AND FK_prenom =@Prenom AND FK_pseudo = @Pseudo)
+		BEGIN
+			UPDATE Abonne SET Supprimer = 2 WHERE Nom= @Nom  AND Prenom = @Prenom AND Pseudo= @Pseudo
+			PRINT 'L''abonne '+cast(@Nom as VARCHAR)+' '+cast(@Prenom as VARCHAR)+' va être supprimer'
+		END
+		
+		FETCH NEXT FROM cur_sup_abonne_ss_abo INTO @Nom, @Prenom, @Pseudo;
+		END
+		
+	CLOSE cur_sup_abonne_ss_abo;
+	DEALLOCATE cur_sup_abonne_ss_abo;
+	
+END
+GO
+
+/*L2 ATIC 2013 GROUPE ouf_tim						    */
+/*Tache de fond nettoyage de la base				    */
+/*Auteur(s): GOUALARD MICKAEL							*/
+/*testeur(s): PATRICK POL								*/
+/*Intégrateur: LADURANTI SANDRA							*/
+
+IF OBJECT_ID ('dbo.cleaning_databade', 'P') IS NOT NULL
+DROP PROCEDURE dbo.cleaning_databade;
+GO
+CREATE PROCEDURE dbo.cleaning_databade
+AS
+BEGIN
+    WHILE(EXISTS (SELECT * FROM Films WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Films WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Appartenir WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Appartenir WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Acteur WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Acteur WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Jouer WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Jouer WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Realisateur WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Realisateur WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Realiser WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Realiser WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Attribuer WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Attribuer WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Edition WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Edition WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Rattacher WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Rattacher WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Afficher WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Afficher WHERE Supprimer = 2
+    END
+    WHILE(EXISTS (SELECT * FROM Exemplaires WHERE Supprimer = 2))
+    BEGIN
+        DELETE FROM Exemplaires WHERE Supprimer = 2
+    END
+
+END
+GO
+		
+				
+		
+
+	
+
+
+
+
+
+
+
+
+
+
+	
+	
+	 
